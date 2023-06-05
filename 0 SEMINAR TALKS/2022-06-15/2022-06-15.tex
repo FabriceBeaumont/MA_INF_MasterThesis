@@ -1,0 +1,229 @@
+\input{../PyCharm_Beamer_Preamble.tex}
+% !Tex spellceck = en_US
+
+\title[MA Seminar Talk - Progress]{
+	\centering
+	\includegraphics[width=0.3\textwidth]{images/WLLT}\\
+	Master Thesis Seminar Talk	
+}
+%\title[MA Seminar Talk - Progress]{Master Thesis Seminar Talk}
+%\titlegraphic{
+%	\includegraphics[width=0.2\textwidth]{images/WLLT}
+%}
+\subtitle{Progress Upade}
+\author[F. Beaumont]{Fabrice Beaumont}
+\institute[]{Department of Information Systems and Artificial Intelligence - \textbf{Dr. Pascal Welke}}
+\date{15. June 2022}
+
+\newcommand{\figureWidth}{7cm}
+\newcommand{\figureHorizontal}{2cm}
+\newcommand{\figureVertical}{5cm}
+\begin{document}
+
+
+\begin{frame}
+	\titlepage
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Overview}
+
+\begin{frame}
+\frametitle{Recap last months progress} \vspace{-1cm}
+	\begin{enumerate}
+		\item Task formulation, registration of the thesis:\\
+		\enquote{\textbf{Learning graph similarity measures using the Weisfeiler-Lehman label hierarchy}}\\
+		Definition of several sub-goals a programming road-map.
+		\newline
+		\item Implementation of a dynamic \textbf{Dataset Loader} (\textit{GarKel}, \textit{OGB}, from file).\\
+		Easily expandable for other frameworks.
+	\end{enumerate}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{RECAP - Method description}
+
+\begin{frame}
+\frametitle{Example of the whole procedure}
+\begin{tikzpicture}[remember picture, overlay]
+\node[right] at (current page.west) 
+{
+	\includegraphics[width=0.9\textwidth]{images/Graphs7}
+};
+\end{tikzpicture}
+\begin{columns}[T]%beamer
+	\column{0.7\textwidth}
+	% blank
+	\column{0.3\textwidth}
+	\textbf{Tree metric}:\\
+	$\begin{array}{ccccc}
+	\ \ \; \textit{4} & \textit{5} & \textit{6} & \textit{7} & \textit{8}
+	\end{array}$\\
+	$
+	\left(		
+	\begin{array}{ccccc}
+	\cdot & 2 & 4 & 4 & 4 \\
+	& \cdot & 4 & 4 & 4 \\
+	&   & \cdot & 2 & 4 \\
+	& \upuparrows & & \cdot & 4\\
+	&   &   &   & \cdot
+	\end{array}
+	\right)
+	$\\
+	\textbf{Wasserstein Dist.}:\\
+	$\mathcal{W}_{t}(A,B) = \frac{4}{3}$\\
+	$\mathcal{W}_{t}(A,C) = 3$\\
+	$\mathcal{W}_{t}(B,C) = 3$\\
+\end{columns}
+\vspace{0.5cm}
+$d_{\text{WLLT}}(B,C) = 2*\frac{2}{4} + 4*\frac{1}{4} + 4*\frac{1}{4} = \frac{12}{4} = 3$
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example of the whole procedure}	
+	\begin{columns}[T]%beamer
+		\column{0.5\textwidth}
+			\centering
+			\textbf{Current clustering:}\\
+			\vspace{0.5cm}
+			\includegraphics[width=0.8\textwidth]{images/Classification1}
+		\column{0.5\textwidth}
+			\centering
+			\textbf{Target clustering:}\\
+			\vspace{0.5cm}
+			\includegraphics[width=0.8\textwidth]{images/Classification2}
+	\end{columns}
+	\vspace{0.5cm}
+	Idea: Reduce distance between $B$ and $C$, by updating the edge weights.
+\end{frame}
+
+\begin{frame}
+	\frametitle{\enquote{Next steps} from last month}
+	\begin{itemize}
+		\item[] . \newline
+		\item Implement the usage of the \textbf{Wasserstein Distance}.\newline
+		
+		\item Implement a \enquote{naive} \textbf{feedback loop} to update the WLLT edge weights.\newline
+		.\\
+		(And the more and more complex variations.)
+	\end{itemize}	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Current overview}
+	\begin{itemize}
+		\item[] . \newline
+		\item Implement the usage of the \textbf{Wasserstein Distance}.\\
+		\textcolor{green}{\textit{DONE}}
+		\item Implement a \enquote{naive} \textbf{feedback loop} to update the WLLT edge weights.\\
+		\textcolor{red}{\textit{IN PROGRESS}}\\
+		(And the more and more complex variations.)
+	\end{itemize}	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Current overview}	
+	\begin{itemize}
+		\item Rethinking the data-loader procedure. \enquote{From software to script}.\\
+		\textcolor{green}{\textit{DONE}}
+		\item Implement the usage of the \textbf{Wasserstein Distance}.\\
+		\textcolor{green}{\textit{DONE}}
+		\item Implement a \enquote{naive} \textbf{feedback loop} to update the WLLT edge weights.\\
+		\textcolor{red}{\textit{IN PROGRESS}}\\
+		(And the more and more complex variations.)
+	\end{itemize}	
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Outlook}
+
+\begin{frame}
+	\frametitle{Next steps}
+	\begin{itemize}
+		\item Complete one \enquote{naive} implementation.
+		\item Investigate its performance (and measures for it).
+		\item (Implement more complex variations.)
+		\item[] 
+	\end{itemize}	
+	\textbf{Goal for the next meeting:} Present evaluations of at least one implementation compared to the state of the art.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{End}
+
+\begin{frame}[c]
+	\centering %\Huge
+	\begin{huge}
+		\emph{Thank you all for listening.}\\
+	\end{huge}
+	\vspace{2 cm}
+	I will be happy to answer any \textbf{questions} and\\
+	hear your \textbf{comments}.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\appendix
+\section{Appendix}
+
+\begin{frame}
+	\frametitle{Example of the whole procedure}	
+	\begin{columns}[T]%beamer
+		\column{0.5\textwidth}
+		\centering		
+		\textit{Local update} $P_{7,8}$:
+		\includegraphics[width=0.8\textwidth]{images/WLLTUpdateEnds}
+		\textit{Weighted path update} $P_{7,8}$:
+		\includegraphics[width=0.8\textwidth]{images/WLLTUpdatePath}
+		\column{0.5\textwidth}
+		\begin{tikzpicture}[remember picture, overlay]
+		\node[left] at (current page.east) [xshift=2.5cm, yshift=-0.5cm] 
+		{
+			\includegraphics[width=1.2\textwidth]{images/Graphs7}
+		};
+		\end{tikzpicture}
+	\end{columns}
+\end{frame}
+
+\begin{frame}
+\frametitle{Implementation road-map 1/2}
+\begin{itemize}
+	\item \textbf{WLLT Construction}:
+		\begin{itemize}
+			\item Write to file and read from file. Construct WL-iteration based.
+			\item All weights \textit{equal}.
+			\item (\textit{Random} initial weights.)
+			\item (Use \textit{a priori} knowledge.)
+		\end{itemize}
+	\item[]
+	\item \textbf{Wasserstein-Distance feedback}:
+		\begin{itemize}
+			\item \enquote{Biggest pile of dirt}. 
+			(\enquote{Smallest}, to increase the distance.)
+			\item Distribution proportional to the pile size.
+			\item Distribution proportional to the cost of moving the pile size.
+		\end{itemize}	
+\end{itemize}	
+\end{frame}
+
+\begin{frame}
+\frametitle{Implementation road-map 2/2}
+\begin{itemize}
+	\item \textbf{Update rule}:
+	\begin{itemize}
+		\item Value:
+		\begin{itemize}
+			\item Constant $\lambda$.
+			\item \textit{Gradient descent}.
+		\end{itemize}
+		\item Location:
+		\begin{itemize}
+			\item \textit{Local}: Only update the first and last edge weights of the connecting path.
+			\item \textit{Weighted path}: Update all edge weights on the path, with less magnitude for edges closer to the root.
+			\item \textit{Path}: Update all edges on the path.
+			\item \textit{Global}: Update all edges, related to all occurring labels.
+		\end{itemize}
+	\end{itemize}		
+\end{itemize}	
+\end{frame}
+
+\end{document}

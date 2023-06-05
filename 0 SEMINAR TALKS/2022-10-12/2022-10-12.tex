@@ -1,0 +1,230 @@
+\input{../White_Beamer_Preamble.tex}
+% !Tex spellceck = en_US
+
+\title[MA Seminar Talk - Progress]{
+	\centering
+	\includegraphics[width=0.3\textwidth]{images/WLLT}\\
+	Master Thesis Seminar Talk	
+}
+%\title[MA Seminar Talk - Progress]{Master Thesis Seminar Talk}
+%\titlegraphic{
+%	\includegraphics[width=0.2\textwidth]{images/WLLT}
+%}
+\subtitle{Progress Update}
+\author[F. Beaumont]{Fabrice Beaumont}
+\institute[]{Department of Information Systems and Artificial Intelligence - \textbf{Dr. Pascal Welke}}
+\date{14. September 2022}
+
+\newcommand{\figureWidth}{7cm}
+\newcommand{\figureHorizontal}{2cm}
+\newcommand{\figureVertical}{5cm}
+\begin{document}
+
+
+\begin{frame}
+	\titlepage
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Method}
+
+
+\begin{frame}
+\frametitle{Example of the whole procedure}
+\centering
+\includegraphics[width=1.0\textwidth]{images/WL_labeling_iterations}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Example of the whole procedure}\vspace{-0.75cm}
+	\centering
+	\includegraphics[width=0.9\textwidth]{images/WLLTProgram1}
+\end{frame}
+
+
+\begin{frame}[noframenumbering]
+	\frametitle{Example of the whole procedure}\vspace{-0.75cm}
+	\centering
+	\includegraphics[width=0.9\textwidth]{images/WLLTProgram2}
+\end{frame}
+
+
+\begin{frame}[noframenumbering]
+	\frametitle{Example of the whole procedure}\vspace{-0.75cm}
+	\centering
+	\includegraphics[width=0.9\textwidth]{images/WLLTProgram3}
+\end{frame}
+
+\begin{frame}[noframenumbering]
+\frametitle{Example of the whole procedure}\vspace{-0.75cm}
+\centering
+\includegraphics[width=0.9\textwidth]{images/WLLTProgram4}
+\end{frame}
+
+\begin{frame}[noframenumbering]
+	\frametitle{Example of the whole procedure}\vspace{-0.75cm}
+	\centering
+	\includegraphics[width=0.9\textwidth]{images/WLLTProgram5}
+\end{frame}
+
+\begin{frame}[noframenumbering]
+	\frametitle{Example of the whole procedure}\vspace{-0.75cm}
+	\centering
+	\includegraphics[width=0.9\textwidth]{images/WLLTProgram6}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Meta Parameters}
+	Procedure
+	\begin{itemize}		
+		\item WLLT depth
+		\item Update scope (w.r.t. layers)
+		\item Update intensity: Push and Pull factors (fixed or percentage)
+		\item Adjust weights to leaves only
+		\item Heaviest earth threshold
+	\end{itemize}
+	
+	Machine Learning
+	\begin{itemize}
+		\item Update frequency (batch size)
+		\item Learning rate
+		\item Adjust weights to leaves only
+		\item Class imbalance factor
+	\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{Update last month}
+
+%\begin{frame}
+%	\frametitle{Last accomplishments}
+%	\begin{itemize}
+%		\item Fixing the CREATION of the graph representation
+%		\item Bigger experiments - and an accumulation of them
+%		\item SVM measurements
+%		\item 3d landscape for weights per layer
+%	\end{itemize}
+%\end{frame}
+
+\section{Results}
+
+\begin{frame}
+	\frametitle{First results}
+	\begin{itemize}
+		\item Clustering scores improve reliably, after enough iterations or high enough WLLT depth.
+		\item WLLT layers 1, 2 and 3 get the most total weight increases.
+		\item WLLT layer 2 grows more rapidly than all others.
+		\item 
+		\item TODO: Track number not intensity of weight updates per Layer?
+		\item[!] Switch to go from relative to absolute push/pull factors
+		\item OGB datasets
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Current todos / Outlook}
+	\begin{itemize}
+		\item Limit the relative weight updates by setting a \textbf{ceiling}
+		\item Switch to go from relative to \textbf{absolute} push/pull increments
+		\item Other, cleaned datasets. And \textbf{OGB} datasets
+		\item Split the dataset in training and test data.\\
+		And evaluate for \textbf{overfitting}. Run for many epochs and search for some kind of plateau in the learning.
+	\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{End}
+
+\begin{frame}[c]
+	\centering %\Huge
+	\begin{huge}
+		\emph{Thank you all for listening.}\\
+	\end{huge}
+	\vspace{2 cm}
+	I will be happy to answer any \textbf{questions} and\\
+	hear your \textbf{comments}.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\appendix
+\section{Appendix}
+
+
+
+\begin{frame}[noframenumbering]
+\frametitle{Example of the whole procedure}	
+\begin{columns}[T]%beamer
+	\column{0.5\textwidth}
+	\centering
+	\textbf{Current clustering:}\\
+	\vspace{0.5cm}
+	\includegraphics[width=0.8\textwidth]{images/Classification1}
+	\column{0.5\textwidth}
+	\centering
+	\textbf{Target clustering:}\\
+	\vspace{0.5cm}
+	\includegraphics[width=0.8\textwidth]{images/Classification2}
+\end{columns}
+\vspace{0.5cm}
+Idea: Reduce distance between $B$ and $C$, by updating the edge weights.
+\end{frame}
+
+\begin{frame}[noframenumbering]
+	\frametitle{Preparation of the performance comparison}	
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.6\linewidth]{images/plot_whiteText}
+		\caption{Classification accuracies on databases using Weisfeiler-Lehman.}
+		\label{fig:plot}
+	\end{figure}
+	\tiny{\texttt{grakel.kernels.\textbf{WeisfeilerLehman}(n\_iter=[1-10], base=grakel.kernels.VertexHistogram, normalize=True)}}\\
+	\tiny{\texttt{grakel.utils.\textbf{cross\_validate\_Kfold\_SVM}(K, y, n\_iter=10)}}
+
+\end{frame}
+
+
+\begin{frame}[noframenumbering]
+\frametitle{Implementation road-map 1/2}
+\begin{itemize}
+	\item \textbf{WLLT Construction}:
+		\begin{itemize}
+			\item Write to file and read from file. Construct WL-iteration based.
+			\item All weights \textit{equal}.
+			\item (\textit{Random} initial weights.)
+			\item (Use \textit{a priori} knowledge.)
+		\end{itemize}
+	\item[]
+	\item \textbf{Wasserstein-Distance feedback}:
+		\begin{itemize}
+			\item \enquote{Biggest pile of dirt}. 
+			(\enquote{Smallest}, to increase the distance.)
+			\item Distribution proportional to the pile size.
+			\item Distribution proportional to the cost of moving the pile size.
+		\end{itemize}	
+\end{itemize}	
+\end{frame}
+
+\begin{frame}[noframenumbering]
+\frametitle{Implementation road-map 2/2}
+\begin{itemize}
+	\item \textbf{Update rule}:
+	\begin{itemize}
+		\item Value:
+		\begin{itemize}
+			\item Constant $\lambda$.
+			\item \textit{Gradient descent}.
+		\end{itemize}
+		\item Location:
+		\begin{itemize}
+			\item \textit{Local}: Only update the first and last edge weights of the connecting path.
+			\item \textit{Weighted path}: Update all edge weights on the path, with less magnitude for edges closer to the root.
+			\item \textit{Path}: Update all edges on the path.
+			\item \textit{Global}: Update all edges, related to all occurring labels.
+		\end{itemize}
+	\end{itemize}		
+\end{itemize}	
+\end{frame}
+
+\end{document}

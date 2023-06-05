@@ -1,0 +1,1492 @@
+\input{../../../../Skript_praeambel.tex}
+
+%\bibliographystyle{splncs04}
+\addbibresource{../../bib_file_THESIS.bib}
+\setcounter{tocdepth}{4}
+\setcounter{secnumdepth}{4}
+
+%TODO. Graph theory viedo continue at https://youtu.be/09_LlHjoEiY?t=4269
+
+% !TeX spellcheck = en_US 
+
+\begin{document}
+\title{Research notes: Graph kernels, Weisfeiler Lehman, Wasserstein Distance, \dots}
+\author{Fabrice Beaumont \\ Matrikel-Nr: 2747609 \\
+Rheinische Friedrich-Wilhelms-Universität Bonn}
+
+\maketitle
+\tableofcontents
+%\listoffigures
+
+%----------------------------------------------------------
+\setcounter{section}{-1}
+\chapter{Best practices for scientific research and presentation}
+
+	\section{Best practice for doing research with a scientific paper}	
+		When reading a new paper, complete these three stages:
+		\begin{enumerate}
+			\item Read the paper on a \textbf{first pass} - to get an overview of \textbf{what happens}.
+			\item Read the paper on a \textbf{second pass} - to \textbf{understand} the material. Document
+			\begin{itemize}
+				\item the main results, claims, notions and ideas
+				\item the structure (can it be improved when reciting the paper?)
+				\item the motivation of definitions
+				\item the used methods or ideas (e.g. for proofs)
+				\item where the material is difficult to understand
+				\item questions.
+			\end{itemize}
+			\item Prepare a presentation which restructures and compresses the material.\\
+			Highlight interesting points, surprising results and also consider not fully understood passages.
+		\end{enumerate}
+	
+	\section{Best practice for scientific talks}	
+		Basic structure of a scientific talk:
+		\begin{enumerate}
+			\item Introduction \& Motivation\\
+			(\textbf{WHAT} are we doing? \textbf{WHY} are we doing it?)
+			\item Basic definitions (if necessary) 
+			\item Result ("' High Level message"')
+			\item Related work
+			\item Methodology, overview of intermediate results, examples and the investigated settings\\
+			(\textbf{HOW} is it being done?)
+			\item Conclusion\\
+			(\textbf{WHAT} has been achieved?)
+			\item Future Work \& link to more information\\
+			(\textbf{WHAT} else is there to do or take into consideration?)
+			\item Q \& A
+		\end{enumerate}
+		
+		Tips and tricks for the presentation:
+		\begin{itemize}
+			\item Slides should be used parallel to the verbal communication. They should support the speaker in the background, or offer summarizing pictures which are explained. 
+			\item Avoid a lot of text, especially if it differs from the actually spoken words. \item Interact with the slides, do not let them run completely separated in the background.
+			\item Use roughly \textbf{one slide per minute} and do not use more than \textbf{two main points per slide}.
+			\item Prefer pictures over formulas.
+		\end{itemize}
+
+\chapter{Mathematical basics}
+
+\textbf{Graph theory} is the mathematical theory of the properties and applications of graphs (networks).
+
+\chapter{Definitions} \label{ch_definitions}
+	
+	This chapter contains definitions. If it exists, the means of computing a defined object are appended after the definition of the object. Proofs and theorems on the efficiencies of these means (algorithms) can be found in chapter \ref{ch_theorems}.
+	
+	\section{Graphs}
+	
+			\begin{Definition}[Graph]{def:Graph}
+				A \textbf{graph} is a tuple $G=(V,E)$ where $V$ is a finite set of vertices and $E \subseteq 2^V$ is a set of undirected edges.\\
+				Use variables $n_G:=|V|$ (the \textbf{size} of $G$) and $m_G:=|E|$.\\
+				
+				$G$ is called
+				\begin{itemize}
+					\item \textbf{labeled}, if there exists a labeling function $\ell:V\to \Sigma$ for a finite \textbf{label alphabet} $\Sigma$. In this case write $G=(V,E,\ell)$.
+					\item \textbf{attributed},	if for each vertex $v\in V$ there exists an associated vector $a(v)\in\IR^m$.\\
+					We call $a(v)$ \textbf{vertex attributes} (high-dimensional continuous vectors) and $l(v)$ \textbf{vertex labels} (integer).
+					\item \textbf{weighted} if there exists a weight function on its edges $w:E\to\IR$.
+					\item \textbf{subtree} of a graph $O=(W,F)$ if $G$ is a graph and $V\subseteq W$ and $E\subseteq F$.
+					\item \textbf{complete}, if it contains $2^V$ edges. That is, between every two vertices there is an edge. A complete graph with $n$ vertices is denoted as the graph $K_n$.
+				\end{itemize}
+			\end{Definition}
+			
+			\begin{Definition}[Adjacency matrix] {def:AdjacencyMatrix}
+				The edges and edge labels of a graph $G=(V,E)$ can be represented by an adjacency matrix $M \in \Sigma^{n_G\times n_G}$, where $\Sigma$ is the set of edge labels. 
+				An entry $m_{i,j}$ in $M$ denotes if there exists an edge ($(i,j) \in E$ or $\{i,j\}\in E$). If no such edge exists, set $m_{i,j}=0$. 
+				If $G$ has edge labels given by $\ell_E$ set $m_{i,j} = \ell_E(i,j)$. 
+				If $0\in\Sigma$, the coding can be chosen differently.
+			\end{Definition}
+			The advantages of the adjacency matrix representation are:
+			\begin{itemize}
+				\item Space efficient for representing dense graphs.
+				\item Edge (weight) lookup time in $\mathcal{O}(1)$.
+			\end{itemize}
+			The disadvantages of the adjacency matrix representation are:
+			\begin{itemize}
+				\item Space complexity of $\mathcal{O}(V^2)$.
+				\item Iterating over all edges has time complexity $\mathcal{O}(V^2)$.
+			\end{itemize}
+		
+			\begin{Definition}[Adjacency list] {def:AdjacencyList}
+				The edges and edge labels of a graph $G=(V,E)$ can be represented by an adjacency list $L$. 
+				$L$ contains for every vertex a list of tuples with neighboring vertices and the edge weights between them.
+			\end{Definition}
+			The advantages of the adjacency list representation are:
+			\begin{itemize}
+				\item Space efficient for representing sparse graphs.
+				\item Allows for an efficient iteration over all edges.
+			\end{itemize}
+			The disadvantages of the adjacency list representation are:
+			\begin{itemize}
+				\item Less space efficient for denser graphs.
+				\item Edge (weight) lookup time complexity is $\mathcal{O}(E)$.
+			\end{itemize}
+		
+			\begin{Definition}[Edge list] {def:EdgeList}
+				The edges and edge labels of a graph $G=(V,E)$ can be represented by an edge list $L$. 
+				$L$ contains triplets $(u,v,c)$ for every edge from vertex $u$ to vertex $v$ with edge weight $c$.
+			\end{Definition}
+			The advantages of the edge list representation are:
+			\begin{itemize}
+				\item Space efficient for representing sparse graphs.
+				\item Allows for an efficient iteration over all edges.
+				\item Arguably the simplest graph representation.
+			\end{itemize}
+			The disadvantages of the edge list representation are:
+			\begin{itemize}
+				\item Less space efficient for denser graphs.
+				\item Edge (weight) lookup time complexity is $\mathcal{O}(E)$.
+			\end{itemize}
+			
+			\begin{Definition}[Bridge]{def:Bridge}
+				Let $G=(V,E)$ be connected a graph with $k$ connected components. An edge $e\in E$ is called a \textbf{bridge} if $(V,E\backslash e)$ has $k+1$ connected components.
+			\end{Definition}
+		
+			\begin{Definition}[Articulation point]{def:ArticulationPoint}
+				Let $G=(V,E)$ be connected a graph with $k$ connected components. A vertex $v\in V$ is called an \textbf{articulation point} (\textbf{cut vertex}) if $(V\backslash v,E)$ has more than $k$ connected components.
+			\end{Definition}
+			
+			\begin{Definition}[Neighborhoods in graphs]{def:Neighborhoods}
+				Let $G=(V,E)$ be a graph. The set
+				\[ \mathcal{N}^1(v)=\mathcal{N}(v):= \{u\in V| \ (u,v)\in E \} \]
+				is called (\textbf{first-}) \textbf{neighborhood} of $G$.\\
+				The \textbf{degree} of $v$ in $G$ is given as $|\mathcal{N}(v)|= \deg(v)$. Set $d_G = \max_{v\in V}\deg(v)$ (the maximum degree in $G$).\\
+				
+				For $0<i\in\IN$ define recursively higher neighborhoods of $v$:
+				\[ \mathcal{N}^i(v) = \{ u\in \mathcal{N}^{i-1}(v)| \ (u,v)\in E  \} \]
+				(Instead of defining the vertices via existing adjacent vertices, one can also define it as the set of vertices that are reachable with paths of length of at most $i$ (no multi sets).)
+			\end{Definition}
+			
+			\begin{Definition}[Walks, cycles and paths]{def:walkPath}
+				A \textbf{walk} $W$ in a graph $G=(V,E)$ is a sequence of vertices in a graph, in which consecutive vertices are connected by an edge:
+				\[ W=(v_0,\dots,v_k)\in V^k \quad \text{s.t.}\quad \forall i,j=0,\dots,k-1:\ \{v_i,v_{i+1}\}\in E \]
+				A \textbf{cycle} is a \textbf{walk} $W=(v_0,\dots,v_k)$ with identical start and end vertex, e.a. $v_0=v_k$.\\
+				A \textbf{path} $P$ in a graph $G=(V,E)$ is a walk $W=(v_0,\dots,v_k)$ in $G$, where all vertices of the walk are distinct:
+				\[ \forall i,j:\quad v_i \neq v_j \]	
+			\end{Definition}
+				
+			\begin{Definition}[Graphs and Laplacian matrix]{def:graph}
+				Graph $G=(V,E)$, $|V|=N$, connected, undirected, edge weighted.\\
+				Adjacency matrix $W\in\IR^{N\times N}$.\\
+				$d(i)$ degree of $i\in V$. Degree matrix $D\in\IR^{N\times N}$:
+				\[ D_{i,j}=\begin{cases}
+				d(i),& i=j\\
+				0,&i\neq j
+				\end{cases} \]
+				Laplacian matrix $L:= D-W$.
+			\end{Definition}
+			
+			\begin{Definition}[Graph isomorphism]{def:GraphIsomorphism}
+				Two graphs $G_1$ and $G_2$ are \textbf{isomorphic} $G_1\equiv G_2$, if there exists a bijective function between their vertices, that preserves all edges and labels.
+			\end{Definition}
+		
+			\begin{Definition}[Structure and depth preserving mapping]{def:SdM}
+				A\textbf{structure and depth preserving mapping} (\textsc{SdM}) between two rooted trees $T$ and $T^\prime$ is a triple $(M, T, T^\prime)$ with $M\subseteq V(T)\times V(T^\prime)$ satisfying
+				\begin{flalign*}
+					1.&\ \forall (v_1, v_1^\prime), (v_2, v_2^\prime) \in M:\quad v_1=v_2\iff v_1^\prime=v_2 &&\text{(definiteness)}\\
+					2.&\ (r(T), r(T^\prime)) \in M &&\text{(root preserving)}\\
+					3.&\ \forall (v, v^\prime) \in M:\ (\text{par}(v),\text{par}(v^\prime))\in M &&\text{(structure preserving)}
+				\end{flalign*}
+				The set of all structure and depth preserving mappings between $T$ and $T^\prime$ is denoted by $\text{SDM}(T, T^\prime)$.\cite{2021_Schulz_CONF} %Definition1 - Figure 3 in Schulz paper for visualization
+			\end{Definition}
+			
+			Note that \textsc{SdM}s preserve siblings and vertices can only be mapped onto vertices of the same depth. Also connected subtrees are mapped only onto connected subtrees.\cite{2021_Schulz_CONF} %After Proposition3.1 (prove?)
+			
+			For an \textsc{SdM} $(M, T, T^\prime)$ let $T=T_0,T_1,\dots,T_k$ be a sequence of trees such that $T_{i+1}$ is obtained from $T_i$ by applying one of the following atomic transformations
+			\begin{itemize}
+				\item \textbf{Relabel}: If $(v,v^\prime)\in M$, then replace the label ov $v$ in $T_i$ by that of $v^\prime$.
+				\item \textbf{Delete}: If $v$ is a leaf in $T_i$ and it does not occur in a pair of $M$, then remove $v$ from $T_i$.
+				\item \textbf{Insert}: If $v^\prime$ is a vertex in $T^\prime$ which does not occur in a pair of $M$ and for which the corresponding parent $u$ already exists in $T_i$, then add a child to $u$ with the label of $v^\prime$.
+			\end{itemize}
+		
+			\begin{Definition}[Costs of structure and depth preserving mappings] {def:SDMCost}
+				Let $T$ and $T^\prime$ be unfolding trees over the vertex label alphabet $\Sigma$ and let $\gamma:\Sigma^{\bot}\times \Sigma^{\bot}\to\IR$ a cost function (where $\bot$ is the blank symbol). Let $(M, T, T^\prime)$ be a structure and depth preserving mapping (\textsc{SdM}) and $N$ and $N^\prime$ the vertices in $T$ and $T^\prime$ that do not occur in any pair of $M$.
+				
+				Then the \textbf{cost} $\gamma(M)$ of the \textsc{SdM} is given as
+				\[ \gamma (M) := \underbrace{\sum_{(v, v^\prime)\in M}\gamma\big( \ell(v), \ell(v^\prime) \big)}_{\text{relabeling}} + \underbrace{\sum_{v\in N}\gamma\big( \ell(v), \bot \big)}_{\text{deletion}} + \underbrace{\sum_{v^\prime\in N^\prime}\gamma\big( \bot, \ell(v^\prime) \big)}_{\text{insertion}} \]
+				\cite{2021_Schulz_CONF}%Definition 2
+			\end{Definition}
+			
+			Note that the \textsc{SdTed} is simply the minimum cost of all \textsc{SdM}.\\
+			Note that the \textsc{SdTed} of unfolding trees corresponds to the Wasserstein distance of the real-valued vector representation of the unfolding trees (see %TODO
+			)\cite{2021_Schulz_CONF}.
+			
+			\begin{algorithm}[H]
+				\caption{Naive computation of an \textsc{SdTed}} \label{alg:SdTedComputation} %Algorithm 1 in \cite{2021_Schulz_CONF}
+				\begin{tabbing}
+					\textbf{Output:} \= \kill
+					\textbf{Input:} \>two labeled rooted trees $T$, $T^\prime$ (w.l.o.g. $\ell=\ell^\prime:V(T)\cup V(T^\prime)\to \Sigma$),\\
+					\>a cost function $\gamma:\Sigma^{\bot}\times\Sigma^{\bot}\to\IR$.\\
+					\textbf{Output:} \>$\textsc{SdTed}(T, T^\prime)$.
+				\end{tabbing}
+				Recall that the function $r(T)$ gives the root of a tree $T$ and $F(v)$ gives the set of subtrees rooted at the children of vertex $v$.
+				\begin{algorithmic}[1]
+					\Procedure{SdTed}{$T,T^\prime$}
+					\State $F:=F(r(T)),\ F^\prime:=F(r(T^\prime))$ \Comment{Trees below the root}
+					\State Pad $F$ and $F^\prime$ with empty trees $T_{\bot}$ such that $|F|=|F^\prime|=\deg(r(T))+ \deg(r(T^\prime))$ \label{line:SdTedLinePadding}
+					\For {all $T_i\in F,\ T_j^\prime\in F^\prime$}
+					\State $\delta_{i,j} = \begin{cases}
+					\textsc{SdTed}(T_i, T_j^\prime) & \text{if }T_i\not\equiv T_{\bot} \ \land\ T_j^\prime\not\equiv T_{\bot}\\
+					\sum\limits_{v\in V(T_i)}\gamma\big(\ell(v), \bot\big) & \text{if }T_i\not\equiv T_{\bot} \ \land\ T_j^\prime\equiv T_{\bot}\\
+					\sum\limits_{v^\prime\in V(T_j^\prime)}\gamma\big(\ell(v^\prime), \bot\big) & \text{if }T_i\equiv T_{\bot} \ \land\ T_j^\prime\not\equiv T_{\bot}\\
+					0 & \text{otherwise}
+					\end{cases}$ \Comment{Define a distance matrix} \label{line:SdTedLineDistDef}
+					\EndFor
+					\State Let $S\subseteq F\times F^\prime$ be a minimum cost perfect bipartite matching with respect to the distances $\delta$
+					\Return $\gamma\big(\ell(r(T)), \ell(r(T^\prime)) \bot\big) + \sum\limits{(T_i, T_j)\in S} \delta_{i,j}$
+					\EndProcedure
+				\end{algorithmic}
+				
+				
+				\textbf{Time complexity}: Naively a exponential number of recursion calls is needed. But note that the number of $i$-unfolding trees in $T$ and $T^\prime$ is bounded by $n=|V(T)|$ and $n^\prime=|V(T^\prime)|$. Thus, for each recursion depth (depth of the unfolding trees), the algorithm needs to be invoked at most $nn^\prime$ times.\\
+				Also, once $\textsc{SdTed}(T_i,T_j)$ has been calculated, it can be \textbf{stored in a look-up table} for later calls from a higher recursion.\\
+				Thus at most $nn^\prime h$ invocations of a minimum cost perfect bipartite matching algorithm (each of complexity $\tilde{\mathcal{O}}((2d)^3)$, $d$ is the maximum degree of $T$ and $T^\prime$) where $h$ is the depth are necessary.\\
+				This gives a total runtime approximation of
+				\[ \tilde{\mathcal{O}}(nn^\prime h(2d)^3) \]
+				
+				Remarks:\begin{itemize}
+					\item Line \ref{line:SdTedLinePadding} ensures, that both sets of rooted subtrees can contain the subtree set of the deeper recursion.
+					\item The second case in the definition in line  \ref{line:SdTedLineDistDef} considers the case that subtree $T_i$ is not part of the mapping ($T_i\not\equiv T_{\bot}$ but $T_j^\prime\equiv T_{\bot}$) - thus for a optimal \textsc{SdM}, all vertices in subtree $T_i$ are \textbf{deleted}.
+					\item The third case in the definition in line  \ref{line:SdTedLineDistDef} considers the case that subtree $T_i$ is not part of the $T$ but the mapped tree $T_j$ is part of $T^\prime$ (insertion) - thus for a optimal \textsc{SdM}, all vertices in subtree $T_j^\prime$ are \textbf{inserted}.
+				\end{itemize}
+				For proof of correctness see theorem \ref{thm:ReductionSdMBipartiteMatching}.\cite{2021_Schulz_CONF} % Algorithm 1
+			\end{algorithm}
+			
+			\begin{Definition}[Weisfeiler-Lehman graph at height $i$]{def:WLGraphAtHeightI}
+				The \textbf{Weisfeiler-Lehman graph at height $i$} (\textbf{WL-graph at height $i$}) of the graph $G=(V,E,\ell) = (V,E,l_0)$ is the graph 
+				\[ G_i = (V,E,l_i) \]
+				(That is the original graph, with the labeling function that has been constructed after $i$ iterations of algorithm \ref{alg:WeisfeilerLehmanEmbedding}.)
+			\end{Definition}
+			
+			\begin{Definition}[Weisfeiler-Lehman sequence up to height $i$]{def:WLGraphAtHeightI}
+				The \textbf{Weisfeiler-Lehman sequence up to height $i$} (\textbf{WL-sequence up to height $i$}) of the graph $G=(V,E,\ell) = (V,E,l_0)=G_0$ is the sequence 
+				\[ \{ G_0,G_1,\dots,G_i \} \ = \ \{ (V,E,l_0),(V,E,l_1), \dots,(V,E,l_i) \} \]
+			\end{Definition}%TODO: mistake in the paper: h=i
+			With the notation from above we can write: $G_i = r(G_{i-1})$.
+			
+			\begin{Definition}[Regular graphs]{def:RegularGraphs}
+				A graph $G$ is called $k$\textbf{-regular}, if the number of common neighbors of a $k$ element subset of vertices only depends on the isomorphism type of the subgraph induced by the $k$ vertices.//
+				
+				$1$-regular graphs are also called \textbf{regular}. $2$-regular graphs are also called \textbf{strongly regular}~\cite{1992_Cai_IEEE}.
+			\end{Definition}
+			
+			\begin{Definition}[Strongly connected component]{def:SCC}
+				A \textbf{strongly connected component} (\textbf{SCC}) of a graph $G=(V, E)$ is a subset $C\subset V$ of vertices, such that between every two vertices in $C$ there exists a path in $G[C]$.\\
+				One can think of SCCs as self-contained cycles.
+			\end{Definition}
+			
+			\begin{Definition}[Graph separator]{def:Separator}
+				A \textbf{separator} of a graph $G=(V, E)$ is a subset $S\subset V$ such that the induced subgraph on $V-S$ has no connected component with more than $|V|/2$ vertices.%~\cite{1992_Cai_IEEE}
+			\end{Definition}
+			
+			\begin{Definition}[Topological vertex ordering]{def:TopologicalVertexOrdering}
+				A \textbf{topological ordering} (\textbf{topological vertex ordering}) of a digraph is an ordering of all vertices such that for each directed edge $(v,w)$, $v$ appears before $w$ in the ordering.\\
+				Vividly explained, if the graph is arranged such that the vertices are sorted with respect to the topological ordering in a line from left to right, all edges will point to the right.				
+			\end{Definition}
+			Trivially, graphs which contain a cycle do not have a topological ordering.
+			Digraphs which posses a topological vertex ordering are called \textbf{directed acyclic graphs} (see definition \ref{def:DAG}).
+			
+			\begin{Definition}[First-order graph theory language]
+				...
+				%TODO: \cite{1992_Cai_IEEE} Also note the examples
+			\end{Definition}
+			
+		\subsection{Trees}
+			
+			\begin{Definition}[Tree]{def:Tree}
+				A \textbf{tree} $T$ is a graph without circles.
+				
+				A tree is called \textbf{rooted}, if one vertex $r(T)\in V$ is called root.
+				For any $v\in V\backslash\{r(T)\}$ the \textbf{parent of} $v$ is the unique neighbor of $v$ on the path to $r(T)$ ($\text{par}(v)$). Accordingly the \textbf{children} of $v$ are all vertices that have $v$ as parent.\cite{2021_Schulz_CONF}
+				
+				The \textbf{subtree rooted in} $v$, denoted $T[v]$, is the subgraph $T$ that is rooted at $v$ and induced by all descendants of $v$.\\
+				$F(v)$ denotes the \textbf{set of subtrees} rooted at the children of $v$. \cite{2021_Schulz_CONF}
+				
+				If $T$ is directed and every edge point away from the root the graph is called an \textbf{arborescence} (\textbf{out-tree}). If all edges point towards the root, it is called an \textbf{anti-arborescence} (\textbf{in-tree}).
+			\end{Definition}
+			
+			\begin{Definition}[Subtree pattern]{def:SubtreePattern}
+				A \textbf{subtree} of a graph $G$ is a connected subset of distinct vertices in $G$ with an underlying tree structure. A \textbf{subtree-pattern} (\textbf{tree-walk}) extends the notation of subtrees, by allowing vertices to be equal.\\
+				Equal vertices in the graph $G$ are treated as distinct vertices in the subtree-pattern. Thus it is still a cycle-free graph (a tree).
+				
+				Similarly how a path extends the notation of a walk in a graph.
+			\end{Definition}
+			
+			\begin{Lemma}{Number of edges in trees}
+				A connected graph $G$ is a tree, iff it has $n_G-1$ edges.
+			\end{Lemma}
+			\begin{Proof}
+				Let $G$ be a tree. Since $G$ by definition, $G$ has no circles, there must exists a vertex $l$ with exactly one neighbor, which we call a leaf. Removing this leaf (and the incident edge) does not close any circles, thus $G\backslash\{l\}$ is still a tree with $e_G-1$ edges. Repeat this step until no more leaves exist. Since there are no circles, no two vertices can remain. And since leaves have exactly one neighbor, exactly one vertex must remain. Thus $n_G-1$ leaves were iteratively removed and thus $n_G-1$ edges must have been present in $G$.\\
+				Let $G$ have $n_G-1$ edges. We will give a proof by contradiction and assume that $G$ is not a tree, meaning that there exists a circle $C$ of $k>2$ vertices and $k$ edges. If there are no leaves in the graph, every vertex has at least two incident edges and thus there are at least $n_G$ edges - which is a contradiction. This implies that $G$ has leaves. 	
+				Again, we can iteratively remove leaves (and their adjacent). The resulting reduced graphs $G^\prime$ will contain exactly one edge and one vertex less, than before, which implies that $e_{G^\prime} = n_{G^\prime} -1$.  If no more leaves can be removed, at least the circle $C$ remains, since it contains vertices with at least two incident edges. If there are more circles, there exist vertices with more than two incident edges. Thus every remaining vertex has at least two incident edges and thus $e_{G^\prime} \ge n_{G^\prime}$ which is the expected contradiction.
+			\end{Proof}
+		
+			\begin{Definition}[(Rooted) trees]{def:rootedTrees}
+				A \textbf{tree} $T$ is a graph without cycles.\\
+				A \textbf{rooted tree} is a tree $T$ with a designated root vertex $r$.\\
+				
+				The \textbf{height} $h_T$ of a rooted tree is the maximum distance between the root and any other vertex in the rooted tree:
+				\[ h_T = \max_{v\in V}\{ k|\; (r, v_1, \dots, v_k)\text{ is a path} \} \]
+				One can extend the notion of subgraphs to \textbf{subtrees}. One can extend the notion of subtrees to \textbf{subtree patterns} (\cite{2008_Bach_ICML}), by duplicating vertices and treating them as distinct.
+			\end{Definition}
+			Note that all subtree kernels compare subtree patterns, not subtrees.
+			
+			\begin{Definition}[Minimum spanning tree]{def:MST}
+				Let $G=(V,E)$ be a connected graph. A \textbf{minimum spanning tree} (\textbf{MST}) is a tree $T=(V,S)$ contains all vertices of $G$ and a subset of the edges $E$ such that the sum of all edges is minimal. (If $G$ is unweighted, consider every edge to have weight $1$.)\\
+				Sometimes, only a MST is defined by only the edge set.
+			\end{Definition}
+			
+			\begin{Definition}[Tree edit distance]{def:TreeEditDistance}
+				Let $\bot\notin\Sigma$ be a special \textbf{blank} symbol. For $\Sigma^{\bot}=\Sigma\cup\{\bot\}$ we define a cost function $\gamma:\Sigma^{\bot}\times \Sigma^{\bot} \to\IR$ and require $\gamma$ to be a metric.
+				
+				An \textbf{edit script} or \textbf{edit sequence} from a labeled tree $T$ into a labeled tree $T^\prime$ is a sequence of edit operations turning $T$ into $T^\prime$. An \textbf{edit operation} can \begin{itemize}
+					\item \textit{relabel} a single vertex $v$,
+					\item \textit{delete} a single vertex $v$ (and connect all its children to the parent of $v$) or
+					\item \textit{insert} a single vertex $w$ between $v$ and a subset of the children of $v$.
+				\end{itemize}
+				
+				The costs of such edits is defined by $\gamma$. \begin{itemize}
+					\item Relabeling $v$ from $a$ to $b$ costs $\gamma(a, b)$ and
+					\item adding or deleting $v$ costs $\gamma(\ell(v),\bot)$.
+				\end{itemize}
+				An edit script between $T$ and $T^\prime$ of minimal cost is called \textbf{optimal} and its costs is called \textbf{tree edit distance}. \cite{2021_Schulz_CONF}
+			\end{Definition}
+		
+			\begin{Definition}[Structure and depth preserving tree edit distance] {def:SDTED}
+				Let $T$ and $T^\prime$ be unfolding trees over the vertex label alphabet $\Sigma$ and let $\gamma:\Sigma^{\bot}\times \Sigma^{\bot}\to\IR$ a cost function (where $\bot$ is the blank symbol). 
+				
+				The \textbf{structure and depth preserving tree edit distance} from $T$ to $T^\prime$ ($\textsc{SdTed}(T, T^\prime)$) is defined as the minimal cost of a \textsc{SdM} between $T$ and $T^\prime$:
+				\[ \textsc{SdTed}(T, T^\prime) = \min\{ \gamma(M)| \ (M, T, T^\prime)\in \textsc{SdM}(T, T^\prime) \} \]	
+				\cite{2021_Schulz_CONF}%Definition 2	
+			\end{Definition}
+			
+			\begin{Definition}[Unfolding tree] {def:UnfoldingTree}
+				An \textbf{unfolding} tree is a rooted tree. %TODO: continue
+				
+				An $i$-unfolding tree $T$ has a \textbf{real-valued vector representation} $\mathbb{V}(T)$ with
+				\[ \mathbb{V}(T) = \big( \mathbb{V}_r(T), \mathbb{V}_c(T) \big) \]
+				where \begin{itemize}
+					\item $\mathbb{V}_r(T)$ denotes the roots label $\ell\big(r(T)\big)$ and
+					\item $\mathbb{V}_c(T)$ denotes the set of $(i-1)$-unfolding child trees $F\big(r(T)\big)$.		
+				\end{itemize}
+				A simple realization is $\mathbb{V}_r(T)\in[0,1]^{\Sigma}$ with entry $1$ corresponding to the roots label and $0$ everywhere else.\\
+				$\mathbb{V}_c(T)$ is made up of counts of isomorphic child trees and contains an entry for empty child trees.
+			\end{Definition}
+			
+			Note that by construction, vertices close to a root $v$ appear in unfolding trees of this root at smaller depth. Furthermore, the number of occurrences of any vertex in $T^i(G,v)$ grows exponentially with $i$ once it has appeared for the first time.
+			
+			\begin{algorithm}[H]
+				\caption{Weisfeiler-Lehman vertex relabeling method} \label{alg:WLVertexRelabeling}
+				The method was originally designed to decide isomorphism between graphs \cite{2021_Schulz_CONF,1968_Weisfeiler_CONF}. The key idea is to iteratively encode the label of each vertex and its neighbors into a new label.
+				\begin{tabbing}
+					\textbf{Output:} \= \kill
+					\textbf{Input:} \>a labeled graphs $G=(V,E,\ell_0)$,\\
+					\>a number of iterations $h\in\IN$,\\
+					\>a list of alphabets $\Sigma_i$ (for $i=1,\dots,h$),\\
+					\>a perfect (injective) hash function $\mathcal{H}:\Sigma_i \times \Sigma_i^* \to \Sigma_{i+1}$ and\\
+					\>the set of all possible labels $\Sigma_0$ (finite and with a total order $>$).\\
+					\textbf{Output:} \>a re-labeled graph $G=(V,E,\ell_h)$.
+				\end{tabbing}
+				\begin{algorithmic}[1]
+					\For {$i=1,\dots,h$}
+					\For {$v\in V$}
+					\State $N = \text{sort}\big([\ell_{i}(u)|\ u\in\mathcal{N}(v)]\big)$
+					\State $\ell_{i+1}(v) := \mathcal{H}(\ell_{i}, N) \ \in\Sigma_{i+1}$ \Comment{The list of neighbor labels is sorted}
+					\EndFor
+					\EndFor 
+				\end{algorithmic}
+				
+				Note: Two graphs $G$ and $G^\prime$ are not isomorphic if the corresponding multisets $\{\!\!\{ \ell_i(v)| \ v\in V(G) \}\!\!\}$ and $\{\!\!\{ \ell_i(v^\prime)| \ v^\prime\in V(G^\prime) \}\!\!\}$ are different for some $i$. Otherwise they \textbf{may or may not} be isomorphic.\cite{2021_Schulz_CONF} %TODO gather examples
+				
+				%\textbf{Time complexity}: $\mathcal{O}(Nhm+N^2 hn)$ - where $m=|E|$ and $h$ is the number of iterations.	
+				
+				There are non-isomorphic graphs, which the test cannot distinguish. For example two regular graphs with the same number of vertices and vertex degrees, where one is connected and the other one is not.
+				
+			\end{algorithm}
+		
+			Babai, Erdös and Selkow \cite{1980_Babai_SIAM}: The 1-dim WL vertex labeling method computes normal forms for all but an $n^{-1/7}$ fraction of the $n$-vertex graphs.\\
+			By handling a few exceptions separately, this fraction can be improved to $c^{-n\log n/\log \log n}$ \cite{1979_Babai_CONF}- which classifies the 1-dim WL vertex labeling method as an \textbf{average linear time canonical labeling algorithm}.
+			
+			\begin{Definition}[Unfolding tree]{def:UnfoldingTree}
+				Consider algorithm \ref{alg:WLVertexRelabeling}. In each iteration $i$ implicitly tree patterns of depth $i$ (which are being compressed into labels) are constructed.\\
+				Each such tree, denoted by $T^i(G,v)$ is called the \textbf{depth-}$i$ \textbf{unfolding tree} ($i$\textbf{-unfolding tree}) of $G$ at $v$.
+			\end{Definition}
+		
+			\begin{Definition}[Graph Neural Networks]{def:GNN}
+				\textbf{Graph Neural Networks} (\textbf{GNNs}) use the graph structure and vertex features to learn a representation vector of a vertex ($h_v$) or an entire graph ($h_G$). Modern GNNs follow a neighborhood aggregation strategy, where the representation of a vertex is update iteratively by aggregating representations of its neighborhood. After $k$ iterations of aggregation, the vertex representation captures the structural information of its $k$-hop network neighborhood.\\%TODO: replace with defined term: k-neighborhood\\
+				
+				Let $h_v^{(k)}$ be the feature vector of vertex $v$ at the $k$-th iteration (or layer). Initialize $h_v^{(0)}$ with the given features of the graph and let $\mathcal{N}_v$ be the neighborhood of vertex $v$. Using this, the $k$-th layer of a GNN can be described as
+				\[ a_v^{(k)} = \operatorname{AGGREGATE}\Big( \Big\{  h_u^{(k-1)}\Big|\ u\in\mathcal{N}_u \Big\} \Big), \qquad h_v^{(k)} = \operatorname{COMBINE}\Big( h_u^{(k-1)}, a_u^{(k)}  \Big)\]				
+				\cite{2019_Xu_CONF}
+				
+				Message-passing graph convolutional networks (GCNs) update the vertex representations from one layer to the other according to the formula
+				\[ h_i^{l+1} = f(h_i^l, \{h_j^l\}_{j\in\mathcal{N}_i} ) \]
+				where $h^l$, $h^{l=1}\in\IR^{n\times d}$ ($n=|V(G)|$ and $d$ is the dimension of the vertex features).
+				Since these updates are local and independent of the graph size, the space and time complexity is in $\mathcal{O}(E)$. For sparse graphs, this can be reduced to linear time $\mathcal{O}$~ \cite{2020_Dwivedi_CONF}. 
+				GCNs are called \textbf{isotrophic}, when the vertex update $f$ treats every edge direction equally.
+				Expressed with weight matrices $W_{1,2}^{l}\in\IR^{d\times d}$ the update function has the form 
+				\[ h_i^{l+1} = \sigma\Big(W_1^l h_i^l = \sum_{j\in\mathcal{N}} W_2^l h_j^l \Big) \]
+				where $\sigma$ is a non-linear point-wise activation like ReLU.\cite{2020_Dwivedi_CONF}
+				
+				GCNs are called \textbf{anisotrophic}, when every edge direction is treated differently:
+				\[ h_i^{l+1} = \sigma\Big(W_1^l h_i^l = \sum_{j\in\mathcal{N}}\eta_{i,j} W_2^l h_j^l \Big) \]
+				where $\eta_{i,j}=f^l(h^l_i, h^l_j)$ and $f^l$ is a parameterized function whose weights are learned during training~\cite{2020_Dwivedi_CONF}.
+				
+				\textbf{Weisfeiler-Lehman} GNNs on the other hand are based on the WL test [88]. They can be distinguished in $k$-WL GNNs, if they can distinguish two non-isomorphic graphs w.r.t. the $k$-WL test. The layer update equation for $3$-WL GNNs is defined as
+				\[ h^{l=1} = \operatorname{Concat}\Big( M_{W_1^l}(h^l),\ M_{W_2^l}(h^l),\ M_{W_3^l}(h^l) \Big) \]
+				with $h^k,h^{l+1}\in\IR^{n\times n\times d}$ and $W^l_{1,2,3}\in\IR^{d\times d\times 2}$ are $M_W$ are $2$-layer MLPs applied to the feature dimension.
+				
+				RingGNNs~\cite{2019_Chen_CONF} achieve higher learning capacity than $2$-WL GNNs. Their update equation is 
+				\[ h^{l=1} = \sigma\Big(  w_1^l L_{W_1^l}(h^l) + w_2^l L_{W_2^l}(h^l) + w_3^l L_{W_3^l}(h^l) \Big) \]
+				with $h^k,h^{l+1}\in\IR^{n\times n\times d}$ and $W^l_{1,2,3}\in\IR^{d\times d\times 17}$ are $L_W$ are linear layers and $w_{1,2}^l \in\IR$. RingGNNs have the same space and time complexities as $3$-WL GNNs.
+			\end{Definition}
+			Many GNN implementations with different neighborhood aggregation and graph-level pooling schemes have been proposed. Examples are - see page 1 in \cite{2019_Xu_CONF}
+			
+			Property: message-passing
+			
+			Examples application domains for of GNNs:\begin{itemize}
+				\item chemistry~\cite{2015_Duvenaud_NIPS, 2017_Gilmer_CONF}
+				\item physics~\cite{2019_Cranmer_NIPS, 2020_SanchezGonzalez_PMLR}
+				\item social sciences~\cite{2016_Kipf_ICLR, 2019_Monti_CONF} (graph of research paper citations)
+				\item knowledge graphs~\cite{2018_Schlichtkrull_LNCS, 2020_Chami_CONF}
+				\item recommendation~\cite{2020_Chami_CONF, 2018_Ying_KDD}
+				\item neuroscience~\cite{2017_Griffa}
+			\end{itemize}
+			Historically, three classes of GNNs have been developed:\begin{itemize}
+				\item First models:~\cite{2009_Scarselli_IEEE, 2013_Bruna_CONF, 2016_Kipf_ICLR, 2016_Defferrard_NIPS, 2016_Sukhbaatar_NIPS, 2017_Hamilton_NIPS}\\
+				aimed at extending the original convolutional neural networks \cite{1995_LeCun_CONF, 1998_Lecun_IEEE} to graphs.  (\textbf{Message-passing GCNs})\\
+				Popular isotrophic GCNs are vanilla GCNs-Graph Convolutional Networks~\cite{2016_Kipf_ICLR, 2016_Sukhbaatar_NIPS} and GraphSage ~\cite{2017_Hamilton_NIPS}.
+				\item Enhance original models with anisotropic operations on graphs \cite{1990_Perona_IEEE} such as \cite{2016_Battaglia_NIPS, 2017_Marcheggiani_CONF, 2020_Mirhoseini_CONF, 2017_Velickovic_ICLR, 2017_Bresson_CONF}.\\				
+				\item GNNs that improve upon theoretical limitations of previous models~\cite{2018_Xu_CONF, 2018_Morris_AAAI, 2019_Maron_NIPS, 2019_Chen_CONF, 2019_Murphy_ICML, 2019_Srinivasan} (\textbf{WL-GNNs})\\
+				Examples are the GIN - Graph Isomorphism Network~\cite{2018_Xu_CONF}.
+			\end{itemize}
+			The first two models can only differentiate simple non-isomorphic graphs and cannot separate automorphic vertices~ \cite{2020_Dwivedi_CONF}.
+			
+			Message-passing GCNs profit from deep learning building blocks such as batching, residual connections and normalization. GCNs can highlz profit from sparse matrix computations~\cite{2020_Dwivedi_CONF}. Furthermore, \enquote{anisotropic GCNs which leverage attention [80] and gating \cite{2017_Bresson_CONF} mechanisms perform consistently across graph, vertex and edge/level tasks, improving over isotropic GCNs on five out of seven datasets.} Additionally, for link prediction tasks, learning features for edges as joint representations of incident vertices during message passing significantly boosts performance~\cite{2020_Dwivedi_CONF}. The expressivitz of GCNs can be increased using graph positional encodings with Laplacian eigenvectors ~\cite{2020_Dwivedi_CONF, 2003_Belkin_IEEE}.
+			
+			Theoretically designed WL-GNNs are prohibitive in terms of space and time complexity and not amenable to batched training. Thus they are usually outperformed by GCNs~\cite{2020_Dwivedi_CONF}.
+		
+		\subsection{Directed acyclic graphs}
+		
+			\begin{Definition}[Directed acyclic graphs]{def:DAG}
+				A \textbf{directed acyclic graph} $G$ is a directed graph with no cycles.
+			\end{Definition}
+			Notice, that all out-trees are DAGs.\\
+			Also notice, that on DAGs the \textbf{single source shortest path} (\textbf{SSSP}) %TODO: Define
+			problem can be solved efficiently in $\mathcal{O}(n+m)$ runtime complexity.
+			
+		\subsection{Bipartite graphs}
+		
+			\begin{Definition}[Bipartite graphs]{def:BipartiteGraphs}
+				A \textbf{bipartite graph} $G=(U\cup V, E)$ is a graph whose vertices can be split into two groups, such that there are no edges between the vertices in $U$ and no edges between the vertices in $V$. That is, all edges connect a vertex in $U$ with a vertex in $V$. In the undirected case this means:
+				\[ \forall e=\{u,v\}\in E:\qquad u\in U \land v\in V \]
+				In the directed case this means:
+				\[ \forall e=(x,y)\in E:\qquad (x\in U \land y\in V) \ \lor \ (y\in U \land x\in V) \]				
+			\end{Definition}
+			\begin{Lemma}[Two-colourability of bipartite graphs]
+				A graph $G$ is bipartite, iff it is two colourable.
+			\end{Lemma}
+			\begin{Proof}
+				Assign all vertices in $U$ to one color and all in $V$ to the other color (or the other way around).
+			\end{Proof}
+		
+			\begin{Lemma}[Cycle lengths in bipartite graphs]
+				A graph $G$ is bipartite, iff there is no cycle of odd length.
+			\end{Lemma}
+			\begin{Proof}
+				%TODO
+			\end{Proof}
+		
+		\subsection{Examples of graph databases}
+			
+			The authors in \cite{2020_Dwivedi_CONF} suggest, that small datasets like Cora, Citeseer and TU datasets are not able to statistically separate the performance of GNNs, as all GNNs perform almost statistically the same.
+			
+			Open Graph Benchmark (OGB)~\cite{2020_Hu_CONF}
+			
+			\begin{tabular}{| l | c | c | c | c | c | }
+				\hline
+				Domain & Construction & Dataset & Vertices & Total vertices & Task\\ \hline
+				Chemistry & Real-world & ZINC & 9-37 & 277,864 & Graph Regression\\
+				\multirow{2}{*}{Mathematical Modeling} & \multirow{2}{*}{Artificial graphs (SBM)} & PATTERN & 44-188 & \num{1664491} & \multirow{2}{*}{Vertex Classification}\\ 
+				 & & CLUSTER & 41-190 & \num{1406436} &\\ 
+				\multirow{2}{*}{Computer Vision} & \multirow{2}{*}{Semi-artificial} & MNIST & 40-75 & \num{4939668} & \multirow{2}{*}{Graph Classification}\\
+				 &  & CIFAR10 & 85-150 & \num{7058005} & \\
+				Combinatorial Optimization & Artificial & TSP & 50-500 & \num{3309140} & Edge Classification\\
+				Social Networks & Real-world & COLLAB & \num{235868} & \num{235868} & Edge Classification\\
+				Circular Skip Links & Artificial & CSL & 41 & \num{6150} & Graph Classification\\
+			\end{tabular}
+			
+			\subsubsection{MUTAG}
+		
+				The dataset contains 188 mutagenic aromatic and heteroaromatic nitro compounds, and the task is to predict whether or not each chemical compound has mutagenic effect on the Gram-negative bacterium Salmonella typhimurium.
+				(From \url{https://ysig.github.io/GraKeL/0.1a8/documentation/introduction.html})
+			
+			\subsubsection{ZINC}
+				\begin{itemize}
+					\item Real-world
+					\item Molecular dataset
+					\item 250K graphs
+					\item Example usage: Graph Regression
+				\end{itemize}
+			
+			\subsubsection{PATTERN}
+				\begin{itemize}
+					\item Generated with Stochastic Block Models (SBM)
+					\item Vertex classification; identification of subgraphs
+				\end{itemize}	
+				
+			\subsubsection{CLUSTER}
+				\begin{itemize}
+					\item Generated with Stochastic Block Models (SBM)
+					\item Vertex classification
+				\end{itemize}	
+			
+			\subsubsection{MNIST}
+				\begin{itemize}
+					\item 
+					\item Image classification
+				\end{itemize}
+				Sanity check dataset. Expect 100\% classification.
+			
+			\subsubsection{CIFAR10}
+				\begin{itemize}
+					\item 
+					\item Image classification
+				\end{itemize}
+		
+			
+			\subsubsection{TSP}
+				\begin{itemize}
+					\item 
+					\item Link prediction
+				\end{itemize}
+			
+			
+			\subsubsection{COLLAB}
+				\begin{itemize}
+					\item 
+					\item Link prediction (proposed bz OGB~\cite{2020_Hu_CONF})
+				\end{itemize}
+			
+			
+			\subsubsection{CSL}
+				\begin{itemize}
+					\item Synthetic dataset
+					\item 
+				\end{itemize}
+	
+	\section{Laplacian eigenvectors}
+		Used as positional embeddings (PE) - see \cite{2020_Dwivedi_CONF} for reference (page 7).
+		
+					
+	\section{Kernels}
+		
+		\begin{Definition}[$\mathcal{R}$-Convolution]{def:Convolution}
+			Decompose graph $G$ into substructures and define a kernel value $k(G,G^\prime)$ as a combination of substructure similarities.
+		\end{Definition}
+		Often $\mathcal{R}$-Convolution kernels discard valuable information such as the distribution of the substructures.\\
+		
+		Several different graph kernels have been defined in machine learning. They can be categorized into three classes: Graph kernels based on\begin{itemize}
+			\item walks (Kashima et al., 2003; Gärtner et al., 2003) %TODO: cite
+			and paths (\cite{2005_Borgwardt_CONF}),\\
+			\item limited-size subgraphs (\textbf{graphlets}, \cite{2004_Horvath_KDD,2009_Shervashidze_PMLR}) and %TODO: check if this is the right citations
+			\item subtree patterns (\cite{2003_Ramon_CONF,2008_Mahe_CONF}).
+		\end{itemize}
+	
+		1. Compute the number of matching pairs of random walks (resp. paths). $\mathcal{O}(n^6)$ \cite{2003_Gaertner_CONF}. In terms of Kronecker products possible in $\mathcal{O}(n^3)$ (Vishwanathan et al., 2010)\\ %TODO: missing ciations?
+		Speed up with random walks of fixed size \cite{2007_Harchaoui_IEEE}. By \cite{2005_Borgwardt_IEEE} in $\mathcal{O}(n^4)$.\\
+		
+		2. Graphlets represent graphs as counts of all types of subgraphs of size $k\in \{3,4,5\}$. Based on sampling or exploitation of the low maximum degree of graphs (\cite{2009_Shervashidze_NIPS}%TODO right citation? 
+		) - unlabeled graphs only.\\
+		Cyclic pattern kernels count pairs of matching cyclic patterns (\cite{2004_Horvath_KDD}). NP-hard for general graphs.\\
+		Count identical pairs of rooted subgraphs containing vertices up to a certain distance from the root, with roots which are located at a certain distance from each other (De Grave (2019)\\%TODO add citation)
+		
+		3. Refined Ramon-Gärtner kernel \cite{2008_Mahe_CONF} (applications in chemo-informatics and hand-written digit recognition). $\alpha$-ary subtrees with at most $\alpha$ children per vertex (\cite{2008_Mahe_CONF}, \cite{2008_Bach_ICML}) - feasible on small graphs with many distinct vertex labels.\\
+		
+		All these graph kernels scale at least $\mathcal{O}(n^3)$ on large labeled graphs with more than 100 vertices.
+		
+		\begin{Definition}[Kernel]{def:Kernel}
+			\textbf{Kernels} are a class of similarity functions.\\
+			Let $X$ be a set and $k: X\to X\to\IR$ be a function associated with a Hilbert space $\mathcal{H}$ such that
+			\[ \exists \phi:X\to\mathcal{H}\text{ s.t. }\qquad\qquad k(x,y)=\langle\phi(x),\phi(y)\rangle_{\mathcal{H}} \]
+			Then $\mathcal{H}$ is a \textbf{reproducing kernel Hilbert space} (\textbf{RKHS}) and $k$ is said to be a \textbf{positive definite kernel}.	
+		\end{Definition}
+		A positive definite kernel can be interpreted as a dot product in a high-dimensional space. Recal SVMs and the kernel trick.\\
+		
+		Informally, a kernel is a function of two objects that quantifies their similarity. Mathematically, it corresponds to an inner product in a reproducing kernel Hilbert space (Schölkopf and Smola, 2002).\\%TODO: find this literature and add to bib
+		Graph kernels are instances of the family of so-called R-convolution kernels by \cite{1999_Haussler_CONF}. R-convolution is a generic way of defining kernels on discrete compound objects by comparing all pairs of decompositions thereof. Therefore, a new type of decomposition of a graph results in a new graph kernel.\\
+		Given a decomposition relation R that decomposes a graph into any of its subgraphs and the
+		remaining part of the graph, the associated R-convolution kernel will compare all subgraphs in two graphs. However, this all subgraphs kernel is at least as hard to compute as deciding if graphs are isomorphic \cite{1979_Garey_BOOK}. Therefore one usually restricts graph kernels to compare only specific types of subgraphs that are computable in polynomial runtime.
+		
+		\begin{Definition}[Graph kernel]{def:GraphKernel}
+			A \textbf{graph kernel} is a symmetric, positive semidefinite function $k:\mathcal{G}\times \mathcal{G}\to \IR$ on the set of graphs $\mathcal{G}$, such that there exists a map $\phi:\mathcal{G}\to\mathcal{H}$ into a Hilbert space $\mathcal{H}$ such that
+			\[ k(G_i,G_j) = \langle \phi(G_i), \phi(G_j) \rangle_{\mathcal{H}} \] 
+			for all $G_i, G_j\in\mathcal{G}$ where $\langle\cdot,\cdot\rangle_{\mathcal{H}}$ is the inner product in $\mathcal{H}$.
+		\end{Definition}
+		Basically, a graph kernel is a function that measures the similarity of two graphs. \url{https://ysig.github.io/GraKeL/0.1a8/documentation/introduction.html}
+		
+		\begin{Definition}[Weisfeiler-Lehman kernel]{def:WeisfeilerLehmanKernel} % Definition 2
+			Let $k$ be any positive semi-definite base kernel on graphs, that we will call the \textbf{base kernel}. Then the \textbf{Weisfeiler-Lehman kernel} (\textbf{WL-kernel}) with $h$ iterations with  $k$ is defined as
+			\[ k_{\text{WL}}^{(h)}(G, G^\prime) \ = \sum_{i=0}^{h} k(G_i,G_i^\prime) \]
+			($\{G_0,\dots, G_h\}$ and $\{G^\prime_0,\dots, G^\prime_h\}$ are the WL-sequences of $G$ and $G^\prime$ respectively.)\\
+			It counte the common multiset strings (WL features) in two graphs~\cite{2009_Shervashidze_NIPS}:
+			\[ k_{\text{WL}}^{(h)}(G, G^\prime) \ = \big|\{ (s_i(v),s_i(v^\prime)) | \ f\big(s_i(v)\big)=f\big(s_i(v^\prime)\big), \ i\in\{1,\dots,h\}, v\in V, v^\prime\in V^\prime \} \big| \]
+			
+			A more general definition can be derived with weights on the GL-graph iterations $0\le \alpha_i\in \IR$:
+			\[ k_{\text{WL}}^{(h)}(G, G^\prime) \ = \sum_{i=0}^{h} \alpha_i k(G_i,G_i^\prime) \]
+			This allows for example to emphasize larger substructures - when for example labels in higher iterations contribute more to the overall similarity.\cite{2021_Schulz_CONF} %TODO: and cite also the other paper(?)
+		\end{Definition}
+			
+		\begin{Definition}[Ramon-Gärtner subtree kernel]{def:RamonGaertnerSubtreeKernel}
+			This kernel compares all pairs of vertices by iteratively comparing their neighborhoods. Let $G=(V,E,\ell)$ and $G=(V^\prime,E^\prime,\ell^\prime)$ be two graphs. The Ramon-Gärtner subtree kernel $k_{\text{Ramon}}^{(h)}$ is defined as
+			\[ k_{\text{Ramon}}^{(h)}(G,G^\prime) = \sum_{v\in V}\sum_{v^\prime\in V^\prime} k_h(v,v^\prime)\]
+			where
+			\[ k_h(v,v^\prime) = \begin{cases}
+			\delta\big( \ell(v), \ell^\prime(v^\prime) \big) & \text{if } h=1\\
+			\lambda_r \lambda_s \sum_{R\in\mathcal{M}(v,v^\prime)} \prod_{(w,w^\prime)\in R} k_{h-1}(w,w^\prime) & \text{if } h>1
+			\end{cases} \]
+			and
+			\[ \mathcal{M}(v,v^\prime) = \{ R\subseteq\mathcal{N}(v)\times\mathcal{N}(v^\prime) | \ \big(\forall (u,u^\prime), (w,w^\prime)\in R: \ u=w\iff u^\prime=w^\prime\big) \land
+			\big(\forall (u,u^\prime)\in R: \ \ell(u)=\ell^\prime(u^\prime)\big) \} \]
+			Intuitively, the kernel iteratively compares all matching $\mathcal{M}(v,v^\prime)$ between neighbors of two vertices $v$ from $G$ and $v^\prime$ from $G^\prime$~\cite{2003_Ramon_CONF, 2009_Shervashidze_NIPS}.
+		\end{Definition}
+		This kernel is the first defined subtree kernel~\cite{2009_Shervashidye_NIPS}.\\
+		Let both graphs have $n$ vertices, $m$ edges, a maximum degree of $d$ and let $h$ be the height of the subtree. 
+		Then the runtime complexity of the subtree kernel for one pair of graphs is $\mathcal{O}(n^2 h 4^d)$, including a comparison of all pairs of vertices ($n^2$) and a pairwise comparison of all matchings in their neighborhoods in $\mathcal{O}(4^d)$, which is repeated in $h$ iterations.\\
+		This runtime is not feasible for larger graphs.
+		See the fast subtree kernel of Shervashidze and Borgwardt instead~\cite{2009_Shervashidye_NIPS}.
+			
+		
+		\paragraph{Example of a WL-kernel:} Consider as base kernel the subtree-kernel $k$:
+		\[ k(G_i, G_i^\prime) = \sum_{v\in V}\sum_{v^\prime\in V^\prime} \delta(\ell_i(v), \ell_i(v^\prime)) \]
+		Here $\delta$ is the Kronecker delta. The WL-kernel $k_{\text{WL}}^h$ on this base kernel simply counts the pairs of matching labels of all $h$ WL-iterations.\\
+		With complexity $\mathcal{O}(h|E(G)|)$ the WL subtree kernel is highly efficient.\cite{2021_Schulz_CONF}
+		
+		\begin{Definition}[Weisfeiler-Lehman subtree kernel]{def:WLSubtreeKernel} % Definition 4
+			Let $G$ and $G^\prime$ be graphs. Define $\hat{\Sigma}_i \subseteq \Sigma$ as the set of labels that occur at least one in $G$ or $G^\prime$ after iteration $i$ of algorithm \ref{alg:WeisfeilerLehmanEmbeddingl}. Let $\Sigma_0$ be the set of original vertex labels of $G$ and $G^\prime$.\\
+			Assume all $\Sigma_i$ are pairwise disjoint (meaning every label occurs exactly once). Define for every $i$, $\Sigma_i=(\sigma_{i,1},\dots,\sigma_{i|\Sigma_i|})$ as the ordered tuple of the set $\hat{\Sigma}_i$.\\
+			Define a map $c_i: \{G, G^\prime\}\times \Sigma_i\to\IN$ such that $c_i(G,\sigma_{i,j})$ is the number of occurrences of the letter $\sigma_{i,j}$ in the graph $G$.\\
+			
+			The \textbf{Weisfeiler-Lehman subtree kernel} (\textbf{WL-subtree kernel}) on $G$ and $G^\prime$ with $h$ iterations is defined as:
+			\[ k_{\text{WLsubtree}}^{(h)}(G,G^\prime) \ = \ \langle \psi_{\text{WLsubtree}}^{(h)}(G), \psi_{\text{WLsubtree}}^{(h)}(G^\prime) \rangle \]
+			where \[ \psi_{\text{WLsubtree}}^{(h)}(G) = \big( c_0(G,\sigma_{0,1}),\dots, c_0(G,\sigma_{0,|\Sigma_0| }),\dots,c_h(G,\sigma_{h,1}),\dots, c_h(G,\sigma_{h,|\Sigma_h| }) \big) \]
+			(analogue for $G^\prime$).\\
+			
+			That is the WL-subtree kernel counts the \textit{common original and compressed labels} in the two graphs.
+		\end{Definition}
+		Note that due to the runtime of algorithm \ref{alg:WeisfeilerLehmanEmbedding}, one can compute the WL-subtree kernel in $\mathcal{O}(hm)$.
+		
+		\begin{Definition}[Relaxed Weisfeiler-Lehman subtree kernel]{def:RelaxedWLSubtreeKernel}
+			Let $\mathcal{G}$ be a set of graphs and $\Theta_i$ a set of hard clustering functions (i.e. partitionings) of the set of depth-$i$ unfolding trees $\mathcal{T}^{(i)}$ appearing in the graphs in $\mathcal{G}$.\\
+			
+			Regard each element of $\Theta_i$ as a function $\rho:\mathcal{T}(i)\to [k]$, where $k$ is the number of clusters defined by $\rho$.
+			
+			Then, for any graphs $G, G^\prime\in\mathcal{G}$ and depth parameter $h\in\IN$, the \textbf{relaxed Weisfeiler-Lehman subtree kernel} (\textbf{R-WL-subtree kernel}) is defined as:
+			\[ k^h_{\text{R-WL}}(G,G^\prime) = \sum\limits_{i=0,\dots, h}\sum\limits_{\rho\in\Theta_i}\sum\limits_{v\in V}\sum\limits_{v^\prime\in V^\prime} \delta\Big( \rho\big( T^i(G,v)\big),\; \rho\big( T^i(G^\prime,v^\prime)\big) \Big) \]
+			(where $\delta$ is the Kronecker delta).
+			\cite{2021_Schulz_CONF}
+		\end{Definition}
+		
+		Clearly $k^h_{\text{R-WL}}(G,G^\prime)$ is positive semi-definite and equivalent to the original WL-subtree kernel for $\Theta_i=\{\rho_i\}$.
+		
+		To compute the WL-subtree kernel on $N$ graphs, see algorithm \ref{alg:WeisfeilerLehmanSubtreeEmbeddingForNGraphs}.
+		
+		Idea: Do not apply the WL-subtree kernel definition (definition  \ref{def:WLSubtreeKernel}) $N^2$-fold. Instead, process all $N$ graphs simultaneously and conduct the steps in algorithm \ref{alg:WeisfeilerLehmanEmbedding} on each graph $G$ in each iteration.
+		
+		\begin{algorithm}[H]
+			\caption{Weisfeiler-Lehman subtree kernel computation on $N$ graphs - one iteration}\label{alg:WeisfeilerLehmanSubtreeEmbeddingForNGraphs}
+			\begin{tabbing}
+				\textbf{Output:} \= \kill
+				\textbf{Input:} \>two labeled graphs $G=(V,E,\ell)$, $G^\prime=(V^\prime,E^\prime,\ell^\prime)$ (w.l.o.g. $\ell=\ell^\prime:V\cup V^\prime\to \Sigma$),\\
+				\> the set of all possible labels $\Sigma$ (ordered and finite, ideally $|\Sigma|\approx Nh(h+1)$ at iteration $h$).\\
+				\>(sufficiently large, to allow $f$ to be injective)\\
+				\textbf{Output:} \>the two graphs re-labeled: $G=(V,E,\hat{\ell})$, $G^\prime=(V^\prime,E^\prime,\hat{\ell}^\prime)$.
+			\end{tabbing}
+			\begin{algorithmic}[1]
+				\State Multiset-label determination:\begin{itemize}
+					\item Assign a multiset-label $M_i(v)$ to each vertex $v$ in $G$ which consists of the multiset $\{ l_{i-1}(u) | \ u\in\mathcal{N}(v) \}$
+				\end{itemize}
+				\item Sorting each multiset:\begin{itemize}
+					\item Sort elements in $M_i(v)$ in ascending order and concatenate them into a string $s_i(v)$.
+					\item $s_i(v) := l_{i-1}(v) \; s_i(v)$
+				\end{itemize}
+				\item Label compression:\begin{itemize}			
+					\item Map each string $s_i(v)$ to a new compressed label, using any injective function $f:\Sigma^*\to \Sigma$, e.a.
+					\[ f(s_i(v)) = f(s_i(w)) \ \iff \ s_i(v)=s_i(w)  \]
+				\end{itemize}
+				\item Relabeling:\begin{itemize}
+					\item $\forall v\in G\cup G^\prime:\ l_i(v):= f(s_i(v))$.
+				\end{itemize}
+				\If { $\{l_i(v)| \ v\in V\} \neq \{l_i(v^\prime)| \ v^\prime\in V^\prime\}$ }
+				\State Terminate: "'$G$ is not identical to $G^\prime$"'
+				\ElsIf {$i==n$}
+				\State "'$G$ and $G^\prime$ are (most likely) isomorphic"'.\cite{1992_Cai_CONF}%TODO: see graphs that cannot be distinguished Valid test for "almost all graphs"
+				\cite{1979_Babai_CONF}
+				\Else
+				\State Continue labeling ($i\to i+1$).
+				\EndIf
+			\end{algorithmic}
+			Note that feasible definitions for $f$ is to sort all neighborhood strings using radix sort. The resulting complexity of this step would be linear in the sum of the size of the current algabet and the total length of strings ($\mathcal{O}(Nn+Nm)=\mathcal{O}(Nm)$).\\
+			An alternative implementation of $f$ would be by means of a perfect hash function.\\
+			
+			\textbf{Time complexity}: $\mathcal{O}(Nhm+N^2 hn)$ - where $m=|E|$ and $h$ is the number of iterations.
+			%	\\
+			%	Remarks:\begin{itemize}
+			%		\item For unlabeled graphs, initialize $M_0(v):= l_0(v)=|\mathcal{N}(v)|$ (since two vertices with same degree are isomorphic at the first level).
+			%		\item Note that the compressed labels $l_i(v)$ correspond to the subtree patterns of height $i$ in the induced tree rooted at $v$.
+			%		\item Since the labelings $l_i$ are concordant in $G$ and $G^\prime$ (identical labels iff identical multiset labels), one can interpret one iteration of relabeling as
+			%		\[ r\big((V, E, l_i)\big) \ = \ (V, E, l_{i+1}) \]
+			%		($r$ only changes the vertex labels.)
+			%	\end{itemize}	
+		\end{algorithm}
+		
+		\begin{Definition}[Ramon-Gärtner subtree kernel]{def:RamonGaertnerSubtreeKernel}
+			\cite{2003_Ramon_CONF} For two graphs $G=(V,E,\ell)$ and $G^\prime=(V^\prime,E^\prime,\ell)$ define the following function which compares all matchings $\mathcal{M}(v,v^\prime)$ between neighbors of two identically labeled vertices $v\in G$ and $v^\prime\in G^\prime$ with associated weights $\lambda_v, \lambda_{v^\prime}$:
+			\[ k_{\text{RG},h}(v,v^\prime) := \begin{cases}
+			\delta\big(\ell(v), \ell(v^\prime)\big) & \text{if } h=0\\
+			\lambda_v\lambda_{v^\prime} \delta\big(\ell(v), \ell(v^\prime)\big) \sum_{R\in\mathcal{M}(v,v^\prime)} \prod_{(w,w^\prime)\in R} k_{\text{RG}, h-1}(w,w^\prime) & \text{if } h>0
+			\end{cases} \]
+			where
+			\[ \mathcal{M}(v,v^\prime) := \Big\{ R\subseteq \mathcal{N}(v)\times \mathcal{N}(v^\prime)| \ \stackrel{\forall (u,u^\prime), (w,w^\prime)\in R:\quad u= w\iff u^\prime=w^\prime}{\land \forall (u,u^\prime)\in R:\quad \ell(u)=\ell(u^\prime)}  \Big\} \]
+			(That is the set of exact matchings of subsets of the neighborhoods of $v$ and $v^\prime$.)\\
+			Now define the \textbf{Ramon-Gärtner subtree kernel} as
+			\[ k_{\text{RG}}^{(h)}(G,G^\prime) \ := \ \sum_{v\in V}\sum_{v^\prime\in V^\prime} k_{\text{RG},h}(v,v^\prime) \]
+		\end{Definition}
+		
+		The runtime complexity of this subtree kernel is $\mathcal{O}(n^2 h 4^d)$: $h$ times a \begin{itemize}
+			\item comparison of all pairs of vertices ($n^2$) and
+			\item a pairwise comparison of all matchings in their neighborhoods in $\mathcal{O}(4^d)$
+		\end{itemize}
+		For a dataset of $N$ graphs, the resulting runtime complexity is then $\mathcal{O}(N^2n^2 h 4^d)$.
+		
+		
+		\paragraph{WL Edge Kernel} % Section 3.3
+		In the case of graphs with unweighted edges, we consider the base kernel that counts matching pairs of edges with identically labeled endpoints (incident vertices) in two graphs. In other words, the base kernel is defined as
+		\[ \dots \]
+		
+		\paragraph{WL Shortest Path Kernel} % Section 3.4
+		
+		
+		\begin{Definition}[Wasserstein Weisfeiler-Lehman kernel]{def:WWL}
+			Given a set of graphs $\mathcal{G}=\{G_1,\dots, G_N\}$ and the GWD defined for each pair of graphs on their WL embeddings, we define the \textbf{Wasserstein Weisfeiler-Lehman} (WWL) kernel as
+			\[ K_{\text{WWL}} = \exp\Big( -\lambda D^{f_{WL}}_W \Big) \]
+			Laplacian kernel > favourable conditions for positive definiteness with non-Euclidean distances: \textbf{Categorical WWL is positive definite} for all $\lambda >0$\\
+			(Open problem for continuous WWL!!)
+		\end{Definition}
+		(Wasserstein distance is not isometric/ no metric-preserving mapping to an $L^2$-norm / thus not necessarily possible to derive a positive definite kernel. Laplacian kernel fortunately did this.)\\
+		
+		For continuous WWL - treat as if indefinite kernel:\begin{itemize}
+			\item (reproducing kernel) \textbf{Krein spaces} (RKKS) \\
+			(Generalisation of reproducing kernel Hilbert spaces)
+			\item Krein SVM (KSVM) as classifier
+		\end{itemize}
+		
+	\section{Algorithms}
+	
+		\subsection{DFS}	
+			\begin{algorithm}[H]
+				\caption{Depth First Search (DFS)} \label{alg:DFS}
+				\begin{tabbing}
+					\textbf{Output:} \= \kill
+					\textbf{Input:}  \>A graph $G$,\\
+					\>a start vertex $s\in V$\\
+					\textbf{Output:} \>All vertices in DFS order, starting from $s$.\\
+					\>The algorithm is usually not used to give an output, \\
+					\>but rather to traverse edges and vertices in a structured way.
+				\end{tabbing}			
+				\begin{algorithmic}[1]
+					\State %TODO
+				\end{algorithmic}
+				
+				\textbf{Time complexity}: $\mathcal{O}(n+m)$\\
+				
+				Remarks:\begin{itemize}
+					\item The augmented version of DFS can be used to perform other tasks. For example:\begin{itemize}
+						\item Count connected components
+						\item Compute a MST
+						\item Detect and find cycles
+						\item Check if the graph is bipartite
+						\item Find strongly connected components
+						\item Topologically sort the vertices
+						\item Find bridges and articulation points
+						\item Find augmenting paths in a flow network
+						\item Generate mazes
+					\end{itemize}
+					\item \textbf{Count connected components}: Start a DFS run at every vertex, if it has not already been visited. For each DFS run, increase a counter and label the visited vertices of that run with the current counter value.\\
+					The final counter indicates the number of connected components. All vertices of one connected component have the same counter value.
+				\end{itemize}
+			\end{algorithm}
+			
+			An implementation of the DFS algorithm using an adjacency list can look as follows:
+			\begin{algorithmic}[1]
+				\State $n=|V|$
+				\State Let $g$ be the adjacency list representing the graph
+				\State $v = [0]^n$ \Comment{Visited array of size $n$}
+				\Procedure{dfs}{$i$}
+				\If {$v[i]==1$}
+				\State \textbf{return} \textbf{True}
+				\EndIf
+				\State $v[i]=1$
+				\State $\mathcal{N} = g[i]$
+				\For {$n\in\mathcal{N}$}
+				\State \textsc{dfs}($n$)
+				\EndFor
+				\EndProcedure
+			\end{algorithmic}
+		
+		
+		\subsection{DFS}	
+			\begin{algorithm}[H]
+				\caption{Breadth First Search (BFS)} \label{alg:BFS}
+				\begin{tabbing}
+					\textbf{Output:} \= \kill
+					\textbf{Input:}  \>A graph $G$,\\
+					\>a start vertex $s\in V$\\
+					\textbf{Output:} \>All vertices in BFS order, starting from $s$.\\
+					\>The algorithm is usually not used to give an output, \\
+					\>but rather to traverse edges and vertices in a structured way.\\
+					\>It is particularly useful to find shortest paths.
+				\end{tabbing}
+				BFS explores graphs in a layered fashion.			
+				\begin{algorithmic}[1]
+					\State %TODO
+				\end{algorithmic}
+				
+				\textbf{Time complexity}: $\mathcal{O}(n+m)$\\
+				
+				Remarks:\begin{itemize}
+					\item Using BFS or its augmented version can be used to perform many tasks. For example:\begin{itemize}
+						\item 
+					\end{itemize}
+					\item 
+				\end{itemize}
+			\end{algorithm}
+		
+		\subsection{Topological sort}	
+			\begin{algorithm}[H]
+				\caption{} \label{alg:TopologicalSort}
+				\begin{tabbing}
+					\textbf{Output:} \= \kill
+					\textbf{Input:}  \>A digraph $G=(V,E)$.\\
+					\textbf{Output:} \>A topological ordering on $V$.
+				\end{tabbing}
+				\begin{algorithmic}[1]
+					\While {Not all vertices have been visited}					
+						\State Pick an unvisited vertex $v$.
+						\State Start DFS from $v$ (on unvisited vertices).
+						\State On all recursive callback of the DFS, add the current vertex to the topological ordering in reverse order.
+					\EndWhile
+				\end{algorithmic}
+				
+				\textbf{Time complexity}: $\mathcal{O}(n+m)$\\
+				
+				The algorithm is useful for applications where vertices in directed graphs encode events which must occur before others. Examples are:\begin{itemize}
+					\item School class prerequisites
+					\item Program dependencies
+					\item Event scheduling
+					\item Assembly instructions
+				\end{itemize}
+				If $G$ is a \textbf{tree}, the task becomes trivial. A topological order can be constructed by iteratively selecting all leaves (in arbitrary order), and then removing them from the graph.
+			\end{algorithm}
+		
+		\subsection{EXAMPLE ALG}	
+			\begin{algorithm}[H]
+				\caption{} \label{alg:EXAMPLE}
+				\begin{tabbing}
+					\textbf{Output:} \= \kill
+					\textbf{Input:}  \> \\
+					\textbf{Output:} \>
+				\end{tabbing}			
+				\begin{algorithmic}[1]
+					\State 
+				\end{algorithmic}
+				
+				\textbf{Time complexity}: \\
+				
+				Remarks:\begin{itemize}
+					\item 
+				\end{itemize}
+			\end{algorithm}
+		
+		\subsection{Graph isomorphism}
+			
+			The graph isomorphism problem is equivalent to computing the order of automorphism groups of graphs.\cite{1979_Mathon}
+			
+			\subsubsection{Weisfeiler-Lehman test of isomorphism}
+			
+			$1$-dimensional variant (\enquote{naive vertex refinement}). Algorithm 1.
+			Augment the vertex labels by the sorted set of vertex labels of neighboring vertices, and compress these augmented labels into new, short labels.
+			Repeat, until the set of vertex labels for the two compared graphs differ.
+			Note that this test has a one-sided error.
+			That is, for some instances the test cannot conclude if the instances are isomorphic or not.
+			
+			
+			\begin{algorithm}[H]
+				\caption{Weisfeiler-Lehman test of isomorphism - one iteration}\label{alg:WeisfeilerLehmanEmbedding}
+				\begin{tabbing}
+					\textbf{Output:} \= \kill
+					\textbf{Input:} \>two labeled graphs $G=(V,E,\ell)$, $G^\prime=(V^\prime,E^\prime,\ell^\prime)$ (w.l.o.g. $\ell=\ell^\prime:V\cup V^\prime\to \Sigma$),\\
+					\> the set of all possible labels $\Sigma$ (ordered and finite, ideally $|\Sigma|=2|V|$).\\
+					\>(sufficiently large, to allow $f$ to be injective)\\
+					\textbf{Output:} \>the two graphs re-labeled: $G=(V,E,\hat{\ell})$, $G^\prime=(V^\prime,E^\prime,\hat{\ell}^\prime)$.
+				\end{tabbing}
+				\begin{algorithmic}[1]
+					\State Multiset-label determination:\begin{itemize}
+						\item For $i=0$, set $M_i(v) := l_0(v)= \ell(v)$.
+						\item For $i>0$, assign a multiset-label $M_i(v)$ to each vertex $v$ in $G$ and $G^\prime$ which consists of the multiset $\{ l_{i-1}(u) |\ u\in\mathcal{N}(v) \}$.
+					\end{itemize}
+					\item Sorting each multiset:\begin{itemize}
+						\item Sort elements in $M_i(v)$ in ascending order and concatenate them into a string $s_i(v)$.
+						\item $s_i(v) := l_{i-1}(v) \; s_i(v)$
+					\end{itemize}
+					\item Label compression:\begin{itemize}
+						\item Sort all of the strings $s_i(v)$ for all $v$ from $G$ and $G^\prime$ in ascending order.
+						\item Map each string $s_i(v)$ to a new compressed label, using any injective function $f:\Sigma^*\to \Sigma$, e.a.
+						\[ f(s_i(v)) = f(s_i(w)) \ \iff \ s_i(v)=s_i(w)  \]
+					\end{itemize}
+					\item Relabeling:\begin{itemize}
+						\item $\forall v\in G\cup G^\prime:\ l_i(v):= f(s_i(v))$.
+					\end{itemize}
+					\If { $\{l_i(v)| \ v\in V\} \neq \{l_i(v^\prime)| \ v^\prime\in V^\prime\}$ }
+						\State Terminate: "'$G$ is not identical to $G^\prime$"'
+					\ElsIf {$i==n$}
+						\State No answer. Or: "'$G$ and $G^\prime$ are (most likely) isomorphic"'.\cite{1992_Cai_CONF}%TODO: see graphs that cannot be distinguished Valid test for "almost all graphs" 
+					\cite{1979_Babai_CONF}
+					\Else
+						\State Continue labeling ($i\to i+1$).
+					\EndIf
+				\end{algorithmic}
+				Note that feasible definitions for both $M_i$ and $f$ arise naturally from the order in $\Sigma$. To construct $f$ simply keep a counter variable that records the number of distinct strings, that $f$ has compressed before. When the input for $f$ as already been assigned at some time, $f$ assigns it to the current state of the counter. If $f$ gets a new string, the counter is incremented and $f$ assigns its value to the new string.\\
+				The order on $\Sigma$ guarantees, that all identical strings are mapped on the same number because they occur in a consecutive block.
+				
+				\textbf{Time complexity}: $\mathcal{O}(mh)$ - where $m=|E|$ and $h$ is the number of iterations.\\
+				Remarks:\begin{itemize}
+					\item For unlabeled graphs, initialize $M_0(v):= l_0(v)=|\mathcal{N}(v)|$ (since two vertices with same degree are isomorphic at the first level).
+					\item Note that the compressed labels $l_i(v)$ correspond to the subtree patterns of height $i$ in the induced tree rooted at $v$.
+					\item Since the labelings $l_i$ are concordant in $G$ and $G^\prime$ (identical labels iff identical multiset labels), one can interpret one iteration of relabeling as
+					\[ r\big((V, E, l_i)\big) \ = \ (V, E, l_{i+1}) \]
+					($r$ only changes the vertex labels.)
+				\end{itemize}	
+			\end{algorithm}
+			
+			Instead of sorting the multiset of the WL-labels of the neighborhood, one may alternatively indicate the carnality of each such label in the multiset. 
+			The $1$-dimensional WL-method also considers all other vertices that are not in the neighborhood of the current vertex $v$: $V(G)\backslash\mathcal{N}(v)$. 
+			The new color in iteration $r+1$ of $v$ is thus defined as
+			\[ \operatorname{hash}\big( \ell^r(v), a_1, b_1, \dots, a_n, b_n \big) \]
+			where $a_i$ is the number of vertices of color $i$ that $v$ is adjacent to ($a_i = \Big|\big\{w| \ w\in\mathcal{N}(v)\land \ell^r(w)=i \big\}\Big|$) 
+			and $b_i$ is the number of vertices of color $i$ that $v$ is not adjacent to ($b_i = \Big|\big\{w| \ w\notin\mathcal{N}(v)\land \ell^r(w)=i\big\}\Big|$)~\cite{1992_Cai_IEEE}.
+			%QUESTION: \cite{1992_Cai_IEEE} page 12 last y_r and n_r should be sth like y_|V| and n_|N| but not dependent on r, right?
+			%QUESTION: What is the k-dim WL method. We only hashed the neighborhood vertices! Not all of them. See \cite{1992_Cai_IEEE} page 13.
+			
+			
+			
+			If the next refinement step yields the same WL-label separation, a \textbf{stable refinement} is reached.
+			
+			The $1$-dimensional WL-method is also called \textbf{vertex refinement}.
+			
+			
+			
+			
+			
+			The $(k-1)$-dimensional WL-method is equivalent to testing $\mathcal{C}_k$ equivalence (where $\mathcal{C}_k$ is the class of first-order graph theory languages with counting quantifiers)~\cite{1992_Cai_IEEE}. This is possible in time $n^k \log(n)$.
+			The 1-dimensional WL-method identifies (is able to test for isomorphism) all trees and almost all graphs~\cite{1992_Cai_IEEE}.
+			
+			
+		\section{Distances}
+		
+			\subsection{Wasserstein distances}
+				\begin{Definition}[Continuous Wasserstein distance]{def:ContinuousWassersteinDistance}
+					The (continuous) \textbf{Wasserstein distance} $W_p$ (also called earth mover distance) is a distance function between probability distributions defined on a given metric space.\\
+					Let $\sigma$ and $\mu$ be two probability distributions on a metric space $M$ equipped with a ground distance $d$ such as the Euclidean distance. For $p\in [1,\infty)$ it is: %QUESTION: $W_\pagebreak$  or $L^p$ 
+					\[ W_p(\sigma, \mu):=\Big( \inf\limits_{\gamma\in\Gamma(\sigma, \mu)}  \int_{M\times M}d(x,y)^p d\gamma(x,y) \Big)^{\frac{1}{p}} \]
+					where $\Gamma(\sigma, \mu)$ is the set of all transportation plans $\gamma\in\Gamma(\sigma, \mu)$ over $M\times M$ with marginals $\sigma$ and $\mu$ on the first and second factors respectively.\\
+					
+					$d$ is a metric $\implies$ $W_p$ is a metric (Villani [44], chapter 6, for a proof)\\
+					Focus on $p=1$ ($L^1$-Wasserstein distance).\\
+				\end{Definition}
+				
+				\begin{Definition}[Discrete Wasserstein distance]{def:DiscreteWassersteinDistance}
+					For two finite sets of vectors $X\in \IR^{n\times m}$ and $X^\prime\in\IR^{n^\prime\times m}$ (vertex embeddings) with $\forall x,x^\prime:\ |x|_1=|x^\prime|_1$ the (discrete) \textbf{Wasserstein distance} is defined as:
+					\[ W_M(X,X^\prime):= \min\limits_{P\in\Gamma(X, X^\prime)}\langle P, M\rangle \]
+					$M$ is a \textbf{cost} or \textbf{distance matrix} containing $d(x,x^\prime)$ for some metric $d$.\\
+					$P\in \Gamma$ - \textbf{transport matrix} (or joint probability). Contains fractions that indicate how to transport the values from $X$ to $X^\prime$ with minimal total transport effort. Because we assume that the total mass to be transported equals $1$ and is evenly distributed across the elements of $X$ and $X^\prime$, the row and column values of $P$ mus sum up to $\frac{1}{n}$ and $\frac{1}{n^\prime}$ respectively.\\
+					$\langle \cdot,\cdot\rangle$ is the Frobenius inner product.
+					
+					For a set of vectors $x_1,\dots, x_n\in\IR^n$ and a cost matrix $C^{n\times n}$ the \textbf{barycenter} of the vectors is defined as
+					\[ \amin{c} \sum_{i\in[n]} W_C(x_i, c) \]
+				\end{Definition}
+		
+\chapter{Problems} \label{ch_problems}
+	
+	This chapter contains definitions of difficult problems, that are concerned with the relations between defined objects and properties. Easier problems, that are concerned with constructive questions (for example, how to compute a spanning tree), may also be found tailing the related definition in chapter \ref{ch_definitions}.
+	
+	\subsection{Solved}
+		
+		\subsubsection{Shortest path problem}		
+		\paragraph{Problem definition}
+		\begin{tabbing}
+			\textbf{Output:} \= \kill
+			\textbf{Input:} \>A (weighted graph) $G=(V,E,\ell)$,\\
+			\>a start vertex $s\in V$,\\
+			\>a target vertex (or end vertex) $t\in V$.\\
+			\textbf{Output:} \>The shortest (meaning the cheapest) $s$-$t$-path.
+		\end{tabbing}
+				
+		\paragraph{Solutions - Overview}
+		\begin{itemize}
+			\item BFS (for an unweighted graph)
+			\item Dijkstra's algorithm
+			\item Bellman-For algorithm
+			\item Floyd-Warshall algorithm
+			\item $A^*$
+		\end{itemize}
+	
+		\subsubsection{Connectivity problem}		
+		\paragraph{Problem definition}
+		\begin{tabbing}
+			\textbf{Output:} \= \kill
+			\textbf{Input:} \>A (weighted graph) $G=(V,E,\ell)$.\\
+			\textbf{Output:} \>The decision if $G$ is connected. (That is there exists a (directed) path between any two vertices.)
+		\end{tabbing}
+		
+		\paragraph{Solutions - Overview}
+		Typical solutions use the union find data structure or apply multiple runs of (path) search algorithms (like DFS or BFS).
+		
+		\subsubsection{Strongly connected components problem}		
+		\paragraph{Problem definition}
+		\begin{tabbing}
+			\textbf{Output:} \= \kill
+			\textbf{Input:} \>A digraph $G=(V,E,\ell)$.\\
+			\textbf{Output:} \>A vertex set labeling, indicating subsets of strongly connected components.
+		\end{tabbing}
+		
+		\paragraph{Solutions - Overview}
+		\begin{itemize}
+			\item Tarjan's and Kosaraju's algorithm
+			\item 
+		\end{itemize}
+		
+		\subsubsection{Negative cycles problem}		
+		\paragraph{Problem definition}
+		\begin{tabbing}
+			\textbf{Output:} \= \kill
+			\textbf{Input:} \>A weighted graph $G=(V,E,\ell)$.\\
+			\textbf{Output:} \>The decision if there exists a cycle with negative edge weight sum in $G$
+		\end{tabbing}
+		Within the task of finding a shortest path, negative cycles can be a trap in the sense that traversing it infinitely reduces the costs infinitely. 
+		
+		\paragraph{Solutions - Overview}
+		\begin{itemize}
+			\item Bellman-Ford
+			\item Floyd-Warshall
+		\end{itemize}
+	
+		\subsubsection{Bridge problem}		
+		\paragraph{Problem definition}
+		\begin{tabbing}
+			\textbf{Output:} \= \kill
+			\textbf{Input:} \>A graph $G=(V,E)$.\\
+			\textbf{Output:} \>The set of bridges $B\subset E$ in $G$.
+		\end{tabbing}
+		
+		\subsubsection{Articulation point problem}		
+		\paragraph{Problem definition}
+		\begin{tabbing}
+			\textbf{Output:} \= \kill
+			\textbf{Input:} \>A graph $G=(V,E)$.\\
+			\textbf{Output:} \>The set of articulation points $A\subset V$ in $G$.
+		\end{tabbing}
+		
+		\subsubsection{Minimum spanning tree (MST)}		
+		\paragraph{Problem definition}
+		\begin{tabbing}
+			\textbf{Output:} \= \kill
+			\textbf{Input:} \>A weighted graph $G=(V,E,\ell)$.\\
+			\textbf{Output:} \>A MST $T$ of $G$.
+		\end{tabbing}
+		
+		\paragraph{Solutions - Overview}
+		\begin{itemize}
+			\item Kruskal's algorithm
+			\item Prim's algorithm
+			\item Boruvka's algorithm
+		\end{itemize}
+	
+		\subsubsection{Network flow - max flow}		
+		\paragraph{Problem definition}
+		\begin{tabbing}
+			\textbf{Output:} \= \kill
+			\textbf{Input:} \>A weighted graph $G=(V,E,\ell)$,\\
+			\>a source $s\in V$,\\
+			\>a sink $t\in V$.\\
+			\textbf{Output:} \>The maximum $s$-$t$-flow.
+		\end{tabbing}
+		%TODO> Define flow
+		\paragraph{Solutions - Overview}
+		\begin{itemize}
+			\item Ford-Fulkerson algorithm
+			\item Edmonds-Karp algorithm
+			\item Dinic's algorithm			
+		\end{itemize}
+		
+	\subsection{Partially solved}
+	
+	- Graph isomorphism problem
+	- Subgraph isomorphism problem
+	- largest common subgraph
+		
+		\subsubsection{Traveling Salesman problem (TSP)}
+		
+		\paragraph{Problem definition}
+		\begin{tabbing}
+			\textbf{Output:} \= \kill
+			\textbf{Input:} \>A (weighted) graph $G=(V,E)$.\\
+			\textbf{Output:} \>A shortest (cheapest) cycle of size $n_G$ that does not contain sub-cycles.
+		\end{tabbing}
+		The output is a route that visits every vertex exactly once and returns to the origin vertex.\\
+		This problem is NP-hard.
+		
+		\paragraph{Solutions - Overview}
+		
+		\paragraph{Similarity measures based on exact matchings}
+		Due to the computational costs of many solutions, many approximation algorithms exist.
+		\begin{itemize}
+			\item Helf-Karp
+			\item Branch and bound
+			\item Ant colony optimization
+		\end{itemize}
+		
+		\subsubsection{Graph similarity measures}
+								
+		\paragraph{Problem definition}
+		
+		Define a suitable similarity measure between graphs.
+		
+		\paragraph{Solutions - Overview}
+		
+		\paragraph{Similarity measures based on exact matchings}
+		Examples of graph similarity measures based on \textbf{exact matchings} are based on:\begin{itemize}
+			\item graph isomorphism (topological identical),
+			\item subgraph isomorphism or
+			\item largest common subgraph.
+		\end{itemize}
+		These measures are quite restrictive in the sense that graphs have to be exactly identical or contain large identical subgraphs in order to be deemed similar by these measures.~\cite{2011_Shervashidze_JMLR}
+		
+		\paragraph{Similarity measures based on inexact matchings}
+		Examples of graph similarity measures based on \textbf{inexact matchings} are based on:\begin{itemize}
+			\item graph edit distance ~\cite{1983_Bunke_ELSEVIER,2005_Neuhaus_IEEE}\\
+			(hard to parameterize; involves solving NP-complete problems as intermediate steps)
+			\item optimal assignment kernels~\cite{2005_Froehlich_ICML}\\
+			(best match between substructures; these kernels are in general not positive semidefinite~\cite{2018_Vert_CONF})
+			\item skew spectrum~\cite{2008_Kondor_ICML}\\
+			(unlabeled graphs; polynomial time)
+			\item graphlet spectrum~\cite{2009_Kondor_ICML}\\
+			(difficult to parameterize on general labeled graphs)
+		\end{itemize}~\cite{2011_Shervashidze_JMLR}
+		
+		Problems with graph kernels:\begin{enumerate}
+			\item Simple aggregation of the similarities of the substructures might limit the ability to capture complex characteristics of the graph\\
+			(Solutions: Fröhlich et a. [15], Kriege et al. [25])
+			\item Most proposed variants do not generalist to graphs with high-dimensional continuous vertex attributes
+		\end{enumerate}~\cite{2011_Shervashidze_JMLR}
+	
+	
+	\subsection{Not solved yet}
+	
+	\subsection{Not solvable}
+	
+	\subsection{Theorems on connections between problems}
+
+\chapter{Theorems} \label{ch_theorems}
+		
+	\section{Graphs}
+		
+		
+		\begin{Theorem}[Bound on \textsc{SdM} sequence lengths] {thm:BoundSDMSequenceLengths}
+			Let $(M, T, T^\prime)$ be an \textsc{SdM} and $T_0=T, T_1, \dots, T_k$ be a sequence of trees obtained by the above atomic transformations such that \textbf{every} $v\in T$ and $v^\prime\in T^\prime$ has been considered \textbf{in exactly one transformation}. Then $T_k=T^\prime$.\cite{2021_Schulz_CONF} %Proposition 3.1.
+			
+			(Note that mapping a vertex in one tree to a vertex in another tree with the same label is considered as a \textit{relabeling operation} with cost zero!)
+		\end{Theorem}
+		\begin{Proof}
+			Proof by contradiction. Assume that there is such a sequence, but $T_k \neq T^\prime$. This implies that either 
+			\begin{enumerate}
+				\item there exists a vertex $v$ which has the wrong label than the corresponding vertex in $T^\prime$.
+				\item there exists a vertex $v$ in $T_k$ but not in $T^\prime$,
+				\item there exists a vertex $v$ in $T^\prime$ but not in $T_k$ or		
+			\end{enumerate}
+			By assumption, this vertex $v$ was involved in exactly one atomic operation. If the operation was\begin{itemize}
+				\item \textbf{relabeling}, case 1 can not be the case, since the operation prevents it by definition. Case 2 can not be the case, since then there was no point in relabeling $v$ - it rather would have been deleted. Case 3 also can not be the case, since then $v$ did not exists in $T_k$ and could not have been relabeled.
+				\item \textbf{deletion}, case 2 can not be the case since then $v$ does not exists in $T^\prime$ as desired. Case 1 and 2 also cannot be the case, since $v$ does no longer exist in $T^\prime$ and there cannot be a corresponding vertex.
+				\item \textbf{insertion}, case 3 can not be the case since then $v$ exists in $T^\prime$ as desired. Recall that $v$ was involved in exactly one operation, thus $v$ could not have been deleted after the insertion (in a second operation). Case 2 can not be the case, since $v$ was never deleted. And case 1 can also not be the case, since $v$ is inserted with a suitable label. Thus there cannot be a need for relabeling.
+			\end{itemize}
+			This implies, that due to the initial assumption, non of the above cases can be true and thus $T_k = T^\prime$ as claimed.
+		\end{Proof}
+		
+		\begin{Theorem}[Reduction of optimal \textsc{SdM} to a optimal bipartite matching] {thm:ReductionSdMBipartiteMatching}
+			The task of finding an optimal \textsc{SdM} (that is minimal w.r.t. some cost function) can be reduced to the minimum cost perfect bipartite matching problem.
+			\cite{2021_Schulz_CONF} %Theorem 3.1 - page 5
+			
+			(This states the correctness of algorithm \ref{alg:SdTedComputation}.)	
+		\end{Theorem}
+		\begin{Proof}
+			Let $T$ and $T^\prime$ be two labeled rooted trees. Let the sets of trees below the roots of these trees be
+			\[ \tilde{F}=\{T_1,\dots, T_k\}\qquad\text{and}\qquad \tilde{F^\prime}=\{T^\prime_1,\dots, T^\prime_{k^\prime}\}\]
+			Expand the sets by adding $k^\prime$ empty trees to $\tilde{F}$ and $k$ to $\tilde{F^\prime}$. Now both expanded sets, call them $F$ and $F^\prime$ have $k+k^\prime$ elements:
+			\[ F=\{T_1,\dots, T_k, T_{\bot},\dots, T_{\bot}\}, \qquad F^\prime=\{T^\prime_1,\dots, T^\prime_{k^\prime}, T_{\bot},\dots, T_{\bot}\}\]
+			Define the distance between a tree and an empty graph as the cost of deleting, resp. inserting that tree. Furthermore, two empty graphs have distance $0$.
+			
+			\textbf{Claim}: The optimal set of \textsc{SdM}s directly corresponds to a perfect bipartite matching of minimum cost between tress in the expanded sets $F$ and $F^\prime$ with such a distance.\\
+			\textbf{Reasoning}: This follows from theorem \ref{BoundSDMSequenceLengths} and the minimization constraint on both ends (triangle equality of the distance/metric).
+			
+			Finally the \textsc{SdTed} between $T$ and $T^\prime$ is the cumulative cost of the distance between their roots and the minimal cost perfect bipartite matching between the trees below them.
+		\end{Proof}
+		
+		\subsection{Trees}
+		
+			\begin{Theorem}[Three edit metric]{thm:TreeEditMetric}
+				If $\gamma$ is a metric, then the tree edit distance with cost function $\gamma$ is a metric too.\cite{2021_Schulz_CONF}
+			\end{Theorem}
+			\begin{Proof}
+				%TODO
+			\end{Proof}
+			
+			\begin{Theorem}[Difficulty of the tree edit distance]{thm:TreeEditDistanceNPHard}
+				Calculating the tree edit distance is \textbf{NP-hard}.~\cite{2005_Bille_TCS}
+			\end{Theorem}
+			\begin{Proof}
+				%TODO
+			\end{Proof}
+		
+			
+			\begin{Theorem}[Bijektion between labels and unfolding trees] {thm:BijektionLabelsUnfoldingTrees}
+				There exists a bijektion between labels in $\Sigma_i$ and the set of (pairwise non-isomorphic) $i$-unfolding trees.
+			\end{Theorem}
+			\begin{Proof}
+				%TODO
+			\end{Proof}
+			
+			Note that the $i$-unfolding trees of most vertices will be unique for very small values of $i$. Thus two structurally completely different unfolding trees are treated identically to two unfolding trees which differ by only very little.
+	
+	\section{Kernels}
+	
+	\subsection{Weisfeiler-Lehman graph kernels}
+	
+		\textbf{Weisfeiler-Lehman graph kernels}~\cite{2011_Shervashidze_JMLR} is a family of efficient graph kernels (for graphs with discrete vertex labels). It can be understood as a meta graph kernel, since it is constructed by using any graph kernel on the same graph with multiple labelings, given by the Weisfeiler-Lehman labeling scheme. The positive definiteness of the base graph kernel is preserved.
+	
+		\begin{Theorem}[Positive semidefiniteness of the Weisfeiler-Lehman kernel]{thm:PosSemiDefinitenWLKernel} % Theorem 3
+			Let the base kernel $k$ be any positive semidefinite kernel on graphs. Then the corresponding WL-kernel $k_{\text{WL}}^{(h)}$ is positive semidefinite.
+		\end{Theorem}
+		\begin{Proof}
+			Let $\phi$ be the feature mapping corresponding to the kernel $k$:
+			\[ k(G_i, G_i^\prime)\ = \ \langle \phi(G_i), \phi(G^\prime_i) \rangle \]
+			It is:\begin{flalign*}
+				k(G_i, G_i^\prime) &= k(r^i(G), r^i(G^\prime))\\
+				&= \langle \phi\big(r^i(G) \big), \phi\big(r^i(G^\prime) \big) \rangle\\
+				&= \langle \psi(G), \psi(G^\prime) \rangle \rangle && \text{defining: } \psi(G):=\phi\big(r^i(G)\big)\\
+			\end{flalign*}
+			Hence $k$ is a kernel on $G$ and $G^\prime$ and $k_{\text{WL}}^{(h)}$ is positive semidefinite as a sum of positive semidefinite kernels.\\
+			
+			The positive semidefiniteness for the more general case (with weights $\alpha_i$) holds, since the property is invariant under positive linear combinations.
+		\end{Proof}
+		Thus the definition of the WL-kernel (definition \ref{def:WeisfeilerLehmanKernel}) provides a framework for applying all positive semidefinite graph kernels that take into account discrete vertex labels to different levels of the vertex-labeling of graphs.\\
+		
+		Side-effects of the WL-graphs for the used kernel $k$:\begin{itemize}
+			\item The graph structures $(V,E)$ remain constant.\\
+			Thus features like shortest paths or MSTs remain constant with $h$.
+			\item The alphabet of the labels increasingly grows with $h$.
+		\end{itemize}
+		
+		Note that one can now easily implement a shortest path kernel, that counts pairs of shortest paths with distance $d$ between identically labeled source and sink vertices on the original paths by running a shortest path kernel with shortest paths length $1$ on the WL-graphs with $h=d-1$.\texttodo{Check this - the WL-graphs should be even more powerful since they GROW in all directions - compare with statement after proof on page 8.}\\
+		
+		\texttodo{I do not understand the learning idea in 3.1.1.}
+		
+		Other source: \cite{2009_Shervashideze_NIPS} %TODO
+		
+		\begin{Theorem}[Equivalency of the Weisfeiler-Lehman kernel and the Ramon-Gärtner kernel]{thm:WLkernelEquivRamonGaertnerKernel}
+			The Weisfeiler-Lehman kernel and the Ramon-Gärtner kernel are equivalent.
+		\end{Theorem}
+		\begin{Proof}
+			The WL kernel can be defined in a recursive fashion which elucidates its relation to the Ramon-Gärtner kernel. %TODO
+			~\cite{2009_Shervashidze_NIPS}
+		\end{Proof}
+		Notice the differences between the two kernels. The WL kernel considers all subtrees up to height $h$ and checks whether the neighborhoods of vertices match exactly. The Ramon-Gärtner kernel considers the subtrees of exactly height $h$ and checks pairs of matching subsets of the neighborhoods of vertices.
+		
+		\begin{Theorem}[Similarity of the WL-kernel and -subtree kernel] {thm:SimilarityOfWLKernelAndSubtreeKernel} % Theorem 6
+			Let the base kernel $k$ be a function counting pairs of matching vertex labels in two graphs
+			\[ k(G,G^\prime) := \sum_{v\in V}\sum_{v^\prime\in V^\prime} \delta\big( \ell(v), \ell(v^\prime) \big) \]
+			then 
+			\[ \forall G, G^\prime:\qquad k_{\text{WL}}^{(h)}(G,G^\prime) = k_{\text{WLsubtree}}^{(h)}(G,G^\prime)  \]
+		\end{Theorem}
+		
+		
+		
+		
+		
+	\section{Algorithms}
+	
+		\begin{Theorem}[Runtime of the Weisfeiler-Lehman test of isomorphism]
+			The Weisfeiler-Lehman test of isomorphism (algorithm \ref{alg:WeisfeilerLehmanEmbedding}) has runtime $\mathcal{O}(mh)$, where $m=\max\{|E|, |E^\prime|\}$ is the bigger number of edges in both given graphs and $h$ is the number of iterations.
+		\end{Theorem}
+		\begin{Proof}
+			Lets consider the runtime for every of the sequential steps one-by-one:
+			\begin{enumerate}
+				\item Defining the multiset-labels $M_i(v)$ can be done in $\mathcal{O}(m)$ by sorting all multiset in $\mathcal{O}(m)$. For one iteration, this can be done as follows:
+				\begin{itemize}
+					\item Use \textbf{counting sort}, since there is a given order on the finite set $\Sigma$ (which can be extended to a lexicographical order).
+					\item $\{ l_{i-1}(u) | \ u\in\mathcal{N}(v) \}\subseteq \{ f\big( s_i(v) \big)| \ v\in V \}$
+					\item $\big|\{ f\big( s_i(v) \big)| \ v\in V \}\big| \le n$
+					\item Assign the elements of all multisets to their corresponding buckets and record which multiset they came from.
+					\item Read through all buckets in ascending order to extract the sorted multisets for all vertices.
+					\item As there are $\mathcal{O}(m)$ elements in the multisets of a graph in iteration $i$, this bounds the runtime.
+					\item Sorting the resulting strings has time $\mathcal{O}(m)$ via \textbf{radix sort} %TODO: not Mehlhorn, 1984, Vol. 1, Section II.2.1?
+					\item The label compression requires one pass over all strings and their characters (again in $\mathcal{O}(m)$)
+				\end{itemize}		 
+				Thus for all $h$ iterations the runtime is $\mathcal{O}(hm)$).
+				%TODO: Counting sort: Count occurrences of every label in the multiset. Then 
+			\end{enumerate}
+		\end{Proof}
+		
+		\begin{Theorem}[Weisfeiler-Lehman subtree kernel algorithm runtime]{thm:WLSubtreeKernelAlgRuntime}
+			For $N$ graphs, the WL-subtree kernel with $h$ iterations on all pairs of these graphs can be computed in 
+			\[ \mathcal{O}(Nhm + N^2 hn) \]
+		\end{Theorem}
+		\begin{Proof}
+			Naive application of the kernel from definition \ref{def:WLSubtreeKernel} for computing $N\times N$ kernel matrix would require a runtime of $\mathcal{O}(N^2 hm)$. One can improve upon this runtime complexity by computing $\phi_{\text{WLsubtree}}^{(h)}$ explicitly for each graph and only then taking pairwise inner products.
+			\begin{enumerate}
+				\item The multiset-label determination in step one still requires $\mathcal{O}(Nm)$.
+				\item The sorting of the multisets in step two can be done vie bucket sort (counting sort) of all strings, requiring $\mathcal{O}(Nn+Nm)$ time.
+			\end{enumerate}
+			The effort of computing $\phi_{\text{WLsubtree}}^{(h)}$ on all $N$ graphs in $h$ iterations is then $\mathcal{O}(Nhm)$, assuming that $m>n$. To get all pairwise kernel values, we have to multiply all feature vectors, which requires a runtime of $\mathcal{O}(N^2 hn)$, as each graph $G$ has at most $hn$ non-zero entries in $\phi_{\text{WLsubtree}}^{(h)}(G)$.
+		\end{Proof}
+		We will later see that the first factor ($Nhm$) dominates the overall runtime in practice.
+	
+	\section{Problems}
+	
+	- Graph isomorphism problem is NP. Neither proven NP-complete, nor found to be solved by a polynomial-time algorithm \cite{1979_Garey_BOOK}.\\
+	
+	- Subgraph isomorphism problem is NP-complete \cite{1979_Garey_BOOK}.
+	
+	- Largest common subgraph is NP-complete \cite{1979_Garey_BOOK}.
+	
+	Other strategies of comparing vertex neighborhoods (other than matching the embedding scheme):\begin{itemize}
+		\item \cite{2009_Hido_IEEE} - using hash functions and logical operations on bit-representations of vertex labels (scales linearly in the number of edges)
+		\item \cite{2004_Mahe_CONF} - Morgan index
+	\end{itemize}
+	
+	
+	
+	\section{Distances}
+	
+		\subsection{Wasserstein distances}
+		
+			\begin{Theorem}[Discrete Wasserstein metric]{thm:DiscreteWassersteinMetric}
+				If the cost matrix is defined by a metric, then the Wasserstein distance is a metric.
+			\end{Theorem}
+			\begin{Proof}
+				\dots %TODO: prove
+			\end{Proof}
+			
+			\begin{Theorem}[Structure and depth preserving distance in terms of Wasserstein distance] {thm:SdTedByWasserstein}
+				For two depth-$i$ unfolding trees $T$ and $T^\prime$, the distance between their roots is equal to $\mathcal{W}^{M_r}\big(\mathbb{V}_r(T),\mathbb{V}_r(T^\prime)\big)$.\\
+				Furthermore the calculation of the minimum cost perfect bipartite matching between the sets of child trees below these roots can be reduced to computing the Wasserstein distance $\mathcal{W}^{M_c}\big(\mathbb{V}_c(T),\mathbb{V}_c(T^\prime)\big)$. Thus it is
+				\[ \textsc{SdTed}(T,T^\prime)= \mathcal{W}^{M_r}\big(\mathbb{V}_r(T),\mathbb{V}_r(T^\prime)\big) + \mathcal{W}^{M_c}\big(\mathbb{V}_c(T),\mathbb{V}_c(T^\prime)\big) \]
+				(Compare with algorithm \ref{alg:SdTedComputation}.)
+				\cite{2021_Schulz_CONF} % Section 4
+			\end{Theorem}
+		
+
+\chapter{Further results and experiments of research papers}
+
+
+
+
+
+
+\chapter{LAB Notes - Weisfeiler-Lehman Graph Kernels}
+
+
+
+%\begin{Definition}[Optimal transport problem]{def:OptimalTransportProblem}
+%	\enquote{Find the most inexpensive way} in terms of ground distance\\
+%	(to transport all the probability mass from distribution $\sigma$ to match distribution $\mu$.)
+%\end{Definition}
+%Intuition for 1D: two probability distribution as piles of sand. Now the minimum effort required to move the content of the first pile to reproduce the second pile = Wasserstein distance.\\
+%
+%\begin{enumerate}
+%	\item Transform each graph into a set of vertex embeddings (definition \ref{def:GraphEmbeddingScheme})
+%	\item Measure the Wasserstein distance between each pair of graphs
+%	\item Compute a similarity matrix to be used in the learning alg.
+%\end{enumerate}
+%
+%\begin{Definition}{Graph Wasserstein Distance}{}{} \label{def:GraphWassersteinDistance}
+%	Given two graphs $G=(V,E)$ and $G^\prime=(V^\prime,E^\prime)$ a graph embedding scheme $f:G\to\IR^{|V|\times m}$ and a ground distance $d:\IR^m\times\IR^m \to\IR$ we define the \textbf{Graph Wasserstein Distance} (\textbf{GWD}) as
+%	\[ D^f_W(G,G^\prime) := W_1(f(G), f(G^\prime)) \]
+%\end{Definition}
+%
+%\begin{Definition}[Graph Embedding Scheme]{def:GraphEmbeddingScheme}
+%	Given a graph $G=(V,E)$, a graph embedding scheme $f:G\to\IR^{|V|\times m}$, $f(G)=X_G$ is a function that outputs a fixed-size vectorial representation for each vertex in the graph.\\
+%	For each $v_i\in V$, the $i$-th row of $X_G$ is called the vertex embedding of $v_i$.\\
+%	
+%	$m$ = dimensionality of vertex attributes (e.g. $m=1$ for only labels).
+%\end{Definition}
+%
+%Concrete embedding: \textbf{Weisfeiler-Lehman scheme} (\textbf{WL scheme})\\
+%Designed for labeled non-attributed graphs.
+%Looks at similarities among subtree patterns, iteratively compares labels on the vertices and their neighbors: Create new labels for each node, which encode the labels of their neighbors by hashing its old label and a string of labels of its neighbors.\\
+%
+%Consider a graph $G=(V,W)$, let $l^0(v)=l(v)$ be the initial vertex label of $v$ for each $v\in V$ and let $H$ be the number of WL iterations. Then, we can define a recursive scheme to compute $l^h(v)$ for $h=1,\dots, H$ by looking at the ordered set of neighbors labels $\mathcal{N}^h(v)=\{ l^h(u_0), \dots, l^h(u_{\deg(v)-1}) \}$ as
+%\[ l^{h+1}(v)= \text{hash}(l^h(v), \mathcal{N}^h (v)) \]
+%Use perfect hashing for the hash function.\\
+%
+%vertices at iteration $h+1$ will have the same label iff their label and those of their neighbors are identical at iteration $h$.\\
+%Since with each iteration the encoded neighborhood increases, the vertices necessary to encode all labels decreases over time.\\
+%
+%For graphs with continuous attributes $a(v)\in\IR^m$ we need to improve the WL refinement step.\\
+%Idea: Create an explicit propagation scheme that uses the average over the attributes and weight of the neighborhoods.\\
+%Suppose we have a continuous attribute $a^0(v)=a(v)$ for each vertex $v\in G$. Define recursively:\\
+%Idea: $ a^{h+1}(v)= a^h(v) + \sum\limits_{u\in\mathcal{N}(v)} w((v,u))a^h(u)$\\
+%When edge weights are not available set $w(u,v)=1$.\\
+%Realization:
+%\[ a^{h+1}(v)= \frac{1}{2}\Big( a^h(v) + \frac{1}{\deg(v)}\sum\limits_{u\in\mathcal{N}(v)} w((v,u))a^h(u) \Big) \]
+%(The weighted average instead of simple sum, and the $1/2$ shall ensure a similar scale of the features across iterations / such tricks lead to better empirical results.)\\
+%
+%>> Intuitive extension for WL subtree kernel. Applicable to all types of graphs! (Without additional hashing)\\
+%
+%\textbf{FUTURE WORK:} Extension for high-dimensional edge attributes (and dual graphs).
+%
+%(Similar approaches for \textbf{vertex-level kernel similarities} rely on additional hashing steps for the continuous features.)\\
+%
+%\begin{Definition}[WL features]{def:WLFeatures}
+%	Let $G=(V,E)$ and let $H$ be the number of WL iterations. Then for every $h\in\{0,\dots,H\}$ we define the WL features as
+%	\[ X^h_G=[ x^h(v_1),\dots, x^h(v_{n_G}) ]^T \]
+%	where $x^h(\dot)=l^h(\dot)$ for categorically labeled graphs and $x^h(\dot)=a^h(\dot)$ for continuously attributed graphs. We refer to $X^h_G\in\IR^{n_g\times m}$ as the \textbf{vertex features} of graph $G$ at iteration $h$. THen the vertex embeddings of graph $G$ at iteration $H$ are defined as $f^H:G\to \IR^{n_G\times (m(H+1))}$:
+%	\[ G\to\text{concatenate}(X^0_G,\dots, X^H_G) \]
+%\end{Definition}
+%%TODO: Woher kommt die Reihenfolge der Knoten $v_1,\dots v_{n_G}$??\ - Definition 4 - gleichung (7)\
+%\textbf{FUTURE WORK:} Both categorically labeled + continously attributed. Information can be joined and used in an extended formula, but the question of appropriate distance measures between categorical and continuous data remains.\\
+%
+%Ground distance between each pair of embedded vertices.\\
+%For \textbf{categorical vertex features} use Hamming distance:
+%\[ d_{\text{Hamm}}(v,v^\prime)=\frac{1}{H+1}\sum\limits_{i=1}^{H+1}\rho(v_i,v^\prime_i) \]
+%\[  \rho(x,y)=\begin{cases}
+%1, & x\neq y\\
+%0, & x= y\\
+%\end{cases}\]
+%Use, since the Weisfeiler-Lehman features are categorical!! (Values carry no meaning).
+%For \textbf{continous vertex feature} use Euclidean distance:
+%\[ d_{E}(v,v^\prime)=||v-v^\prime||_2 \]
+%
+%\textbf{Time-Complexity}: $n$ = cardinality of indexed set / number of vertices in the two graphs:
+%\[ \mathcal{O}(n^3\log(n)) \]
+%Speed-up: Approximations using Sinkhorn regularisation:
+%\begin{center}
+%	near-linear time (while accurate)
+%\end{center}
+
+
+
+
+
+\printbibliography
+
+\end{document}
+

@@ -1,0 +1,86 @@
+\boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
+\babel@toc {english}{}
+\babel@toc {english}{}
+\contentsline {section}{\numberline {1}Introduction}{3}{section.1}
+\contentsline {paragraph}{Outline of the Thesis}{5}{section*.2}
+\contentsline {subsection}{\numberline {1.1}Problem Statement and Method}{5}{subsection.1.1}
+\contentsline {subsection}{\numberline {1.2}Research Question}{5}{subsection.1.2}
+\contentsline {subsection}{\numberline {1.3}Related Work}{6}{subsection.1.3}
+\contentsline {paragraph}{Early Graph Kernels}{6}{section*.3}
+\contentsline {paragraph}{Weisfeiler-Leman Graph Kernels}{7}{section*.4}
+\contentsline {paragraph}{Optimal-Assignment Graph Kernels}{8}{section*.5}
+\contentsline {paragraph}{Wasserstein Weisfeiler-Leman Graph Kernels}{8}{section*.6}
+\contentsline {paragraph}{A baseline for Graph Kernels}{9}{section*.7}
+\contentsline {paragraph}{Mentioning of other Strategies}{9}{section*.8}
+\contentsline {subsection}{\numberline {1.4}Research Plan}{10}{subsection.1.4}
+\contentsline {subsection}{\numberline {1.5}Results}{10}{subsection.1.5}
+\contentsline {section}{\numberline {2}Theoretical Background}{11}{section.2}
+\contentsline {subsection}{\numberline {2.1}Graph Theory}{11}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Metrics}{13}{subsection.2.2}
+\contentsline {subsubsection}{\numberline {2.2.1}Wasserstein Distance}{14}{subsubsection.2.2.1}
+\contentsline {paragraph}{Tree Wasserstein Distance}{15}{section*.9}
+\contentsline {subsection}{\numberline {2.3}Weisfeiler-Leman Labels}{16}{subsection.2.3}
+\contentsline {subsubsection}{\numberline {2.3.1}Weisfeiler-Leman Labeling Scheme}{16}{subsubsection.2.3.1}
+\contentsline {paragraph}{WL-labels and Unfolding Trees}{17}{section*.10}
+\contentsline {paragraph}{Limitations of the WL-Labeling Scheme}{18}{section*.11}
+\contentsline {paragraph}{Runtime of the WL-labeling Scheme}{18}{section*.12}
+\contentsline {subsubsection}{\numberline {2.3.2}Weisfeiler-Leman Labeling Tree}{19}{subsubsection.2.3.2}
+\contentsline {paragraph}{Runtime of the WLLT Construction}{22}{section*.20}
+\contentsline {subsection}{\numberline {2.4}Kernels}{23}{subsection.2.4}
+\contentsline {subsubsection}{\numberline {2.4.1}Laplacian Kernel}{24}{subsubsection.2.4.1}
+\contentsline {subsubsection}{\numberline {2.4.2}Tree-sliced Wasserstein Kernel}{24}{subsubsection.2.4.2}
+\contentsline {subsubsection}{\numberline {2.4.3}Weisfeiler-Leman Graph Kernel}{25}{subsubsection.2.4.3}
+\contentsline {subsubsection}{\numberline {2.4.4}Weisfeiler-Leman Optimal Assignment Graph Kernel}{25}{subsubsection.2.4.4}
+\contentsline {subsubsection}{\numberline {2.4.5}Wasserstein Weisfeiler-Leman Graph Kernel}{26}{subsubsection.2.4.5}
+\contentsline {subsection}{\numberline {2.5}Cluster Learning}{27}{subsection.2.5}
+\contentsline {section}{\numberline {3}Method}{29}{section.3}
+\contentsline {subsection}{\numberline {3.1}Graph Representation}{29}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}WLLT Edge Weight Initialization}{30}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Edge Weight Learner}{30}{subsection.3.3}
+\contentsline {paragraph}{Absolute pp-Factors}{32}{section*.21}
+\contentsline {paragraph}{Class-Imbalance Factor}{32}{section*.22}
+\contentsline {paragraph}{Weights Scaling}{33}{section*.23}
+\contentsline {paragraph}{Heaviest Earth Threshold}{33}{section*.24}
+\contentsline {paragraph}{Runtime}{34}{section*.25}
+\contentsline {subsection}{\numberline {3.4}l-WWLLT Kernel}{35}{subsection.3.4}
+\contentsline {subsection}{\numberline {3.5}Evaluation}{35}{subsection.3.5}
+\contentsline {subsubsection}{\numberline {3.5.1}Sample Movement Error}{36}{subsubsection.3.5.1}
+\contentsline {paragraph}{Global, batch-wise and local interpretation}{37}{section*.27}
+\contentsline {subsubsection}{\numberline {3.5.2}Support Vector Machine}{38}{subsubsection.3.5.2}
+\contentsline {subsubsection}{\numberline {3.5.3}Cluster Evaluations}{38}{subsubsection.3.5.3}
+\contentsline {subsubsection}{\numberline {3.5.4}Method Evaluation Strategy}{39}{subsubsection.3.5.4}
+\contentsline {subsubsection}{\numberline {3.5.5}Comparison to Other Methods}{40}{subsubsection.3.5.5}
+\contentsline {section}{\numberline {4}Experiments}{42}{section.4}
+\contentsline {subsection}{\numberline {4.1}Datasets}{42}{subsection.4.1}
+\contentsline {subsubsection}{\numberline {4.1.1}TU Dataset}{43}{subsubsection.4.1.1}
+\contentsline {subsubsection}{\numberline {4.1.2}OGB Dataset}{44}{subsubsection.4.1.2}
+\contentsline {subsection}{\numberline {4.2}Set Up}{45}{subsection.4.2}
+\contentsline {subsection}{\numberline {4.3}Experiments}{45}{subsection.4.3}
+\contentsline {subsubsection}{\numberline {4.3.1}Batch Size, WLLT Depth and Number of Epochs}{45}{subsubsection.4.3.1}
+\contentsline {paragraph}{Batch Size}{45}{section*.29}
+\contentsline {paragraph}{WLLT Depth}{46}{section*.30}
+\contentsline {paragraph}{Number of Epochs}{47}{section*.32}
+\contentsline {subsubsection}{\numberline {4.3.2}Edge Weight Limit}{51}{subsubsection.4.3.2}
+\contentsline {paragraph}{Redemption of unlimited Weights}{51}{section*.41}
+\contentsline {subsubsection}{\numberline {4.3.3}Artificial Dataset}{53}{subsubsection.4.3.3}
+\contentsline {subsubsection}{\numberline {4.3.4}Arbitrary Classifications}{56}{subsubsection.4.3.4}
+\contentsline {subsubsection}{\numberline {4.3.5}Relation between Pushing and Pulling}{57}{subsubsection.4.3.5}
+\contentsline {subsubsection}{\numberline {4.3.6}Dynamic PP-Factors}{60}{subsubsection.4.3.6}
+\contentsline {section}{\numberline {5}Results}{64}{section.5}
+\contentsline {subsection}{\numberline {5.1}Comparison to other Kernels}{64}{subsection.5.1}
+\contentsline {subsection}{\numberline {5.2}Answering the Research Questions}{67}{subsection.5.2}
+\contentsline {subsection}{\numberline {5.3}Reflection and Conclusion}{67}{subsection.5.3}
+\contentsline {section}{\numberline {6}Outlook}{68}{section.6}
+\contentsline {paragraph}{Graph Representations}{68}{section*.65}
+\contentsline {paragraph}{Datasets}{68}{section*.66}
+\contentsline {paragraph}{Edge Weight Initialization}{68}{section*.67}
+\contentsline {paragraph}{Update Rule}{69}{section*.68}
+\contentsline {paragraph}{Other Parameters}{69}{section*.69}
+\contentsline {paragraph}{Controlled Distance Improvements}{69}{section*.70}
+\contentsline {paragraph}{Performance Comparability}{69}{section*.71}
+\contentsline {paragraph}{Runtime Complexity}{70}{section*.72}
+\contentsline {paragraph}{Method Capabilities}{70}{section*.73}
+\contentsline {section}{\numberline {A}APPENDIX}{71}{appendix.A}
+\contentsline {subsection}{\numberline {A.1}WLLT Statistics}{71}{subsection.A.1}
+\contentsline {subsection}{\numberline {A.2}Weisfeiler Lehman Kernel on TUDatasets}{72}{subsection.A.2}
+\contentsline {subsection}{\numberline {A.3}Overview Graph Kernel Methods}{72}{subsection.A.3}

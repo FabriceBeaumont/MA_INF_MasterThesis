@@ -1,0 +1,157 @@
+\section{Results} \label{sec:results}
+    
+    The experiments and the results presented in section \ref{sec:experiments} are centered around the research question, of realizing the l-WWLLT method in a way, that leads to a (predictable) improvement of the resulting similarity measure.
+    As stated in the introduction, the main goal of the thesis is to elaborate, if the proposed method can improve over the initial state.
+    We reflect on the research question in section \ref{subsec:research_answer}.
+    However the evaluation of the proposed method may be considered incomplete, if the results are not also compared to the performance of other kernels.
+    A short comparison of the best results is presented in the following section \ref{subsec:comparison_other_kernels}.
+    Finally we reflect on the presented results and thus the l-WWLLT method itself in section \ref{subsec:reflection}.
+    
+    \subsection{Comparison to other Kernels} \label{subsec:comparison_other_kernels}   
+        
+	    The datasets \textit{ogbg-molbace} and \textit{ogbg-molbbbp} of the OGB collection are newer and not used in most of the research on which the l-WWLLT method is based upon.	    
+	    The same goes for the cleaned versions of the TUDatasets.
+	    That is why we we exclude them from the comparisons in this section.
+	    The best reported SVM accuracies on these datasets are however included in table \ref{tab:BestSVM_results}.
+    	Tables \ref{tab:SVM_Compared1} and \ref{tab:SVM_Compared2} belong together and list reported SVM accuracies for a variety of kernels and datasets.
+    	
+    	The kernels in tables \ref{tab:SVM_Compared1} are
+    	the l-WWLLT Kernel as proposed in this thesis,    	
+    	the No-graph Kernel (\textbf{NoG})~\cite{2019_Schulz_CONF},	
+    	the Probabilistic Frequent Subtree Kernel (\textbf{PFS})~\cite{2017_Welke_CONF}, % [5] in \cite{2019_Schulz_CONF}
+    	the Boosted Probabilistic Frequent Subtree Kernel (\textbf{BPFS})~\cite{2017_Welke_CONF}, % [5] in \cite{2019_Schulz_CONF}
+    	the Frequent Subgraph Kernel based on FSG (\textbf{FSG})~\cite{2004_Kuramochi_IEEE}, % [7] in \cite{2019_Schulz_CONF}
+    	%the \textit{Cyclic Pattern Kernel} (\textbf{CP})~\cite{2004_Horvath_KDD}, % [2] in \cite{2019_Schulz_CONF}
+    	the Graphlet Sampling Kernel (\textbf{GS})~\cite{2009_Shervashidze_PMLR}, % [4] in \cite{2019_Schulz_CONF}
+    	%the \textit{Graphlet Kernel}~\cite{2005_Borgwardt_IEEE} based on connected subgraphs with three vertices (similar to ~\cite{2011_Shervashidze_JMLR}),
+    	%the \textit{Shortest Path Kernel} (\textbf{SP})~\cite{2005_Borgwardt_IEEE}, 
+    	and the Random Walk Kernel (\textbf{RW})~\cite{2003_Gaertner_CONF}. % [6] in \cite{2019_Schulz_CONF}
+    	The results for kernels other than the l-WWLLT are reported by \citeauthor{2019_Schulz_CONF}~\cite{2019_Schulz_CONF}.
+    	The entry '$\approx$' indicates a measured SVM accuracy comparable to the one reported for the NoG Kernel~\cite{2019_Schulz_CONF}.
+    	
+    	The kernels in tables \ref{tab:SVM_Compared2} are
+    	again the l-WWLLT Kernel for comparison,    	
+    	the Weisfeiler-Leman Optimal Assignment Kernel (\textbf{WL-OA})~\cite{2016_Kriege_NIPS}.
+    	the Weisfeiler-Leman Kernel (\textbf{WL})~\cite{2011_Shervashidze_JMLR},
+    	and the Wasserstein Weisfeiler-Leman Kernel (\textbf{WWL}) ~\cite{2019_Togninalli_NIPS}.
+    	The results for kernels other than the l-WWLLT are reported by \citeauthor{2016_Kriege_NIPS}~\cite{2016_Kriege_NIPS}.
+    	They also reported results on 
+    	the Vertex Kernel (V), 	which is based on the dot products on vertex label histograms, 
+    	the Edge Kernel (E), 		which is based on the dot products on edge label histograms (edge labels as the set of labels of its endpoints), 
+    	the Vertex Optimal Assignment Kernel (V-OA)~\cite{2016_Kriege_NIPS}, and 
+    	the Edge Optimal Assignment Kernel (E-OA)~\cite{2016_Kriege_NIPS}.
+    	These four kernels (V, E, V-OA, E-OA) all performed worse than the reported results of the WL-OA on these datasets~\cite{2012_Kriege_CONF}, which is why we omit them here.    	
+    	The SVM accuracy of $93.36\%$ for the WL Kernel~\cite{2011_Shervashidze_JMLR} % [3] in \cite{2019_Schulz_CONF}
+    	on the dataset \textit{Tox21\_AHR} was reported by \citeauthor{2019_Schulz_CONF}~\cite{2019_Schulz_CONF}.
+    	
+    	The results for the \textbf{Std WL} are based on own experiments with the WL Kernel (WL)~\cite{2011_Shervashidze_JMLR} and an implementation provided by the GraKel framework~\cite{2020_Siglidis_CONF}.
+    	The results are visualized in the plot \ref{fig:SVM_WL_TUDatasets} in the appendix.
+    	\footnote{Using a vertex histogram as base kernel. See \url{https://ysig.github.io/GraKeL/0.1a8/generated/grakel.GraphKernel.html\#grakel.GraphKernel}.}.
+    	The attached column D indicates for which WL iteration $i\in[1,10]$ the highest accuracy was reached.
+    	    	
+    	\begin{table}[h]
+    		\centering
+    		\begin{tabular}{|l||r|r|r|r|r|r|r|}
+    			\hline
+    			\textbf{Dataset} 	& \textbf{l-WWLLT} 	& \textbf{NoG} 		& \textbf{PSF} 			& \textbf{BPSF} & \textbf{FSG} & \textbf{GS} & \textbf{RW} \\ \hline\hline
+    			\textbf{AIDS} 	 	& 98.73 		 	& \textbf{99.65} 	& 98.25 	& 98.45 	& 97.85 	& $\approx$	& $\approx$	\\ \hline
+    			\textbf{ENZYMES} 	& 59.04 		 	& 43.33 			& 28.33 	& 32.00		& ~ 		& 30.50 	& 17.33 	\\ \hline
+    			\textbf{MSRC\_9} 	& \textbf{90.83} 	& 88.35 			& $\approx$ & $\approx$ & ~ 		& 25.09 	& 11.73  	\\ \hline
+    			\textbf{MSRC\_21}	& \textbf{87.58} 	& 86.46 			& 51.84 	& 52.22 	& 46.79 	& 14.60 	&  5.05  	\\ \hline    			
+    			\textbf{MUTAG} 		& \textbf{87.33}	& 87.31 			& $\approx$ & $\approx$ & $\approx$ & $\approx$ & $\approx$ \\ \hline
+    			\textbf{NCI1} 		& 79.44 			& 69.93 			& $\approx$ & 74.33 	& 76.28 	& 62.68 	& ~ 		\\ \hline
+    			\textbf{PROTEINS} 	& 73.57 			& 74.58 			& $\approx$ & $\approx$ & ~ 		& $\approx$ & ~ 		\\ \hline
+    			\textbf{PTC\_MR} 	& \textbf{64.92} 	& 57.60 			& $\approx$ & $\approx$	& $\approx$ & $\approx$ & $\approx$ \\ \hline
+    			\textbf{Tox21\_AHR} & 88.37 			& \textbf{90.89} 	& 88.47 	& 88.36 	& 88.37 	& 88.38 	& ~ 		\\ \hline
+    		\end{tabular}
+	    	\caption{SVM accuracies for various kernels (1/2)}\label{tab:SVM_Compared1}
+    	\end{table}    	
+    	\begin{table}[h]
+    		\centering
+    		\begin{tabular}{|l||r|r|r|r|rc|}
+    			\hline
+    			\textbf{Ds} 	& \textbf{L-WWLLT} 	& \textbf{WL-OA} 		& \textbf{WL} 			& \textbf{WWL} 		& \textbf{Std WL} 	& D 	\\ \hline\hline
+    			\textbf{A} 		& 98.73 			& ~ 					& ~ 					& ~ 				& 98.54 			& 1 	\\ \hline
+    			\textbf{E} 		& 59.04 			& \textbf{59.9}$\pm$1.1 & 53.7$\pm$1.4 			& 73.25$\pm$0.87 	& 53.95 			& 3 	\\ \hline
+    			\textbf{M\_9} 	& \textbf{90.83} 	& ~ 					& ~ 					& ~ 			 	& ~ 				& ~ 	\\ \hline
+    			\textbf{M\_21}	& \textbf{87.58} 	& ~ 					& ~ 					& ~				 	& ~ 				& ~ 	\\ \hline    			
+    			\textbf{MU} 	& \textbf{87.33} 	& 84.5$\pm$1.7 			& 86.0$\pm$1.7 			& ~ 			 	& 83.85 			& 10	\\ \hline
+    			\textbf{N} 		& 79.44 			& 86.1$\pm$0.2 			& \textbf{85.8}$\pm$0.2 & ~ 			 	& 85.09			 	& 8 	\\ \hline
+    			\textbf{P} 		& 73.57 			& 76.4$\pm$0.4 			& 75.6$\pm$0.4 			& 77.91$\pm$0.80 	& \textbf{75.63} 	& 10 	\\ \hline
+    			\textbf{P\_MR} 	& \textbf{64.92} 	& 63.6$\pm$1.5 			& 61.3$\pm$1.4 			& ~ 			 	& ~ 				& ~ 	\\ \hline
+    			\textbf{T} 		& 88.37 			& ~ 					& 93.36 				& ~ 			 	& ~ 				& ~ 	\\ \hline
+    		\end{tabular}
+    		\caption{SVM accuracies for various kernels (2/2)}\label{tab:SVM_Compared2}
+    	\end{table}
+    	    
+ 	  	We can report a better SVM accuracies for the datasets \textit{MSRC\_21},\\
+ 	  	\textit{MSRC\_9}, \textit{MUTAG}, and \textit{PTC\_MR} compared to all other enlisted kernels.
+ 	  	On the datasets \textit{AIDS} and \textit{Tox21\_AHR} the SVM accuracies are comparable to the best accuracies among all other kernels.
+ 	  	On the dataset \textit{NCI1} we report a significantly worse accuracy compared to the best listed accuracies of the WL-OA Kernel and the WL Kernel.
+ 	  	 	  	
+ 	  	The best improvements over other reported accuracies are achieved on the datasets \textit{ENZYMES} and \textit{PTC}.
+    	    
+    	\begin{table}[h]
+    		\centering
+    		\begin{tabular}{|l||r|r|r|r|r|r|c||rr|}
+    			\hline
+    			\textbf{Dataset} & $D$ & $lr$ & $bs_p$ & $bs_a$ & $f_{\text{pull}}$ & $f_{\text{push}}$ & $t_{\text{he}}$ & \textbf{SVM} & E \\ \hline\hline
+    			\textbf{AIDS} ($w\notin [0,2]$) & 4 & 1 & $5\%$ & 100 & 0.50 & 0.50 & 0.9 & \textbf{98.73} & 160 \\ \hline % |V|=2000	100
+    			\textbf{AIDS\_c} 				& 4 & 1 & $5\%$ &  56 & 0.10 & 0.50 & 1.0 & \textbf{97.75} & 200 \\ \hline % |V|=1110	56
+    			\textbf{AIDS\_perfect} 			& 4 & 1 & $5\%$ & 100 & 0.10 & 0.10 & 0.6 & \textbf{99.49} & 0	\\ \hline % |V|=2000	100
+    			\textbf{ENZYMES} 				& 4 & 1 & $5\%$ &  30 & 0.10 & 0.50 & 1.0 & \textbf{59.04} & 140 \\ \hline % |V|=600		30
+    			\textbf{ENZYMES\_c} 			& 4 & 1 & $5\%$ &  29 & 0.10 & 0.50 & 1.0 & \textbf{59.06} & 180 \\ \hline % |V|=595		29
+    			\textbf{MSRC\_9} 				& 4 & 1 & $30\%$ &  66 & 0.10 & 0.40 & 1.0 & \textbf{90.83} & 40 	\\ \hline % |V|=221		66
+    			\textbf{MSRC\_21} 				& 4 & 1 & $30\%$ & 169 & 0.20 & 0.20 & 1.0 & \textbf{87.58} & 160 \\ \hline % |V|=563		169
+    			\textbf{MUTAG} 					& 1 & 1 & $5\%$ &   9 & 0.01 & 0.01 & 1.0 & \textbf{87.33} & 160 \\ \hline % |V|=188		9
+    			\textbf{NCI1} 					& 4 & 1 & $5\%$ & 206 & 0.10 & 0.50 & 1.0 & \textbf{79.44} & 200 \\ \hline % |V|=4110	206
+    			\textbf{ogbg-molbace} 			& 2 & 1 & $7\%$ & 100 & 0.20 & 0.20 & 1.0 & \textbf{83.56} & 160	\\ \hline % |V|=1513	100
+    			\textbf{ogbg-molbbbp} 			& 4 & 1 & $5\%$ & 100 & 0.20 & 0.20 & 1.0 & \textbf{84.30} & 200 \\ \hline % |V|=2039	100
+    			\textbf{PROTEINS} 				& 4 & 1 & $5\%$ &  56 & 1.00 & 1.00 & 0.6 & \textbf{73.57} & 80 	\\ \hline % |V|=1113	56
+    			\textbf{PROTEINS\_c} 			& 4 & 1 & $5\%$ &  49 & 1.00 & 1.00 & 0.6 & \textbf{72.87} & 160 \\ \hline % |V|=975		49
+    			\textbf{PTC\_MR} 				& 4 & 1 & $30\%$ & 103 & 0.40 & 0.40 & 0.6 & \textbf{64.92} & 20	\\ \hline % |V|=344		103
+    			\textbf{Tox21\_AHR} 			& 4 & 1 & $1\%$ &  82 & 0.10 & 0.10 & 0.6 & \textbf{88.37} & 0	\\ \hline % |V|=8169	82
+    		\end{tabular}
+    		\caption{Best SVM accuracies for the l-WWLLT Kernel}\label{tab:BestSVM_results}
+    	\end{table}
+    
+    	Table \ref{tab:BestSVM_results} contains the configurations for the best SVM accuracies over all experiments.
+    	The columns denote the configuration in the same notation used in the section \ref{subsec:experiments}.
+    	$bs_p$ and $bs_a$ denote the batch size as percentage and absolute number respectively.
+    	Note that unlike the others, the first row (for the \textit{AIDS} dataset) reports on an execution where the edge weights where not limited to the interval $[0, 2]$.
+    	The last column E indicates, in which learning epoch this best SVM accuracy was reached.
+    	Depending on the datasets, the reported accuracies are the best in $200$, $500$, or $1000$ learning epochs.
+    	Since the set of used parameters varies between these evaluations, and since only every $10$-th epoch for every experiment was evaluated, we omit a detailed comparison of the SVM accuracies with respect to the number of learning epochs.
+    	As stated in section \ref{subsec:experiments}, no relation between these values as found.
+    	
+    	It is important to notice, that this last column reveals, that the best SVM accuracies were achieved after only a few learning epochs.
+    	While most of the experiments aimed at improving the cluster statistics and the SVM accuracies steadily and reliable over many epochs, very good accuracies were reached early in the learning process.
+    	
+    	It should be emphasized that no grid search was performed for all parameter settings and no clear reliable trend in performance could be discovered for all datasets.    	
+    	These results indicate that the method has potential and the impact of parameter settings should be further investigated.
+    	
+    \subsection{Answering the Research Questions} \label{subsec:research_answer}
+    
+	    The research question of this thesis (see section \ref{subsec:research_question}) is, whether the l-WWLLT method can improve the resulting graph similarity measure over its definition at the initialization.
+	    As presented in section \ref{sec:experiments} (e.g. figures \ref{fig:plota2svmaidsgdl2417h-05}, \ref{fig:ArbitraryClSVM} and \ref{fig:plota1massevalscorecalinski}), configurations of the implemented l-WWLLT method do exist, such that the SVM accuracy, or the cluster scores increases over time (for a significant amount of learning epochs).
+	    Thus the main research question can be answered positively.
+	    
+	    The different evaluation scores of the proposed graph similarity measure can but do not necessarily need to yield align in their statement of success (see for example section \ref{subsubsec:exp_dynamic_pp} and \ref{subsubsec:exp_Arbitrary_Classifications}).
+	    A variety of different implementation choices in form of parameter settings are presented.
+	    No clear l-WWLLT improving or degenerating strategy could be identified.
+    
+   \subsection{Reflection and Conclusion} \label{subsec:reflection}
+   
+	   The experiments shown in section \ref{sec:experiments} may indicate, that a lot of different parameter settings and variations for the l-WWLLT method can be constructed.
+	   One may notice that the initialized edge weights in the WLLT already imply a good similarity measure.
+	   Recall for example the SVM accuracy for the \textit{AIDS} dataset, arising from the uniformly initialized WLLT edge weights of $98.56\%$ for $D=3$ depicted in figure \ref{fig:plota2svmaidsgdl2417h-05}	   	   	   
+	   and of $96.42\%$ for $D=5$ depicted in figure \ref{fig:SVMTotalWS_AIDS} (or see results in the table in section \ref{Asub:SVMacc} of the appendix).	   
+	   These SVM accuracies are comparable to accuracies of kernels like PSF, FSG, GS, RW and WL~\cite{2019_Schulz_CONF}.
+	   Although note, that the graph structure ignoring NoG Kernel already outperforms these accuracies with a reported accuracy of $99.65\%$~\cite{2019_Schulz_CONF}.
+	   The SVM accuracy (figure \ref {fig:plote6svmmsrc9egdl2200h-05mexp3pull}) and the implied clustering (figure \ref{fig:plote6tsnee0msrc9egdl2200h-05mexp3pull}) of the \textit{MSRC\_9} as shown in section \ref{subsubsec:exp_dynamic_pp} is an example for an initial similarity measure, which outperforms all other reported kernel results.
+	   	   
+	   Although in the experiments, some configurations were found which improved the resulting SVM accuracy, no systematic strategy to find such a configuration was found.
+	   We conclude that the implemented update method does not necessarily improve neither the (global) SME, nor the presented cluster scores, nor the SVM accuracy of the resulting kernel.
+	   More research on the existing implementation and variations of it should yield a strategy when applying the l-WWLLT method.
+	   Ideally a non-supervised learning strategy.
+	   

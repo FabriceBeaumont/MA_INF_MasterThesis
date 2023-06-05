@@ -1,0 +1,243 @@
+\documentclass[11pt,a4paper,english]{article}
+%\usepackage[ngerman]{babel} % \usepackage[shortcuts]{extdash} % Explicit Hyphenation: multi\-/disciplinary. Deny hypen: multi\=/disciplinary
+\usepackage[english]{babel}
+\usepackage{MA_Titlepage}
+
+\usepackage{savefnmark} % Reusing a footnote with '\saveFN\fnname' and '\useFN\fnname'
+
+\usepackage{hyperref}
+% Allgemeines
+% \usepackage[automark]{scrpage2} % Kopf- und Fußzeilen
+\usepackage{amsmath, marvosym, amssymb} % Mathesachen % http://ctan.org/pkg/amsmath
+\usepackage{blkarray} % Matrix % http://www.hss.caltech.edu/~kcb/TeX/kbordermatrix.sty
+\usepackage{siunitx}%Schöne Darstellung großer Zahlen \num{}
+\usepackage[T1]{fontenc} % Ligaturen, richtige Umlaute im PDF
+\usepackage[utf8]{inputenc}% UTF8-Kodierung für Umlaute usw
+\usepackage[normalem]{ulem} % for strike outs: \sout{Crossed out text}
+% Schriften
+\usepackage{mathpazo} % Palatino für Mathemodus
+\usepackage{mathtools}% Fur {}pmatrix*}[r]
+%\usepackage{mathpazo,tgpagella} % auch sehr schöne Schrift
+% Schriften-Größen
+% Sprache: Deutsch
+% PDF
+\usepackage{pdflscape} % einzelne Seiten drehen können
+% Tabellen
+\usepackage{multirow} % Tabellen-Zellen über mehrere Zeilen
+\usepackage{multicol} % mehrere Spalten auf eine Seite
+\usepackage{tabularx, booktabs} % für Tabellen mit vorgegeben Größen
+\usepackage{longtable} % Tabellen über mehrere Seiten
+\usepackage{array}
+%  Bibliographie
+\usepackage{bibgerm} % Umlaute in BibTeX
+% Bilder
+\usepackage{graphicx} % Bilder
+% \usepackage{color} % Farben
+\usepackage[usenames, dvipsnames]{color}
+\graphicspath{{images/}} % Lege den Standardpfad mit Bilder fest
+\DeclareGraphicsExtensions{.pdf,.png,.jpg} % bevorzuge pdf-Dateien vor den anderen
+%\usepackage[justification=RaggedRight, singlelinecheck=false]{caption}
+\usepackage[justification=centering]{caption}
+\usepackage{subcaption}  % mehrere Abbildungen nebeneinander/übereinander
+% Für Pseudocode-Darstellungen
+\usepackage{algorithm}
+\usepackage{algpseudocode} 
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\algdef{SE}[DOWHILE]{Do}{doWhile}{\algorithmicdo}[1]{\algorithmicwhile\ #1}
+\makeatother
+% Quellcode
+% für Formatierung in Quelltexten, hier im Anhang
+\usepackage{listings}
+\usepackage{csquotes} % für Anführungszeichen/ Zitate
+\usepackage{enumerate}
+\usepackage{enumitem}
+\usepackage{minted}
+\usepackage{tikz} % Graph construction 
+\setminted[python]{breaklines, frame=lines, framesep=2mm, fontsize=\footnotesize, numbersep=5pt, linenos}
+%\usepackage[shortlabels]{enumerate}
+\definecolor{grau}{gray}{0.25}
+\lstset{
+	extendedchars=true,
+	basicstyle=\tiny\ttfamily,
+	%basicstyle=\footnotesize\ttfamily,
+	tabsize=2,
+	keywordstyle=\textbf,
+	%commentstyle=\color{grau},
+	stringstyle=\textit,
+	numbers=left,
+	numberstyle=\tiny,
+	% für schönen Zeilenumbruch
+	breakautoindent  = true,
+	breakindent      = 2em,
+	breaklines       = true,
+	postbreak        = ,
+	prebreak         = \raisebox{-.8ex}[0ex][0ex]{\Righttorque},
+}
+
+\definecolor{javared}{rgb}{0.6,0,0} % for strings
+\definecolor{javagreen}{rgb}{0.25,0.5,0.35} % for strings
+\definecolor{javapurple}{rgb}{0.5,0,0.35} % for strings
+\definecolor{javadocblue}{rgb}{0.25,0.35,0.75} % for strings
+\lstset{
+	language=Java,
+	basicstyle=\fontsize{8}{7}\ttfamily,
+	keywordstyle=\color{javapurple}\bfseries,
+	stringstyle=\color{javared},
+	commentstyle=\color{javagreen},
+	morecomment=[s][\color{javadocblue}]{/**}{*/}
+	numbers=left,
+	numberstyle=\tiny\color{black},
+	stepnumber=2,
+	numbersep=10pt,
+	tabsize=4,
+	showspaces=false,
+	showstringspaces=false
+%	{Ö}{{\"O}},	{Ä}{{\"A}},	{Ü}{{\"U}},	{ß}{{\ss}},	{ö}{{\"o}},	{ä}{{\"a}},	{ü}{{\"u}},
+}
+%\lstset{
+%	literate=%
+%	{Ö}{{\"O}}1
+%	{Ä}{{\"A}}1
+%	{Ü}{{\"U}}1
+%	{ß}{{\ss}}1
+%	{ö}{{\"o}}1
+%	{ä}{{\"a}}1
+%	{ü}{{\"u}}1
+%}
+
+\usepackage{scrhack} % Vermeidung einer Warnung
+
+%%% Numbersets
+\newcommand{\eye}{\mathbb{1}} % Identitiy matrix
+\newcommand{\one}{\textbf{1}} % One-vector (1 1 ... 1)
+\newcommand{\IN}{\mathbb{N}} % Natural numbers
+\newcommand{\IR}{\mathbb{R}} % Real numbers
+\newcommand{\IZ}{\mathbb{Z}} % Integers
+\newcommand{\IQ}{\mathbb{Q}} % Rational numbers
+\newcommand{\ID}{\mathbb{D}} % Dyadic numbers
+\newcommand{\IC}{\mathbb{C}} % Complex numbers
+\newcommand{\IF}{\mathbb{F}} % (Vector) Field
+\newcommand{\IW}{\mathbb{W}} % Wasserstein distance
+\newcommand{\vA}{\mathcal{A}}
+\newcommand{\vD}{\mathcal{D}}
+\newcommand{\vB}{\mathcal{B}}
+\newcommand{\vP}{\mathcal{P}}
+\newcommand{\vJ}{\mathcal{J}}
+\newcommand{\vU}{\mathcal{U}}
+%%% Basic operators
+\newcommand{\IP}{\mathbb{P}} % Probability operator
+\newcommand{\IE}{\mathbb{E}} % Expectation operator
+\newcommand{\vF}{\mathcal{F}} % Fourier transform
+%%% Distributions
+\newcommand{\vN}{\mathcal{N}} % Normal distribution
+\newcommand{\Bin}{\mathop{\mathrm{Bin}}} % Binomial distribution
+\newcommand{\Poi}{\mathop{\mathrm{Poi}}} % Poisson distribution
+%%% Others
+\newcommand{\Cov}{\mathop{\mathrm{Cov}}} % covariance
+\newcommand{\co}{\mathop{\mathrm{co}}} % covariance
+\newcommand{\Var}{\mathop{\mathrm{Var}}} % variance
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert} % norm
+\newcommand{\var}[1]{{\ttfamily#1}} % variable
+\newcommand{\tr}{\mathop{\operatorname{tr}}} % trace
+\newcommand{\rk}{\mathop{\operatorname{rk}}} % rank
+\newcommand{\diag}{\mathop{\operatorname{diag}}} % diagonal
+\renewcommand{\vec}[1]{\bm{#1}} % vector
+\newcommand{\mat}[1]{\bm{#1}} % matrix
+\newcommand{\ten}[1]{\bm{\mathcal{#1}}}
+\newcommand{\inv}[1]{#1^{-1}} % inverse
+\newcommand{\trn}[1]{#1^\intercal} % transpose
+\newcommand{\opt}[2]{#1 \trn{#2}} % outer product
+\newcommand{\ipt}[2]{\trn{#1} #2} % inner product
+\newcommand{\angles}[2]{\langle #1, #2 \rangle} % scalar product
+\newcommand{\Angles}[2]{\bigl \langle #1, #2 \bigr \rangle} % big scalar product
+\newcommand{\st}{\operatorname{s.\!t.}} % 'such that'
+\DeclareMathOperator{\Ima}{\textit{Im}}
+%%% Stacked symbols
+\newcommand{\amin}[1]{\operatorname*{argmin}_{#1}}
+\newcommand{\amax}[1]{\operatorname*{argmax}_{#1}}
+\newcommand{\sign}{\mathop{\mathrm{sign}}}
+\newcommand{\eqex}{\mathop{\stackrel{!}{=}}}
+\newcommand{\geex}{\mathop{\stackrel{!}{\ge}}}
+\newcommand{\leex}{\mathop{\stackrel{!}{\le}}}
+\newcommand{\softmax}{\operatorname*{softmax}}
+%%% Table colors
+\newcommand\cellr{\cellcolor{red!20}}
+\newcommand\cellg{\cellcolor{green!10}}
+\newcommand\cellb{\cellcolor{blue!10}}
+\newcommand\cello{\cellcolor{orange!10}}
+%%% Sets
+\newcommand{\set}[1]{\{{#1}\}}
+\newcommand{\Set}[1]{\big\{{#1}\big\}}
+\newcommand{\BigSet}[1]{\Big\{{#1}\Big\}}
+%%% Multisets
+\newcommand{\mset}[1]{\{\mskip-5mu\{{#1}\}\mskip-5mu\}}
+\newcommand{\Mset}[1]{\big\{\mskip-5mu\big\{{#1}\big\}\mskip-5mu\big\}}
+\newcommand{\BigMset}[1]{\Big\{\mskip-5mu\Big\{{#1}\Big\}\mskip-5mu\Big\}}
+%%% Footnote
+%\deffootnote{1.5em}{1em}{\makebox[1.5em][l]{\thefootnotemark}}
+
+
+\newcommand{\qedwhite}{\hfill \ensuremath{\Box}} %QED Box
+
+\newcommand{\todo}[1]{
+      {\colorbox{BurntOrange}{ TODO: #1 }}
+}
+\newcommand{\info}[1]{
+      {\colorbox{blue}{ (INFO: #1)}}
+}
+% Hinweis auf Programme in Datei
+\newcommand{\datei}[1]{
+      {\ttfamily{#1}}
+}
+% Hinweis auf Code in Datei
+\newcommand{\code}[1]{
+      {\ttfamily{#1}}
+}
+% bild mit defnierter Breite einfügen
+%\newcommand{\bild}[4]{
+%  \begin{figure}[!hbt]
+%    \centering
+%      \vspace{1ex}
+%      \includegraphics[width=#2]{images/#1}
+%      \caption[#4]{\label{img.#1} #3}
+%    \vspace{1ex}
+%  \end{figure}
+%}
+%% bild mit eigener Breite
+%\newcommand{\bilda}[3]{
+%  \begin{figure}[!hbt]
+%    \centering
+%      \vspace{1ex}
+%      \includegraphics{images/#1}
+%      \caption[#3]{\label{img.#1} #2}
+%      \vspace{1ex}
+%  \end{figure}
+%}
+%
+%% Bild todo
+%\newcommand{\bildt}[2]{
+%  \begin{figure}[!hbt]
+%    \begin{center}
+%      \vspace{2ex}
+%	      \includegraphics[width=6cm]{images/todobild}
+%      %\caption{\label{#1} \color{red}{ TODO: #2}}
+%      \caption{\label{#1} \todotext{#2}}
+%      %{\caption{\label{#1} {\todo{#2}}}}
+%      \vspace{2ex}
+%    \end{center}
+%  \end{figure}
+%}
+% Snippet to allow latex to interpret commas in math modes as possible breaking points.
+% This reduces problems where math mode stops LaTex from suitable line breaks.
+%\makeatletter 
+%\def\old@comma{,}
+%\catcode`\,=13
+%\def,{%
+%	\ifmmode%
+%	\old@comma\discretionary{}{}{}%
+%	\else%
+%	\old@comma%
+%	\fi%
+%}
+%\makeatother

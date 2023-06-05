@@ -1,0 +1,268 @@
+\input{../White_Beamer_Preamble.tex}
+% !Tex spellceck = en_US
+
+\title[MA Seminar Talk - Progress]{
+	\centering
+	\includegraphics[width=0.3\textwidth]{images/WLLT}\\
+	Master Thesis Seminar Talk	
+}
+%\title[MA Seminar Talk - Progress]{Master Thesis Seminar Talk}
+%\titlegraphic{
+%	\includegraphics[width=0.2\textwidth]{images/WLLT}
+%}
+\subtitle{Progress Update}
+\author[F. Beaumont]{Fabrice Beaumont}
+\institute[]{Department of Information Systems and Artificial Intelligence - \textbf{Dr. Pascal Welke}}
+\date{10. November 2022}
+
+\newcommand{\figureWidth}{7cm}
+\newcommand{\figureHorizontal}{2cm}
+\newcommand{\figureVertical}{5cm}
+%\setbeamersize{text margin left=0pt,text margin right=0pt}
+\begin{document}
+
+\begin{frame}
+	\titlepage
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Method}
+
+
+\begin{frame}
+\frametitle{Example of the whole procedure}
+\centering
+\includegraphics[width=0.8\textwidth]{images/WL_labeling_iterations}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Example of the whole procedure}\vspace{-0.75cm}
+	\centering
+	\includegraphics[width=0.9\textwidth]{images/WLLTProgram6}
+\end{frame}
+
+\section{Results}
+
+\begin{frame}\frametitle{Example: AIDS t-SNE}
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{images/plot8tSNE}
+	\end{minipage}
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{images/plot9tSNE}
+	\end{minipage}
+\vspace{2cm} \\
+\tiny{Bs: $5\%$, WLLT-d: $4$, PP: $0.4$, SVM-acc.: $80\%$}
+\end{frame}
+
+\begin{frame}\frametitle{Example: NCI1 t-SNE}
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{images/plot10tSNE}
+	\end{minipage}
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{images/plot11tSNE}
+	\end{minipage}
+	\vspace{2cm} \\
+	\tiny{Bs: $5\%$, WLLT-d: $4$, Pull: $1.0$, Push: $0.1$, SVM-acc.: $48\%$}
+\end{frame}
+
+\begin{frame}\frametitle{Example: NCI1 t-SNE}
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{images/plot12tSNE}
+	\end{minipage}
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{images/plot13tSNE}
+	\end{minipage}
+	\vspace{2cm} \\
+	\tiny{Bs: $5\%$, WLLT-d: $4$, Pull: $1.0$, Push: $0.1$, SVM-acc.: $48\%$}
+\end{frame}
+
+\begin{frame}\frametitle{Example: ENZYMES t-SNE}
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{images/plot14tSNE}
+	\end{minipage}
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{images/plot15tSNE}
+	\end{minipage}
+	\vspace{2cm} \\
+	\tiny{Bs: $5\%$, WLLT-d: $4$, Pull: $1.0$, Push: $0.1$, SVM-acc.: $11\%$}
+\end{frame}
+
+\begin{frame}\frametitle{Example: ENZYMES t-SNE}
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{images/plot16tSNE}
+	\end{minipage}
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{images/plot17tSNE}
+	\end{minipage}
+	\vspace{2cm} \\
+	\tiny{Bs: $5\%$, WLLT-d: $4$, Pull: $1.0$, Push: $0.1$, SVM-acc.: $11\%$}
+\end{frame}
+
+\begin{frame}\frametitle{Example: Sample movement error}
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{images/IdealSME}
+	\end{minipage}
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{images/plot18ClDiffSums}
+	\end{minipage}
+	\vspace{2cm} \\
+	\tiny{NCI1, Bs: $5\%$, WLLT-d: $4$, Pull: $0.1$, Push: $0.5$, SVM-acc.: $48\%$}
+\end{frame}
+
+\begin{frame}\frametitle{Example: Sample movement error}
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{images/plot19ClDiffSums}
+	\end{minipage}
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{images/plot20ClDiffSums}
+	\end{minipage}
+	\vspace{2cm} \\
+	\tiny{PROTEINS\_c, Bs: $5\%$, WLLT-d: $4$, Pull: $1.0$, Push: $0.1$, SVM-acc.: $64\%$}\\
+	\tiny{ENZYMES, Bs: $5\%$, WLLT-d: $4$, Pull: $1.0$, Push: $0.1$, SVM-acc.: $11\%$}
+\end{frame}
+
+
+\begin{frame}\frametitle{Example: Sample movement error}
+	\begin{minipage}{0.4\textwidth}
+		\includegraphics[width=\textwidth]{images/plot21tSNE}
+	\end{minipage}
+	\begin{minipage}{0.4\textwidth}
+		\includegraphics[width=\textwidth]{images/plot22tSNE}
+	\end{minipage}
+
+	\begin{minipage}{0.4\textwidth}
+		\includegraphics[width=\textwidth]{images/plot23tSNE}
+	\end{minipage}
+	\begin{minipage}{0.4\textwidth}
+		\includegraphics[width=\textwidth]{images/plot24tSNE}
+	\end{minipage}
+	\vspace{2cm} \\
+	\tiny{AIDS\_perfect, Bs: $5\%$, WLLT-d: $4$, Pull: $0.3$, Push: $0.1$, SVM-acc.: $51\%$}
+\end{frame}
+
+\begin{frame}\frametitle{Example: AIDS\_perfect}
+	Separate clusters for:\\
+	\begin{center}
+		WLLT-d=$4$, $100$ epochs, Bs=$5\%$, He\_thdl=$0.6$, Pull=$0.1$, Push=$0.1$
+	\end{center}
+	And with changed:
+	\begin{itemize}
+		\item Bs=$20\%$
+		\item WLLT-d=$2$
+		\item Lr=$0.5$
+	\end{itemize}	
+	Assume that these parameters do not interfere with the cluster separation.\\
+	Suspect instead the scaling effect of multiplicative updates. Thus try absolute updates.
+\end{frame}
+
+
+\begin{frame}\frametitle{Example: AIDS\_perfect - SVM accuracy}
+	Expected (almost) $100\%$ for iteration 0. But got only \textcolor{red}{$51\%$}.\newline
+	
+	Testing the SVM with other \textbf{kernel lambdas} $\lambda$ besides the standard 'scale' in the computation of the kernel matrix from the distance matrix $D$:
+	\[ K := \exp(-\lambda D) \]
+	\begin{center}\begin{tabular}{l|r r r r r}
+		$\lambda$ & scale 	& \textbf{auto} & $0.1$ & $0.5$ & $1.0$\\ \hline
+		Avg.Acc.  & $50.43$ & 97.94 & 79.99 & 50.54 &  50.91\\
+		Std.dev.  &  $3.69$ &  2.53 &  1.26 &  0.93 &  0.55
+	\end{tabular}\end{center}
+	Where:
+	\begin{itemize}
+		\item auto:  $\lambda = 1 / \big(\#\{\text{features}\} * \operatorname{var}(D)\big)$
+		\item scale: $\lambda = 1 / (\#\{\text{features}\})$ 
+	\end{itemize}
+	'scale' is the default of sklearn's svm implementation (since version $0.22$).
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Outlook}
+
+\begin{frame}\frametitle{Outlook}
+	\begin{itemize}
+		\item \enquote{Finish} experiments with \texttt{AIDS\_perfect}\\
+		(limits of push-pull, absolute weight update, single layer)
+		\item Try to find more truly SME improving configuration for (normal) AIDS\\
+		(Ideally increasing diff-cl distance \textbf{and} decreasing same-cl dist.)
+		\item[]
+		\item Besides this: \textbf{Terminate the evaluations} and report about the investigated parameter configurations.\\
+		Outlook for improvement of the method: e.g. Layer gradient
+	\end{itemize}	
+\end{frame}
+
+\section{Outlook - Usage}
+\begin{frame}\frametitle{Example: MUTAG WLLT layer 0}
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{images/plotWlltl0}
+	\end{minipage}
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{images/plotWlltl1}
+	\end{minipage}
+	\vspace{2cm} \\
+	\tiny{Bs: $20\%$, WLLT-d: $4$, Pull: $0.3$, Push: $0.1$, SVM-acc.: $66\%$}
+\end{frame}
+
+\begin{frame}\frametitle{Example: MUTAG WLLT layer 1}
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{images/plotWlltl2}
+	\end{minipage}
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{images/plotWlltl3}
+	\end{minipage}
+	\vspace{2cm} \\
+	\tiny{Bs: $20\%$, WLLT-d: $4$, Pull: $0.3$, Push: $0.1$, SVM-acc.: $66\%$}
+\end{frame}
+
+\begin{frame}\frametitle{Example: MUTAG WLLT layer 2}
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{images/plotWlltl4}
+	\end{minipage}
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{images/plotWlltl5}
+	\end{minipage}
+	\vspace{2cm} \\
+	\tiny{Bs: $20\%$, WLLT-d: $4$, Pull: $0.3$, Push: $0.1$, SVM-acc.: $66\%$}
+\end{frame}
+
+\begin{frame}\frametitle{Example: AIDS WLLT layer 2}
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{images/plot6wllt}
+	\end{minipage}
+	\begin{minipage}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{images/plot7wllt}
+	\end{minipage}
+	\vspace{2cm} \\
+	\tiny{Bs: $5\%$, WLLT-d: $4$, PP: $0.4$, SVM-acc.: $80\%$}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{End}
+
+\begin{frame}[c]
+	\centering %\Huge
+	\begin{huge}
+		\emph{Thank you all for listening.}\\
+	\end{huge}
+	\vspace{2 cm}
+	I will be happy to answer any \textbf{questions} and\\
+	hear your \textbf{comments}.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\appendix
+\section{Appendix}
+
+\begin{frame}[noframenumbering]
+	\frametitle{Preparation of the performance comparison}	
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.6\linewidth]{images/plot_whiteText}
+		\caption{Classification accuracies on databases using Weisfeiler-Lehman.}
+		\label{fig:plot}
+	\end{figure}
+	\tiny{\texttt{grakel.kernels.\textbf{WeisfeilerLehman}(n\_iter=[1-10], base=grakel.kernels.VertexHistogram, normalize=True)}}\\
+	\tiny{\texttt{grakel.utils.\textbf{cross\_validate\_Kfold\_SVM}(K, y, n\_iter=10)}}
+
+\end{frame}
+
+\end{document}

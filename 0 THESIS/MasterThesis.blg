@@ -1,0 +1,15 @@
+[0] Config.pm:302> INFO - This is Biber 2.9
+[0] Config.pm:305> INFO - Logfile is 'MasterThesis.blg'
+[17] biber:313> INFO - === Sat Nov 26, 2022, 23:40:03
+[119] Biber.pm:371> INFO - Reading 'MasterThesis.bcf'
+[170] Biber.pm:857> INFO - Found 86 citekeys in bib section 0
+[178] Biber.pm:3981> INFO - Processing section 0
+[207] Biber.pm:4154> INFO - Looking for bibtex format file '../../bib_file_THESIS.bib' for section 0
+[224] bibtex.pm:1468> INFO - LaTeX decoding ...
+[399] bibtex.pm:1294> INFO - Found BibTeX data source '../../bib_file_THESIS.bib'
+[896] UCollate.pm:68> INFO - Overriding locale 'en_US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[896] UCollate.pm:68> INFO - Overriding locale 'en_US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[897] Biber.pm:3809> INFO - Sorting list 'none/global//global/global' of type 'entry' with template 'none' and locale 'en_US'
+[897] Biber.pm:3815> INFO - No sort tailoring available for locale 'en_US'
+[935] bbl.pm:617> INFO - Writing 'MasterThesis.bbl' with encoding 'UTF-8'
+[963] bbl.pm:720> INFO - Output to MasterThesis.bbl

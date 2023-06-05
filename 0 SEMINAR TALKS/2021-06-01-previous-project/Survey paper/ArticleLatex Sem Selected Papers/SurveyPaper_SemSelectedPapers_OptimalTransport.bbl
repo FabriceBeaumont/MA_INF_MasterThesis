@@ -1,0 +1,28 @@
+\begin{thebibliography}{1}
+
+\bibitem{A}
+Matteo Togninalli, Elisabetta Ghisu, Felipe Llinares-L{\'o}pez, Bastian Rieck,
+  and Karsten Borgwardt.
+\newblock Wasserstein weisfeiler-lehman graph kernels.
+\newblock In {\em Advances in Neural Information Processing Systems}, pages
+  6439--6449, 2019.
+
+\bibitem{B}
+Hermina~Petric Maretic, Mireille El~Gheche, Giovanni Chierchia, and Pascal
+  Frossard.
+\newblock Got: an optimal transport framework for graph comparison.
+\newblock In {\em Advances in Neural Information Processing Systems}, pages
+  13876--13887, 2019.
+
+\bibitem{C}
+Nathaniel Lahn, Deepika Mulchandani, and Sharath Raghvendra.
+\newblock A graph theoretic additive approximation of optimal transport.
+\newblock In {\em Advances in Neural Information Processing Systems}, pages
+  13836--13846, 2019.
+
+\bibitem{discreteBible}
+Bernhard Korte, Jens Vygen, B~Korte, and J~Vygen.
+\newblock {\em Combinatorial optimization}, volume~2.
+\newblock Springer, 2012.
+
+\end{thebibliography}

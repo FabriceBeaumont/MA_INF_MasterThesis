@@ -1,0 +1,218 @@
+\section{Introduction} \label{sec:introduction}
+	%%% APPLICATIONS for graph similarity measures & kernels %%%	
+	Digitization is steadily increasing the amount of digitally stored structured data.
+	Common examples of such are images~\cite{2003_Barla_CONF, 2005_Boughorbel_IEEE, 2007_Grauman_CONF, 2007_Harchaoui_IEEE}, natural language texts ~\cite{1999_Manning_CONF}, semi-structured data such as HTML and XML~\cite{2000_Abiteboul_CONF}, 3d shapes~\cite{2015_Bai_CONF}, social and sensor networks, program flows, and structures in chemo- and bio-informatics (e.g. molecules, proteins, genes and chemical compounds)~\cite{2005_Borgwardt_CONF, 2005_Froehlich_ICML, 2011_Shervashidze_JMLR}.
+	Based on functional properties of the represented structures, one may define classifications on the graphs used for their representation.
+	Such a classification can indicate, for example, the mutagenic effect of chemical compounds on a bacterium~\cite{1991_Debnath_CONF}. 
+	
+	To extend the classification of known graph instances to unknown instances is one of many different challenges when working with such graph data.
+	In this framework it is usually assumed that graphs with similar structure represent structures with similar properties.
+	Therefore one assumes that such graphs with are classified similarly too.
+	Thus, it is important to quantify the structural similarity between graphs~\cite{2011_Shervashidze_JMLR}. 
+	Due to the lack of efficient similarity measures between graphs the analysis, classification, and prediction of graph data stays challenging.	
+%	Bei der Herstellung neuer Medikamente versucht man ihre gewünschte Wirkung zu maximieren und die Nebenwirkungen zu minimieren. In der Pharmakologie kann mit der Klassifikation von Molekülen zum Beispiel die Rolle bestimmter Moleküle bei dem Auftreten einer Krankheit bestimmt werden. Beispielsweise konnte auf diese Weise auch Datenbasen mit HIV-Hemmstoffen klassifiziert werden, um entscheidende Hemmstoffe zu erkennen.\cite{TheGastonTool}\\ %TODO: siehe GASTON Tool - Stoffe klassifiziert?
+	
+	The most sensitive similarity measure is the binary decision, whether two given graphs are isomorphic (topologically identical) or not.
+	This solves the so called Graph Isomorphism Problem, which is in NP~\cite{1979_Garey_BOOK}. % is in NP
+	That is, no polynomial algorithm to detect graph isomorphisms are known, and it has been conjectured that no such algorithm can exist~\cite{1977_Read_CONF}.
+	Furthermore, the task of testing, weather for two given graphs one is isomorphic to a subgraph of the other one, is NP-complete~\cite{1979_Garey_BOOK}. 
+	The seemingly reasonable approach to restrict the isomorphism test to a unique subgraph, like the largest common subgraph, is of limited use, since finding such largest common subgraphs is a NP-complete problem as well~\cite{1979_Garey_BOOK}.
+	
+	There are several different approaches to defining a more sophisticated similarity measure.
+	To give a few examples, researchers have based similarity measures on the graph edit distance~\cite{1983_Bunke_ELSEVIER,2005_Froehlich_ICML}, optimal assignment kernels~\cite{2005_Froehlich_ICML}, the
+	skew spectrum~\cite{2008_Kondor_ICML} and the graphlet spectrum~\cite{2009_Kondor_ICML, 2009_Shervashidze_NIPS}.
+	A common approach to define graph similarity measures, is to define a kernel function on graph representations.
+	Such a graph kernel have the desirable property of enabling the application of kernelized learning methods on graph-structured data.
+	Most prominently a reduced computational cost when invoking the kernel trick.
+	Furthermore, by restricting the kernels to substructures of graphs, they sometimes can be computed in polynomial time~\cite{1999_Haussler_CONF, 2008_Hofmann_CONF}.
+	This restriction however may at the same time limit their ability to capture complex characteristics of the graphs.	
+	For example the WL Subtree Kernel uses special vertex labels, so-called Weisfeiler-Leman labels (WL-labels), which recursively summarize information on the neighborhoods in the graph.
+	Given WL-labels for a fixed number of iterations (recursions), the WL Subtree Kernel counts the WL-labels both graphs have in common~\cite{2011_Shervashidze_JMLR} (proposed in 2011).
+	This counting procedure is a simplified aggregation of information, and discards both the information on what WL-labels the two graphs have in common, and all information on WL-labels, which the two graphs do not have in common.
+	The information loss due to simplified aggregations like these may be the reason, why most proposed variants do not generalize well to graphs with high-dimensional continuous vertex attributes~\cite{2011_Shervashidze_JMLR}. 
+	Generally speaking, the trade-off between the expressiveness of graph representations and the computational effort of their comparison, guides the research in this area.
+	In 2016, \citeauthor{2016_Kriege_NIPS} proposed their WL-Optimal Assignment Kernel (WL-OA), which opted for defining a bijection between vertices such that as many iterations of equal WL-labels as possible are preserved.
+	Three years later, in 2019, \citeauthor{2019_Togninalli_NIPS} established their Wasserstein WL Graph Kernels as the new state of the art.
+	Unlike before, two graphs are not compared by counting common WL-labels between them.	
+	Instead, the graphs are represented as vectors of WL-labels, which are compared by using a Wasserstein Distance.
+	The Wasserstein Distance in turn is defined based on a ground distance between the WL-labels themselves.
+	For categorical original vertex labels, the authors propose to use the normalized Hamming distance for this ground distance.	 
+	Similarly to the WL-OA, using the Wasserstein Distance can be seen as an assignment between the graphs as well.
+	
+	However, these rigid ground metrics (e.g. the normalized Hamming distance) do not permit to adjust the distances between the WL-labels (or attributes) used in the graphs.
+	Such adjustment may be advantageous, since the WL-labels represent entire substructures (also known as unfolding trees~\cite{2021_Schulz_CONF}), whose importance may vary, depending on the classification task.
+	We argue that it is reasonable to assume that the same set of graphs (e.g., a set of molecules), can be classified differently according to different structural properties.
+	But using the same ground distance, yields the same distance measurements for the graphs, independent of their classification.
+	That is, the proposed Wasserstein WL Graph Kernel does allow to compare substructures between graphs, but does not distinguish between their importance with respect to the classification task at hand.
+	
+	In this thesis, I present research on an approach to iteratively change and adapt the used ground distance.	
+	This allows to introduce application specific knowledge about the similarity of the original vertex labels (or attributes) or even whole substructures (unfolding trees).
+	Since this knowledge may not be known or only partially known, I use machine learning to learn these similarities.
+	If such a learning procedure succeeds, the learned similarities on the WL-labels may reveal application based knowledge, linked to the given classifications.
+		
+	\paragraph{Outline of the Thesis} 
+	The remaining document is structured as follows.
+	This chapter continues with summarizing the idea of the researched method, and the research question.		
+	Next, related work is presented, the research plan sketched, and the results are briefly summarized.	
+	The next chapter contains theoretical background on the implemented method (section \ref{sec:theoretical_background}) and includes the most necessary definitions and theorems to understand the proposed method and its evaluation.
+	The chapter after this, presents the implemented method in detail (section \ref{sec:method}) and its evaluation (subsection \ref{sec:method_eval_ewl}).
+	Finally, the experiments on the implemented method are presented and discussed (section \ref{sec:experiments}).
+	At last, a conclusion is given, to review and answer the research questions, and sketch an outlook for future work (section \ref{sec:outlook}).
+		
+	%%% METHOD %%%
+    \subsection{Problem Statement and Method} \label{subsec:problem_statement_method}    	    	
+    	The goal of this thesis is to define a similarity measure between graphs.    	    	
+    	The approach is based on the Wasserstein Weisfeiler-Leman (WWL) Graph Kernel proposed by \citeauthor{2019_Togninalli_NIPS}~\cite{2019_Togninalli_NIPS}.
+    	The key difference is, to not use a fixed ground distance in the definition of the Wasserstein Distance used in the WWL Kernel, but to use machine learning to learn a more favorable ground distance.
+    	To do so, the Wasserstein Distance is formulated as Tree-sliced Wasserstein Distance, and its ground distance as tree-metric.
+    	The tree metric in turn is based on edge weights, assigned to the hierarchy tree induced by WL-labels.    	
+    	The update rule in the learning process aims to decrease the distance between two graph samples, if they belong to the same class, and increase it otherwise.
+    	The distance de- and increase is realized by changing the edge weights for the tree-metric.
+    	The precise definition of the learning process shall be developed during the research.
+    	In this thesis, we refer to the described method as \textbf{learned Wasserstein Weisfeiler Leman labeling tree} (\textbf{l-WWLLT}) method and to the implied similarity measure and graph kernel as \textbf{l-WWLLT distance} and \textbf{l-WWLLT Kernel} accordingly.
+    	
+	%%% RESEARCH QUESTION %%%
+	\subsection{Research Question} \label{subsec:research_question}
+		As mentioned, the goal is to implement a learning procedure, which improves the implied graph distances.
+		This improvement is evaluated in two ways.
+		First, by using clustering metrics to evaluate the relation between the given classification and the learned l-WWLLT distances.
+		Second, by evaluating the accuracy of a Support Vector Machine (SVM) with respect to the l-WWLLT Kernel.
+		
+		An improvement is indicated by improving the clustering metrics with respect to their definition of better clustering, or by improving the accuracy of the SVM.	
+				
+		The research question of this thesis is to decide, if the l-WWLLT method can improve the resulting graph similarity measure over its definition at the initialization.		
+		Furthermore, the flexibility of the graph similarity measure shall be investigated by evaluating several different implementation and parameter choices.
+			
+	%%% RELATED WORK %%%
+    \subsection{Related Work} \label{subsec:related_work}
+    	
+    	This section contains definitions of other graph similarity measures, which relate to the proposed l-WWLLT method.
+    	The section is structured mostly in chronological order.
+    	Early studies use almost exclusively vector-based descriptions of the graphs~\cite{2005_Borgwardt_IEEE}.
+    	Later, the similarities are defined on simply counting equivalent substructures.	
+    	Over time, research shifted to more complex comparisons such as optimal assignment functions.
+    	
+	    %%% Graph Kernels %%%
+	    \paragraph{Early Graph Kernels}
+		In 1999, Haussler introduced a more sophisticated way of designing kernels on structured data by proposing so-called $\mathcal{R}$-convolution kernels, where $\mathcal{R}$ indicates a relation between graphs and its substructures~\cite{1999_Haussler_CONF, 2003_Kashima_ICML, 2019_Togninalli_NIPS}.
+		Convolution kernels generalize the class of radial basis and simple exponential kernels, and they are well suited to represent joint probability distributions on pairs of substructures~\cite{1999_Haussler_CONF}.
+		With respect to graph kernels, this approach translates to decomposing a graph into substructures and defining the kernel value as a combination (for example sums or averages) of similarities defined on these substructures.
+%		Convolution kernels are characterized by defining the similarity as a summation of local substructures similarity.
+		Many graph kernels can be categorized as such convolution kernels and use substructures like for example walks~\cite{2003_Gaertner_CONF,2003_Kashima_ICML}, paths~\cite{2005_Borgwardt_IEEE}, graphlets~\cite{2004_Horvath_KDD, 2009_Shervashidze_NIPS}, subtree patterns~\cite{2003_Ramon_CONF, 2008_Mahe_CONF} or combinations of them~\cite{2011_Shervashidze_JMLR}.
+								
+		In 2003, Thomas Gärtner, Peter Flach and Stefan Wrobel showed that computing any kernel that is capable of fully recognizing the structure of graphs (i.e. solving the Graph Isomorphism Problem) is NP-hard~\cite{2003_Gaertner_CONF}.
+		Such kernels are also referred to as complete graph kernels~\cite{2003_Ramon_CONF}.
+		There are however polynomial time algorithms to decide the Graph Isomorphism Problem for several restricted graph classes, for example planar graphs~\cite{2012_Kobler_BOOK}.
+		Therefore, for an efficient (incomplete) graph kernel, it can be assumed that some structural information is discarded depending on the graph substructures used.
+
+		The first attempts in the quest of finding an efficient and yet expressive graph kernel, are based on strings and trees~\cite{1999_Haussler_CONF}, 
+		(random) walks (2002 and 2003)~\cite{2002_Gartner_NIPS, 2003_Kashima_ICML}\footnote{Walk kernels usually count the number of matching walks of fixed length. These can be efficiently computed as the direct product of adjacency matrices.}, 
+		frequent subgraphs (FSG, 2004)~\cite{2004_Kuramochi_IEEE}, and
+		tree and cyclic patterns (2003 and 2004)~\cite{2003_Ramon_CONF, 2004_Horvath_KDD}.			
+		Still, some of these substructures are computationally expensive or even NP-hard to compute. 
+		For example, the computation of general cycles is NP-hard, and a kernel based on cyclic patterns may only be efficiently applicable to graphs with a fixed number of cycles of limited length~\cite{2005_Borgwardt_IEEE}.
+		On the other hand, if the substructure is to simple, their expressiveness may be to low.
+		For example, with an increasing walk length in Random Walk Kernels one may find that classification accuracy decreases~\cite{2005_Borgwardt_IEEE}.
+		The kernel proposed in 2003 by \citeauthor{2003_Ramon_CONF} is based on subtree patterns and trades an expensive computation against improvements over walk based kernels~\cite{2003_Ramon_CONF}.
+		There also exist variations, adapted to interpolate between different subtree patterns~\cite{2008_Mahe_CONF}.
+		In 2005, \citeauthor{2005_Borgwardt_IEEE} proposed a Shortest Path Kernel which improved over all walk kernels~\cite{2005_Borgwardt_IEEE}.	
+		In addition to that, this kernel has the desired qualities, that it is computable in polynomial time (using Dijkstra's or Floyd-Warshall's algorithm), positive definite, and applicable to a wide range of graphs.
+	
+		So far, the mentioned graph kernels scale at least qubically in the number of graph vertices~\cite{2009_Shervashidze_PMLR}.
+		To overcome this drawback and introduce a graph kernel, which is more efficiently applicable to bigger graphs, \citeauthor{2009_Shervashidze_PMLR} proposed in 2009 a Graphlet Kernel, which counts pre-defined subgraphs of limited size.
+		The classification accuracies of their kernel is comparable to the previous state of the art kernels like the Shortest Path Kernel.
+		Significant is the reduced runtime on slightly larger datasets~\cite{2009_Shervashidze_PMLR}.
+		
+		%MAYBE Include \cite{2010_Costa_ICML} Fast Neighborhood Subgraph Pairwise Distance Kernel
+				
+		% WL Graph Kernels - 2011_Shervashidze_JMLR
+		\paragraph{Weisfeiler-Leman Graph Kernels}
+		However, the success of all these approaches (in terms of SVM classification accuracy) was overshadowed by the Weisfeiler-Leman Graph Kernel proposed by \citeauthor{2011_Shervashidze_JMLR} in 2011~\cite{2011_Shervashidze_JMLR}.
+		This kernel is based on the $1$-dimensional WL-labeling scheme and it can be combined with any other graph kernels (base kernels), since it simply sums up their results over the graphs, labeled with WL-labels for every WL iteration. 
+		%By definition of the WL-labeling scheme, the kernel can be interpreted as a specific kind of subtree pattern kernel.
+		The authors also present a subtree, edge and shortest path variation of the WL Kernel in their article titled \enquote{Weisfeiler-Leman Graph Kernels}~\cite{2011_Shervashidze_JMLR}. 
+		For example, the Weisfeiler-Leman Subtree Kernel counts the WL-labels two graphs have in common in the first $D$ WL-labeling iterations.
+		Considering the normalized histogram of all WL-labels up to iteration $D$ for a graph allows to compute this WL Subtree Kernel by taking the dot product of such feature vectors.
+		%In theory, the runtime of the proposed WL Subtree Kernel scales quadratically in the number of vertices.
+		The proposed WL Subtree, WL Edge and WL Shortest Path Kernels improved in terms of classification accuracy on the datasets \textit{NCI1}, \textit{NCI109}, and \textit{ENZYMES}\footnote{These datasets are from the TUDatasets~\cite{2016_Kersting_CONF, 2020_Morris_CONF}}\saveFN\fnname\; over the mentioned Walk Kernel~\cite{2003_Ramon_CONF}, the Random Walk and $p$-Random Walk Kernel~\cite{2010_Vishwanathan_CONF, 2003_Kashima_ICML}, the Graphlet Count Kernel~\cite{2009_Shervashidze_PMLR}, and over the Shortest Path Kernel~\cite{2005_Borgwardt_IEEE}.
+		For the dataset \textit{DD} (or \textit{D\&D})\useFN\fnname\; their accuracies are comparable to the Graphlet Count Kernel but still improved over all other kernels.
+		In terms of runtime, the experiments with the three WL Kernels are competitive to the other kernels on the datasets of smaller graphs.
+		But especially the WL Subtree Kernel greatly outperforms the other kernels on datasets of graphs with thousands of vertices.
+		On the dataset \textit{DD}\useFN\fnname, subtree-patterns of height up to ten vertices are computed in eleven minutes, while all other kernels required at least half an hour and in extreme cases over one year of runtime~\cite{2011_Shervashidze_JMLR}.
+		These results motivated the usage of datasets with larger graphs and continuous or high-dimensional vertex attributes.
+				
+		% WL-OA - 2016_Kriege_NIPS
+		\paragraph{Optimal-Assignment Graph Kernels}
+		As mentioned, most of the graph kernels up to this point in time are convolution kernels.	
+		While convolution kernels add up pairwise similarities of substructures, assignment kernels on the other hand define bijections between such substructures (and thereby solving an assignment problem).
+		This can provide a more valid notion of similarity but also often yields indefinite functions, which complicates their use in kernel methods.
+		The approach has been successfully applied to, for example, general graph matching~\cite{2005_Gori_IEEE, 2009_Riesen_CONF} and kernel-based classification~\cite{2005_Froehlich_ICML, 2015_Bai_CONF, 2015_Schiavinato_CONF}.
+		In 2016, Nils M. Kriege, Pierre-Louis Giscard, and Richard C. Wilson improved over the WL Kernel by defining an assignment kernel, which they named Weisfeiler-Leman Optimal Assignment Kernel (WL-OA)~\cite{2016_Kriege_NIPS}.
+		This kernel defines a bijection between as many equal WL-labels for all vertices between two graphs as possible~\cite{2016_Kriege_NIPS}. % Def.: page 7
+		Given the associated hierarchy on which the WL-labels are based, this kernel can be computed in linear time.
+		They also presented optimal assignment kernels based on vertices or edge matchings only.
+		
+		% WWL graph kernel - 2019_Togninalli_NIPS
+		\paragraph{Wasserstein Weisfeiler-Leman Graph Kernels}
+		As mentioned in the introduction, the Wasserstein WL (WWL) Graph Kernels were established as the new state of the art in 2019~\cite{2019_Togninalli_NIPS}.
+		These kernels are computed using the Laplacian Kernel on a graph similarity measure which is based on the WL-labeling scheme and the Wasserstein Distance.
+		More precisely, the graph similarity is computed using a discrete $\mathcal{L}_1$-Wasserstein distance (Graph Wasserstein Distance) on a graph embedding scheme which concatenates the WL-labels of all vertices in a graph for a fixed number of iterations.
+		As ground distance for the Wasserstein Distance the Hamming distance is used (in the case of categorical vertex labels).		
+		The WWL kernel performs comparably to the WL-OA kernel for categorical vertex labels.
+		Moreover, it generalizes well to attributed vertex labels and is therefore better suited for more complex datasets~\cite{2019_Togninalli_NIPS}.
+		One may consider the WL-OA (optimal assignment) as a \enquote{hard-matching} and the WWL (optimal transport) as a \enquote{soft-matching} between vertices.
+		
+		\paragraph{A baseline for Graph Kernels}
+		At least until 2020, many researchers\footnote{For example see \cite{2007_Wale_CONF, 2016_Kriege_NIPS, 2011_Shervashidze_JMLR, 2015_Yanardag_CONF, 2020_Siglidis_CONF, 2020_Dwivedi_CONF, 2021_Schulz_CONF}}\; used graph datasets, which are summarized in the graph dataset collection \textbf{TUDatasets}~\cite{2016_Kersting_CONF, 2020_Morris_CONF}.		
+		However, \citeauthor{2019_Schulz_CONF} showed in 2019, that many of these datasets may be insufficient in their role as benchmark datasets when it comes to the task of measuring the ability to capture and compare graph structures~\cite{2019_Schulz_CONF}.
+		As a comparison, they defined a simple baseline graph kernel, which ignores graph structures completely.
+		Their so-called No-graph (NoG) Kernel simply accumulates all vertex and edge features and ignores the edge definitions themselves, thereby ignoring the graph structure.
+		They compared the performance of the NoG Kernel against the Probabilistic Frequent Subtree Kernel~\cite{2017_Welke_CONF}, the Frequent Subgraph Kernel ~\cite{2004_Kuramochi_IEEE}, the Cyclic Pattern Kernel~\cite{2004_Horvath_KDD}, the Graphlet Sampling Kernel~\cite{2009_Shervashidze_PMLR}, the Shortest Path Kernel~\cite{2005_Borgwardt_IEEE}, the Random Walk Kernel~\cite{2003_Gaertner_CONF}, and against the WL Kernels~\cite{2011_Shervashidze_JMLR}.
+		Their NoG Kernel outperformed almost all these kernels on almost all previously used datasets, such as \textit{BZR}, \textit{ENZYMES}, \textit{MSRC\_21}, and \textit{REDDIT-BINARY}\useFN\fnname.
+		Only the WL Kernel, performed better than the NoG in more cases than not.
+		But it did so still on only few datasets like \textit{NCI1}, \textit{NCI109}, and \textit{SYNTHETICnew}\useFN\fnname.
+		Since the goal in constructing graph kernels in general is to capture the graph structures and not just the sets of their vertex and edge attributes, the NoG kernel can be considered as a baseline kernel.
+				
+		%%% Other similarity measures %%%
+		\paragraph{Mentioning of other Strategies}
+		It should be mentioned that there exist other attempts to improve the tools for graph learning, besides graph kernels.
+		For example Graph Neural Networks (GNNs)~\cite{2009_Scarselli_IEEE, 2020_Dwivedi_CONF, 2019_Xu_CONF}.
+		The WL-labeling scheme can be seen as a GNN, which iteratively propagates vertex states until an equilibrium is found.
+		But there exists more research on different kinds of GNNs, like for example Graph Attention Networks by \citeauthor{2017_Velickovic_ICLR}.
+		These generalize so-called Recursive Neural Networks to deal with general classes of graphs such as cyclic directed and undirected graphs~\cite{2017_Velickovic_ICLR}.
+		Another related approach was presented in 2016 by \citeauthor{2016_Cheng_CONF} on Long Short-Term Memory-Networks for Machine Reading~\cite{2016_Cheng_CONF}.\newline	
+		%- Neighborhoods as Rooted DAG (directed acyclic trees) %TODO> G. D. S. Martino, N. Navarin, and A. Sperduti. A tree-based kernel for graphs. In SIAM SDM, pages 975–986, 2012. mentioned in chapter 1 of 2021_Schulz_CONF
+		
+		Since the approach researched in this paper is focused on the WL-labeling scheme, we do not go into further detail of these other approaches.
+		After describing the proposed l-WWLLT method in section \ref{sec:method} in more detail, we reflect on similarities to the just presented related work in section \ref{subsec:comparison_to_other_methods}.
+	
+	%%% RESEARCH PLAN %%%
+    \subsection{Research Plan} \label{subsec:research_plan}
+                
+        The research plan can be divided into the following five steps.
+        First, the proposed method and its evaluation are implemented.
+        This includes specifying and redefining the used methods and evaluations if deemed necessary.
+        Second, experiments are conducted to search for appropriate parameters and meaningful applications of the l-WWLLT method.        
+        Due to the amount of (hyper)parameters and limited time, an extensive grid search is not of primary concern.
+        Rather, a series of different experiments shall be conducted to shed light on different aspects of the l-WWLLT method and answer the research question.
+        Third, research question is answered.
+        Fourth, meaningful results are reported and the method is compared with the state of the art.
+        Fifth, provide an outlook on how the method may be further improved.
+        
+	%%% RESULTS %%%
+    \subsection{Results} \label{subsec:results}
+		The experiments (section \ref{subsec:experiments}) show that the proposed l-WWLLT method can indeed improve the original definition of the similarity measure.
+		In other words, there are configurations of the learning method where the edge weights are adjusted favorably in terms of both clustering metrics and SVM accuracy.
+		The main research question can be answered positively.
+		However, the experiments also show that this is highly dependent on the parameter settings and may perform poorly for most configurations.
+		It is also observed that the learning method may improve individual success metrics (e.g., SVM accuracy) but not the others (e.g., cluster scores) at the same time.
+		The failed configurations show how changing edge weights based on two sample graphs, affects the distance between many graphs in a potentially degenerative way.
+		Thus, local improvement can lead to global degradation of the resulting similarity measure.
+		
+		Nevertheless for four our of seven dataset, a l-WWLLT Kernel was computed, which improves over all other considered kernels with state of the art performance.
+		On three datasets a comparable performance was measured and on only one dataset all computed l-WWLLT Kernels perform worse than the state of the art.
+		Performance wise, the l-WWLLT can be compared to the No-Graph Kernel~\cite{2019_Schulz_CONF} and potentially improve over it.
+		
+		Further research is needed to extend the experiments to larger and more complex datasets.
+		And to argue, whether predicable performances of the resulting l-WWLLT Kernel can be learned with more suitable parameters or method variations.
+       

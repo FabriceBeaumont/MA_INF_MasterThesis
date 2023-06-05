@@ -1,0 +1,9 @@
+
+AIDS Perfect
+The WLLT does not separate the clusters by default. Consider the case that two graphs have completely different initial labels.
+This is not the case. 
+Thus the original WLLT does separate the clusters perfectly since all representations of graphs in the same class have at least one common non-negative entry (with respect to the original labels). 
+And all representations of graphs in different classes have no common non-negative entry at all.
+The SVM accuracy of the similarity measure arising from the initial ground metric was 99.49 %.
+Among other, this experiment verifed, that the implemented method can separate classes with respect to the defined graph representations and the WLLT.
+It also verified, that the learning method does try to improve on this score, since a few experiments (with batch size in $\{5\%, 20\%\}$, pull factors in $\{0.1, 0.3\}$ and the push factor set to $0.1$) showed no significant degeneration of the resulting qualitiy measure for at least 100 learning epochs.

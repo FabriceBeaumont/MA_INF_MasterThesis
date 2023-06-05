@@ -1,0 +1,18 @@
+
+Maintain a set of slides containing
+
+- Supervisor name on the title slide.
+- a formal problem definition/statement of your thesis project and
+- *all* preliminary notions and definitions relevant to understand it.
+
+Think of it as a slide version of your proposal. 
+
+As PDF to Sciebo:
+    https://uni-bonn.sciebo.de/s/hskDEJx1YHONQik (Password: MLAIThesis)
+    <LastName>_<FirstName>_<ShortTitle>.pdf
+    "_v1", "_v2", etc.
+at least one day *before* the thesis seminars
+
+These slides are for reference and preparation only.
+However, it is probably a good idea to include them in the *appendix* of your regular
+presentations and only present them when they change substantially.

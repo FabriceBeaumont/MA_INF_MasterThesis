@@ -1,0 +1,75 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{MA_Titlepage}[2010/04/25] % \ProvidesPackage{BA_Titelseite}[2010/04/25]
+
+%%%%%%%%%%%%%%%%
+% Titlepage:
+%%%%%%%%%%%%%%%%
+\newcommand*{\supervisor}[1]{\def\@supervisor{#1}}
+\supervisor{}
+\newcommand*{\reviewersecond}[1]{\def\@reviewersecond{#1}}
+\reviewersecond{}
+\newcommand*{\outputtype}[1]{\def\@outputtype{#1}}
+\outputtype{}
+\newcommand*{\dateofbirth}[1]{\def\@dateofbirth{#1}}
+\dateofbirth{}
+\newcommand*{\birthplace}[1]{\def\@birthplace{#1}}
+\birthplace{}
+\newcommand*{\institute}[1]{\def\@institute{#1}}
+\institute{}
+
+\renewcommand\maketitle{\begin{titlepage}%
+  \let\footnotesize\small
+  \let\footnoterule\relax
+  \let \footnote \thanks
+  \null\vfil
+
+\begin{center}%
+
+\parbox{10cm}{\centering\huge\bfseries \@title \par}\\
+\vspace{1em}
+{\Large
+\vspace{1em}
+\@author}\\
+\vspace{1em}
+Born on the \@dateofbirth \ in \@birthplace\\
+\vspace{1em}
+{\large \@date}
+\vspace{10em}
+
+{\large \@outputtype}\\
+\vspace{1em}
+{\large \@supervisor}\\
+\vspace{1em}
+{\large \@reviewersecond}\\
+\vspace{1em}
+\centerline{{\large\scshape \@institute}}
+\vspace{10em}
+
+\centerline{{\large\scshape Faculty of Mathematics and Natural Sciences of the}} %\centerline{{\large\scshape Mathematisch-Naturwissenschaftliche Fakult\"at der}}
+\vspace{1em}
+\centerline{{\large\scshape Rhenish Friedrich Wilhelm University of Bonn}} %\centerline{{\large\scshape Rheinischen Friedrich-Wilhelms-Universit\"at Bonn}}
+
+
+\end{center}
+
+\vfil\null
+\clearpage
+\thispagestyle{empty}\mbox{}
+\clearpage
+\pagenumbering{arabic}
+
+\end{titlepage}%
+
+  \setcounter{footnote}{0}%
+  \global\let\maketitle\relax
+  \global\let\@author\@empty
+  \global\let\@date\@empty
+  \global\let\@title\@empty
+  \global\let\title\relax
+  \global\let\author\relax
+  \global\let\date\relax
+  \global\let\and\relax
+}
+% END Titlepage
+
+\endinput

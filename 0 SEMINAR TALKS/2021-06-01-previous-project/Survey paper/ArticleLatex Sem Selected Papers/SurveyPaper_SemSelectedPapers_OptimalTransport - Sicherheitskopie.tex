@@ -1,0 +1,378 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Journal Article
+% LaTeX Template
+% Version 1.4 (15/5/16)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Frits Wenneker (http://www.howtotex.com) with extensive modifications by
+% Vel (vel@LaTeXTemplates.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+% !TeX spellcheck = en_GB 
+%\documentclass[twoside,twocolumn]{article}
+\documentclass[twoside]{scrartcl}
+
+\usepackage{blindtext} % Package to generate dummy text throughout this template 
+
+\usepackage[sc]{mathpazo} % Use the Palatino font
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\linespread{1.05} % Line spacing - Palatino needs more space between lines
+\usepackage{microtype} % Slightly tweak font spacing for aesthetics
+\usepackage{csquotes}
+\usepackage{amsmath}
+\usepackage{mathtools}
+
+\usepackage[english]{babel} % Language hyphenation and typographical rules
+
+\usepackage[hmarginratio=1:1,top=32mm,columnsep=20pt]{geometry} % Document margins
+\usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
+\usepackage{booktabs} % Horizontal rules in tables
+
+\usepackage{lettrine} % The lettrine is the first enlarged letter at the beginning of the text
+
+\usepackage{enumitem} % Customized lists
+\setlist[itemize]{noitemsep} % Make itemize lists more compact
+
+\usepackage{abstract} % Allows abstract customization
+\renewcommand{\abstractnamefont}{\normalfont\bfseries} % Set the "Abstract" text to bold
+\renewcommand{\abstracttextfont}{\normalfont\small\itshape} % Set the abstract itself to small italic text
+
+\usepackage{titlesec} % Allows customization of titles
+\renewcommand\thesection{\Roman{section}}
+\renewcommand\thesubsection{\Roman{subsection}}
+\renewcommand\thesubsubsection{\alph{subsubsection}}
+
+
+\titleformat{\section}[block]{\large\scshape\centering}{\thesection.}{1em}{}
+\titleformat{\section}[block]{\large\scshape}{\thesection.}{1em}{}
+\titleformat{\subsection}[block]{\large\scshape}{\thesection.\thesubsection.}{1em}{}
+\titleformat{\subsubsection}[block]{\scshape}{\thesection.\thesubsection.\thesubsubsection.}{1em}{}
+\titleformat*{\paragraph}{\scshape}
+
+\usepackage{fancyhdr} % Headers and footers
+\pagestyle{plain}
+%\pagestyle{fancy} % All pages have headers and footers
+%\fancyhead{} % Blank out the default header
+%\fancyfoot{} % Blank out the default footer
+%\fancyhead[C]{Running title $\bullet$ May 2016 $\bullet$ Vol. XXI, No. 1} % Custom header text
+%\fancyfoot[RO,LE]{\thepage} % Custom footer text
+
+%\usepackage{titling} % Customizing the title section
+
+\usepackage{hyperref} % For hyperlinks in the PDF
+
+\newcommand{\IP}[1][]{%
+	\ifthenelse{\equal{#1}{}}{\mathbb{P}}{\mathbb{P}[#1]}%
+}
+\newcommand{\IN}{\mathbb{N}}
+\newcommand{\IR}{\mathbb{R}}
+\newcommand{\IZ}{\mathbb{Z}}
+\newcommand{\IQ}{\mathbb{Q}}
+\newcommand{\ID}{\mathbb{D}}
+\newcommand{\IC}{\mathbb{C}}
+\newcommand{\IE}{\mathbb{E}}
+\newcommand{\vF}{\mathcal{F}}
+\newcommand{\vA}{\mathcal{A}}
+\newcommand{\vD}{\mathcal{D}}
+\newcommand{\vB}{\mathcal{B}}
+\newcommand{\vP}{\mathcal{P}}
+\newcommand{\vJ}{\mathcal{J}}
+\newcommand{\vN}{\mathcal{N}}
+\newcommand{\vU}{\mathcal{U}}
+\newcommand{\Bin}{\mathop{\mathrm{Bin}}}
+\newcommand{\Poi}{\mathop{\mathrm{Poi}}}
+\newcommand{\Cov}{\mathop{\mathrm{Cov}}}
+\newcommand{\Var}{\mathop{\mathrm{Var}}}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+%\setlength{\droptitle}{-4\baselineskip} % Move the title up
+
+%\pretitle{\begin{center}\Huge\bfseries} % Article title formatting
+%\posttitle{\end{center}} % Article title closing formatting
+
+\title{Survey Paper - Optimal Transport}
+\subtitle{Seminar Selected Papers from NeuroIPS 2019 - SS 2020}
+\author{\textsc{Fabrice beaumont} \\[1ex] 
+	\normalsize Rheinische Friedrich-Wilhelms-Universit\"at Bonn\\
+	\normalsize \href{mailto:s6fabeau@uni-bonn.de}{s6fabeau@uni-bonn.de}  
+}
+\date{31.08.2020}
+\setlength\parindent{0pt}
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+% Print the title
+\maketitle
+
+%----------------------------------------------------------------------------------------
+%	ARTICLE CONTENTS
+%----------------------------------------------------------------------------------------
+
+
+\section{Introduction}
+
+\lettrine[nindent=0em,lines=2]{I} n this report three scientific papers, which all were presented at the \textit{33rd Conference on Neural Information Processing Systems} (NeurIPS 2019 in Vancouver, Canada) are being summarized and compared. The papers are:\begin{enumerate}
+	\item \enquote{\textit{Wasserstein Weisfeiler-Lehman Graph Kernels}} by Togninalli, Llinares-López, Ghisu, Rieck and Borgwardt (ETH Zurich and the Swiss Institute of Bioinformatics) \cite{A}
+	\item \enquote{\textit{GOT: An Optimal Transport Framework for Graph Comparison}} by 
+	 Maretic, Chierchia, EL Gheche and Frossard (Ecole Polytechnique Fédérale de Lausanne) \cite{B}
+	\item \enquote{\textit{A Graph Theoretic Additive Approximation of Optimal Transport}}
+	by Lahn, Mulchandani and Raghvendra (Virginia Tech)
+	\cite{C}
+\end{enumerate}
+
+All three papers relate to the topic of Optimal Transport and the Wasserstein distance in some way. The papers will be presented by summarizing the underlying motivation, the presented method and the achieved results. On top of that a comment on the papers as a whole are made.\\
+Subsequently the three papers are compared and related to each other.\\
+
+Two of the papers (\cite{A} and \cite{B}) use similar but slightly different definitions of graphs. To avoid redundancy a single detailed definition which suffices for both papers is now presented:\\
+An \textit{undirected graph} $G=(V,E)$ is a tuple of a set of nodes $V$ and a set $E\subseteq \{ (v,w)|\;\; v,w\in V \}$ of edges. The set $N(v):= \{ u\in V|\; \{u,v\}\in E \}$ is called the \textit{neighborhood} of a node $v\in V$.\\
+Edges $e\in E$ can have weights which are defined by a \textit{weight function} $w:E\to \IR$. 
+Nodes $v\in V$ can have labels which are defined by a \textit{label function} $l:E\to \Sigma$. If $\Sigma$ is a finite set the labels are called \textit{categorical} (or discrete). Otherwise it is $\Sigma=\IR$ and the labels are called \textit{continuous}\footnote{In \cite{A} such labels are called attributes. In \cite{B} such labels are called signals.}. Note that in general multi-dimensional labels are possible as well.\\
+By subtracting the diagonal degree matrix from the adjacency matrix one can compute the \textit{Laplacian matrix} which will be denoted with $L$. The notations $\nu_G$ and $\mu_G$ refer to the $|V|$ dimensional vector containing the labels of all nodes in $V$ (with respect to some given order of the nodes and a given label function).\\
+
+In this report graphs are considered to be connected. This property, as well as the property of being a complete bipartite graph will not be formalized further. Instead more elaborate definitions can be found for example in \cite{discreteBible}.\\
+
+Since all three papers do related to the topic of optimal transport and the Wasserstein distance, a quick introduction to this topic is presented in the following section. 
+
+%------------------------------------------------
+
+\section{Optimal Transport}
+
+The topic of Optimal Transport in general is concerned with computing a transportation strategy to transform a given data set (supply) into another desired one (demand)\footnote{Example of data sets are point clouds, probability distributions, images and graphs.}. Wasserstein distances are suitable to compute the effort needed for such transformations. Recently they are used in more and more applications in the fields of Machine Learning and Artificial Intelligence.\\
+The task of determining an optimal transportation plan yields in comparing transportation costs, which in turn induces a similarity measure between the given distributions.\\
+
+Consider a complete bipartite graph $G(A,B)$ on two distinct sets of nodes $A$ and $B$. The set $B$ can be understood as a set of supply nodes - for example encoding an image. The set $A$ can be understood as a set of demand nodes - for example encoding a reference image. Each node $b\in B$ has a supply $s_b \in\mathbb{R}$ and each node $a\in A$ has a demand $d_a\in \mathbb{R}$ - for example encoding the value of one pixel of the image.\\
+A function $c:A\times B\to \mathbb{R}$ is called cost function. In the suggested example $c(a,b)$ encodes the effort to change the value of $s_b$ to the value of $d_a$.\\
+A transportation plan is defined as a function $\sigma: A\times B\to\mathbb{R}_{\ge 0}$ such that
+\[ \sum\limits_{b\in B} \sigma(a, b) \le d_a \quad\text{ and }\quad \sum\limits_{a\in A} \sigma(a, b) \le s_b \text{.}\]
+These conditions formalize that a transportation plan can not oversaturate a demand or create supply. A transportation plan is called maximal, if all given supply is transported. Note that for this purpose it is reasonable to limit the supply such that it cannot oversaturate all demands.\\
+The cost of a transportation plan $\sigma$ is defined as 
+\[ \sum\limits_{(a, b)\in A\times B}\sigma(a,b)c(a,b) \]
+To ask for a maximal transportation plan with minimal cost is equivalent in the suggested example to ask for the minimal necessary changes to transform one image into the other one.
+Intuitively the cost of such a minimal transportation plan can be used as similarity measure between the two inputs. This idea is utilized in \cite{A} and \cite{B}.\\
+
+Applying further constraints to this general description of the optimal transport problem leads to different variations of the problem. If all supplies and demands are positive integers the problem is called the Hitchcock Koopmanns problem. If all supplies and demands are equal to one the problem is called the Assignment problem where the costs encode the possible assignments.  If all supplies sum up to one the input sets can be seen as a discrete distribution. If on top of that the cost function is a metric the resulting similarity measure is referred to as the Earth Mover's distance.\\
+Finally if the cost function is the $p$-th power of a metric for $1<p\in\mathbb{N}$ the resulting similarity measure is referred to as the $p$-Wasserstein distance\footnote{Some more formal definitions of the $p$-Wasserstein distance can be found in all three summarized papers.}.\\
+%\[ W_p(\sigma, \mu) = \Big(\inf\limits_{\gamma \in \Gamma(\sigma,\mu)} \sum\limits_{M\times M} d(x,y)^p d\gamma(x,y) \Big)^{\frac{1}{p}}\]
+%where $\Gamma(\sigma, \mu)$ denotes the set of all transportation plans over $M\times M$ and $\sigma$ and $\mu$ are marginals (continuous probability distributions).\\ %TODO: remove! replace with notions
+In \cite{A} the $1$-Wasserstein distance is used between two real vectors that originate from given graphs. In \cite{B} the $2$-Wasserstein distance is used between two real distributions that originate from given graphs. In \cite{C} on the other hand an approximation of the $p$-Wasserstein distance is presented.\\ %TODO: is this true?
+
+Note that the Wasserstein distance in its general form is not isometric. This means that there exists no metric-preserving mapping to an $L^2$-norm.% A, S. 6, 2. Absatz
+
+%------------------------------------------------
+% Ende seite 2
+\section{Paper Presentation}
+
+\subsection{Paper: \enquote{\textit{Wasserstein Weisfeiler-Lehman Graph Kernels}}} %TODO: enquote all 
+%TODO: set definitions to italic
+The article \enquote{\textit{Wasserstein Weisfeiler-Lehman Graph Kernels}} proposes a kernel to measure similarities between two graphs. The basic idea is to firstly represent a given graphs via a matrix which contains some level of information about the substructures of the graph (Wiesfeile Lehman graph embedding). Secondly the $1$-Wasserstein distance between these matrices of two graphs is computed and finally used as part of a kernel function which serves as similarity function.
+
+\subsubsection{Motivation}
+The authors motivate their research with the observation that known similarity measure between graphs often rely on global features (e.g. aggregated by R-convolution kernels) of the graphs and do not capture small but possibly significant differences. Furthermore they argue that many known approaches do not scale well with increasing dimensionality of the node label function.\\
+
+The authors mention related work in which the sequence of labels of a random walk [19] %TODO 
+or of a shortest path [5] %TODO
+through the graph were used. The presented new method however is designed to capture more detailed information about the substructure of the graph.
+
+\subsubsection{Method}
+As already mentioned the method can be subsectioned into three phases. They are summarized one by one in the following paragraphs.
+
+\paragraph{Weisfeiler Lehman graph embedding scheme} The information about edge weights and node labels $x^{h+1}_G(v)$ is compressed by iteratively generating new node labels depending on the weighs and labels in the neighbourhood. Define $\mathbf{N}^h(v):=\{x^{h}_G(u)|\; u\in N(v)\}$ as the set of labels in the neighbourhood of a node $v$. For the computation of such an iterative embedding two formulas are proposed. One for categorical labelled nodes (CAT) and one for node labels with continuous labels (CON): 
+
+\[ x^{h+1}_G(v) := \begin{cases}
+\text{hash}(x^{h}_G(v), \; \mathcal{N}^h(v)) & \text{(CAT)}\\ 
+\frac{1}{2}\Big(x^{h}_G(v) + \frac{1}{d_v} \sum_{u\in \mathcal{N}^h(v)}w(\{u,v\})x^{h}_G(v)\Big)  & \text{(CON)}\\ 
+\end{cases} \]
+
+%\begin{equation}
+%\resizebox{0.5\textwidth}{!}{
+%	$$
+%}
+%\end{equation}
+
+Repeating this iterative definitions $i$ times yields in attributes that depend on every node that can be reached in paths of length $i$\footnote{$x^{0}_G(v)$ denotes the original label of $v$ in the graph $G$.}. Thus the dependency in strongly connected subgraphs is increased. A graph embedding $f$ is defined as the matrix of all computed embeddings for every node:
+
+\[ f(G) = \begin{bmatrix}
+X^H_G(v_1) \\ \dots \\ X^H_G(v_{|V|})
+\end{bmatrix} = \begin{bmatrix}
+\begin{bmatrix}
+x^{0}_G(v_1) & \dots & x^{H}_G(v_1)
+\end{bmatrix} \\ \dots \\ \begin{bmatrix}
+x^{0}_G(v_{|V|}) & \dots & x^{H}_G(v_{|V|})
+\end{bmatrix}
+\end{bmatrix} \]
+
+\paragraph{Wasserstein distance}
+In the second step the first Wasserstein distance between such two graph embeddings is computed.\\
+
+In order to compute a summarizing distance matrix $M$, a distance measure between the vector of all computed labels for each node is needed. Again two different approaches for both the discrete and the continuous case are presented. Either the normalized Hamming distance or the Euclidean distance are used:
+\[ d(g, g') := \begin{cases}
+\frac{1}{H+1}\sum\limits_{i=1}^{H+1} \delta(g, g') & \text{(CAT)}\\ 
+\norm{g-g'}_2  & \text{(CON)}\\ 
+\end{cases} \]
+where $\delta(x,y)$ has value $1$ if $x\neq 0$ and $0$ otherwise. The Wasserstein distance itself was computed using a network simplex method.\\ %TODO: A: [31] rechercieren
+
+In order to compare two graph embeddings the authors use the following definition of the $1$-Wasserstein distance where $P$ is a transportation matrix defining a transportation plan between the two given embeddings and $D$ is the distance matrix containing all ground distances between all nodes:
+\[ W_1(f(G_1),f(G_2))= \min\limits_{P}\langle P,D\rangle \]
+
+\paragraph{Kernelization}
+Finally in the third step the $1$-Wasserstein distance between the graph embeddings is used in a Laplacian kernel %TODO: recherchieren
+in order to yield the main result of the paper called the WWL-kernel:
+
+\[ K_{\text{WWL}} := \exp\Big( -\lambda\; W_1(f(G_1), f(G_2)) \Big) \]
+
+The article concludes the presentation of the method by mentioning that the WWL kernel is positive definite for all $\lambda >0$ in the case that the discrete label function (and ground distance) was used. If the continuous label function (and ground distance) was used, establishing the definiteness of the obtained kernel remains an open problem. %A: S.6
+However it is claimed that by using induced repoducing kernel Krein spaces (RKKS) and a Krein SVM instead oa SVM on a Hilber space, ensures the practical and theoretical correctness of the method.
+
+\subsubsection{Results}
+In the paper some experimental results are presented to support the claim that the presented WWL kernel is competitive with the best graph kernel for discretely labelled data (namely WL, WL-OA, vertex and edge histograms) and that it outperforms all state-of-the art graph kernels for continuous attributed graphs (hash graph kernels (HGK-SP, HGK-WL), GraphHopper GH, continuous vertex historgams VH-C). The applicability for both cases is seen as and advantage on top of that.\\ %TODO: RBF Kernel vs Wasserstein distance
+
+As classifier a KSVM was used for the WWL kernel and a SVM was used for the other methods. For all investigations a $10$-fold cross-validationand the same splits were used. \\
+
+The runtime complexity using a naive simplex network implementation for solving the optimization problem lies in $\mathcal{O}(n^3 \log(n))$ where $n$ is the number of nodes in both graphs combined.\\
+
+Future work: runtime improvement potential, theoretical results for positive definiteness of the continous WWL kernel
+
+
+\subsubsection{Critic}
+The paper is clearly structured using definitions claims and case distinctions. This makes it easy to understand the ideas and method itself.\\
+However some criticism seems suitable for flaws which seem to be easily avoidable. For example suggest the column-wise notation in the 6th equation (page 5) some sort of correlation between the assigned labels between the nodes. But on the same page it is illustrated how the just defined matrix is processed row-wise (for the computation of the ground distance). The notation was flipped in this summary accordingly to hopefully be more intuitive.\\
+In the same section the number of iterative embeddings is given by the variable $H$ which later is claimed to be an input parameter of the algorithm. Since depending on de graphs, $H$ directly influences the quality of the embedding it seems indispensable to discuss useful settings or limits of this parameters. But this was dismissed entirely.\\
+
+Another rather important step in the algorithm is the actual computation of the Wasserstein distance. It is barely mentioned that a network simplex was used, settings or the foundations for this decision are missing, too. Similarly the use of a Laplacian kernel seems to be considered trivial. The use of other kernel definitions is not discussed.\\
+
+Finally it is stated that the use of a KSVM for the proposed method and a SVM for all other compared methods would not influence the results. Since this is a distinctly different setting for exclusively the investigated method it seems to be reasonable on thoroughly investigate the truth of this claim.
+
+\subsection{Paper: \enquote{\textit{GOT: An Optimal Transport Framework for Graph Comparison}}}
+Probability distribution -> Wasserstein distance -> optimization problem (stochastic gradient descent method)
+
+\subsubsection{Motivation}
+
+B: Assume that the attributes of the nodes can be assumed to follow the normal distribution. The distance is the computed on these distributions.\\
+
+
+\subsubsection{Method}
+According to the motivation it is assumed that the labels of the nodes in two given graphs are distributed normally. More explicitly the authors assume that the labels are distributed normally with a mean of zero and a covariance given by the pseudoinverse of the Laplacian of the respected graph. Using this assumption authors argue that the $2$-Wasserstein distance $W_2^2(\nu^{G_1},\mu^{G_2})$ between the label vectors $\nu^{G_1}\in \IR^{|V_1|}$ and $\mu^{G_2}\in \IR^{|V_1|}$ of two graphs $G_1$ and $G_2$ can be computed as:
+\[ W_2^2(\nu^{G_1},\mu^{G_2}) = Tr(L^\dag_1 + L^\dag_2) - 2 Tr(\sqrt{L^{\dag/2}_1 L^\dag_2 L^{\dag/2}_1})\footnote{$M^\dag$ denotes the covariance of a matrix $M$} \]
+By definition of the Laplacian matrices $L_1$ and $L_2$ this computation depends on the used enumeration of the nodes when defining the label vectors. To get rid of this dependency a permutation matrix $P$ is introduced and the covariance of one of the label distributions is permuted accordingly: 
+\[ W_2^2(\nu^{G_1},\mu^{G_2}_{P}) = Tr(L^\dag_1 + P^T L^\dag_2 P) - 2 Tr(\sqrt{L^{\dag/2}_1 P^T L^\dag_2 P L^{\dag/2}_1}) \]
+Since the goal is to obtain an unambiguous similarity measure by minimizing this distance the resulting non convex optimization problem is further simplified. First replacing the discrete permutation parameter with a continuous version provided by the Sinkhorn operator
+%\[ S_\tau (P)= A \exp\Big( \frac{P}{\tau}\Big) B \]
+and then by focussing on optimizing the expectation (Bayesian exploration) of the problem rather than the equation itself. 
+% This can be exemplified as putting all the mass
+Lastly a multivariate normal distribution and a parameterless distribution (product of standard normal distributions) is used to obtain an approximating gradient with can be optimized used stochastic gradient descent. As usual, this approach can not guarantee convergence towards a global minimum of the (original) optimization problem.\\
+
+%Graph alignement solution (NP-hard)
+
+\subsubsection{Results}
+outperform Gromov-Wasserstein, Euclidean distance
+
+application: noisy graph alignement, graph classification, graph signal transfer
+
+%experiment 1 and 2: capture structural information about graphs:\\
+%- graph alignment task (randomly removing edges with a fixed probability and permutating the vertices) (good performance)
+%- graph classification: good performance
+%- transportation plan: MNIST, between digits and FASHION MIST
+
+The straight forward implementation results in a run time complexity for one iteration in $\mathcal{O}(n^3)$ where $n$ is.\\ %TODO:
+However to approximate square roots a faster implementation based on SVD and the sparsity of the matrices is proposed.  % diagonal shift on the laplacian matrixes and compute the inverse instead of the pseudoinverse
+
+
+\subsubsection{Critic}
+Since the paper focusses on one problem definition which is refined and transformed throughout the paper, the train of though is quite clear and easy to follow. The presented illustrations do support the explanations.\\
+
+However some claims are not proved or the argumentation of their correctness seems to be entirely left on other papers. For example the discussion of the runtime complexity (page 7) basically leaves the reader with the claim that the algorithm can be implemented better than in a naive way (which has cubic runtime complexity).\\
+
+Furthermore the experimental results are compared using different error measurements, suited for different methods which were actually used in these experiments. The comparability of these error measures, in particular without giving their definitions, is implied unfounded.\\
+Similarly the assumption about the distribution of the nodes labels indeed founded on other papers, but the performance of the method on other distributions or examples is not discussed.\\
+
+At last, one might mention the rather noticeable typing error of an equality sign inside a text at the last paragraph of page 5. However regarding the content this is of course negligible.
+
+\subsection{Paper: \enquote{\textit{A Graph Theoretic Additive Approximation of Optimal Transport}}}
+In this paper the authors present an approximation method to solve find a maximal transportation plan in the optimal transport problem as defined above with no restrictions regarding the cost, demand and supply.
+
+\subsubsection{Motivation}
+The motivation for the research is to find approximate solutions of the optimal transport problem fast and without restricting the cost, demand and supply.
+\subsubsection{Method}
+A $\delta$-close solution to the given problem is a transportation plan $\sigma$ which costs at most $\delta$-percent of the total demand more than the optimal transport plan $\sigma^*$: $w(\sigma) \le w(\sigma^*) + \delta \sum_{b\in B} s_b$. The authors show how to obtain such $\delta$-close solutions.\\ %TODO .how#?
+
+The proposed method uses and algorithm by Gabow and Tarjan %TODO: cite
+which was defined for integral inputs (demands, supplies and costs). The contribution of the authors is to scale and round arbitrary inputs in order to obtain a similar integer formulation which can be processed similarly like in the algorithm of Gabow and Tarjan, and then using \enquote{backwards-rounding} to obtain a transportation plan that is suitable for the initial inputs.\\
+The algorithm used on the scaled and rounded inputs is a primal-dual-algorithm and computes a $\delta$-close solution. Since the computation of only an approximation is targeted, the approach uses a relaxed version of dual feasibility and derivates a primal feasible formulation. The dual variables of the linear program are updated greedily by using Dijkstras algorithm. The primal variables are updated using a partial DFS routine.
+%TODO using primal-dual-linear programming.
+
+\subsubsection{Results}
+The worst-case time complexity of the presented algorithm is bounded by $\mathcal{O}(n^2(C/\delta) + n(C/\delta)^2)$ where $n$ is the sum of nodes in both compared graphs. Note that it is $C= \max_{e\in E} c(e)$.\\
+
+Future work could consider using a nearest neighbor structure to improve the runtime. Performing the update and query steps in poly-logarithmic time in $n$ would lead to a runtime complexity with linear and logarithmic terms only. \\
+Another approach could be to replace the use of Dikstras algorithm and allow easier parallelization of the procedure.\\
+
+The researchers conclude their paper with two experiments on data from the dataset MNIST. First they illustrate with an application in mapping pixel colours from one image to another, that the worst case runtime is not heavily reflected in practice.\\
+Second they argue that the proposed method is superior to the former state-of-the art implementations (especially for small values of $\delta$, which results in better approximations). The compared implementations are %TODO:
+
+\subsubsection{Critic}
+The formulations in the paper are rather technical and heavily focusses on statements and proofs. Although proofs are indispensable for the credibility of the research, they often do not help the reader to understand the main ideas and techniques behind the proven statements.\\
+It could be preferable to allow access to the proofs in some other form (e.g. appendix) and shift the focus of the paper towards illustrating and visualizing the ideas, advantages and disadvantages of the method.
+% Ende seite 6
+%------------------------------------------------
+%TODO: compare ciritc to our findings in the presentations
+\section{Paper comparison and relation}
+Clearly \cite{A} and \cite{B} are more similar since they both apply a Wasserstein distance to obtain some sort of similarity measure between graphs. On the other hand \cite{C} is focusses one a more general solution of the Wasserstein distance itself.\\
+
+Nonetheless it is possible to compare the style of the papers and to argue how they can benefit from each other.
+
+%\subsection{Comparison of Method}
+%TODO: Graph definition, kernel / simple comparison ...
+As mentioned, \cite{A} uses the $1$-Wasserstein distance on real valued vectors representing layers of labels in neighbourhoods in two given graphs. \cite{B} on the other hand uses the $2$-Wasserstein distance on assumed distributions on the labels in two given graphs. Both the assumption on present distributions and the compressing of information with respect to neighbourhoods could be tried in the other approach.\\
+
+Regarding the style of the papers, the illustrations in \cite{B} seem more practical and informative. Especially regarding the applied experimental results. \cite{A} only compares the performance of the presented method in a statistical manner. This in turn could be improved in \cite{B}.\\
+
+%\subsection{Merged Application}
+Naturally the results in \cite{C} could be used to replace the network simplex method in computing the Wasserstein distance in \cite{A}. Since the main effort of \cite{B} is to suitable use stochastic gradient descent to compute a Wasserstein distance for the presented specialized case, it is evidently how the approximation from \cite{C} could improve the results in \cite{B}.\\
+All applications in the other way round seem illogical since this would mean to apply a concrete solution to a more abstract formulation.
+
+% Ende seite 8
+
+%\begin{table}
+%	\caption{Example table}
+%	\centering
+%	\begin{tabular}{llr}
+%		\toprule
+%		\multicolumn{2}{c}{Name} \\
+%		\cmidrule(r){1-2}
+%		First name & Last Name & Grade \\
+%		\midrule
+%		John & Doe & $7.5$ \\
+%		Richard & Miles & $2$ \\
+%		\bottomrule
+%	\end{tabular}
+%\end{table}
+%
+%\begin{equation}
+%	\label{eq:emc}
+%	e = mc^2
+%\end{equation}
+
+\textbf{TARGET: 8 pages}
+
+%----------------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------------
+\newpage
+\bibliographystyle{unsrt}
+\bibliography{Bibliography}
+
+\end{document}

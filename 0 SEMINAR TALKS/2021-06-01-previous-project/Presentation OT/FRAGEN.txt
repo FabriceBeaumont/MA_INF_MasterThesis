@@ -1,0 +1,10 @@
+
+
+-	FRAGE1: Die Konstrution der Node embedding function a^{h+1}(v) wird auf Seite 4 teilweise erklärt.
+	Es ist z.B. davon die Rede, die Werte der Nachbarschaften zu gewichten / normalisieren und dass die Anpassungen zu (nicht erklärten) besseren empirischen Ergebnissen geführt haben.
+	Dort steht aber auch, dass der Faktor 1/2 "a similar scale of the feature across iterations" bewirken solle. Ich verstehe diese Begründung nicht - 
+	warum wird genau der Faktor 1/2 verwendet?
+
+- 	FRAGE2: Auf Seite 7 (nach Gleichung (9)) ist davon die Rede, dass die Wasserstein Distanz mit einer "network simplex method" berechnet wird.
+	Was ist damit gemeint und sollte ich darauf eingehen?
+	

@@ -1,0 +1,103 @@
+\input{../PyCharm_Beamer_Preamble.tex}
+% !Tex spellceck = en_US
+
+\title[MA Seminar Talk - Progress]{Master Thesis Seminar Talk}
+\subtitle{Progress Upade}
+\author[F. Beaumont]{Fabrice Beaumont}
+\institute[]{Department of Information Systems and Artificial Intelligence - \textbf{Dr. Pascal Welke}}
+\date{09. February 2022}
+\begin{document}
+
+
+\begin{frame}
+	\titlepage
+\end{frame}
+
+\begin{frame}
+\frametitle{Method overview} \vspace{-1cm}
+	Ongoing tasks:
+	\begin{enumerate}
+		\item Writing an thesis exposé\\
+		$\implies$ Formulating precise (initial) research questions.
+	\end{enumerate}
+
+	Basic idea and (re)opened questions:
+	\begin{enumerate}
+		\item Construct the Wl-labeling hierarchy tree $T$ on a set of graphs
+		\item Initialize edge weights in $T$
+		\item Refinement Loop:
+		\begin{enumerate}
+			\item \color{red}{Evaluate the performance of the edge weights.}\\
+			Initial approach: Use the Wasserstein distance on vector representations of graphs. \color{red}{How to get a differentiated feedback for the weight adjustments?}
+			\item \color{red}{(How to) Update the edge weights.}\\
+			Initial approach: Static updates with fixed margin.
+		\end{enumerate}
+	\end{enumerate}
+	\hfill\newline
+	\begin{itemize}		
+		\item[] \hfill\newline
+		\item[] \hfill\newline
+	\end{itemize}
+\end{frame}
+
+% 4 
+\begin{frame}
+\frametitle{Method overview} \vspace{-1cm}
+\begin{enumerate}
+	\item \begin{tabbing}
+		Given: \=Graph database $\mathcal{D}=\{ (V_i, E_i, \ell^V_i) \}_{i\in[N]}$\\
+		\>Distance $d$ on $\bigcup_{i\in[N]}\text{Range}(\ell^V_i)$\ \ \=for the FRM\\
+		\>Ground distance $d_0$\>for the Wass.Dist. $W_{\text{WLT}}$
+	\end{tabbing}
+	\item Compute $t$ iterations of Weisfeiler Lehman (WL) labels on $\mathcal{D}$
+	\item Construct the WL labeling tree (WLLT) [WL labeling hierarchy]
+	\item Define edge weights on the WLLT - using a FRM (and $d$)		
+	\item Define an \underline{initial} distance between graphs - using $W_{\text{WLT}}$ (and $d_0$)
+\end{enumerate}
+\textbf{Loop:}
+\begin{itemize}		
+	\item Use the distances to define a WWL-kernel and classify the database using an SVM
+	\item Use the mapping chosen by $W_{\text{WLT}}$ to identify crucial edge weights. \textbf{Refine the edge weights}, given the desired closeness of the graphs.
+\end{itemize}
+\end{frame}
+
+% 5
+\begin{frame}
+\frametitle{Current progress}
+	Programming:
+	\begin{itemize}
+		\item Construction of the WL-labeling tree (WLLT) \newline
+		\item Several distance metrics for this WLLT \newline
+		\item Construction of the WL-label set representation of the graphs \newline
+		\item Construction of a distance matrix/kernel on the dataset\newline
+	\end{itemize}	
+	Still in progress: Several optimizations w.r.t to these implementations.
+\end{frame}
+
+% 6
+\begin{frame}
+\frametitle{Next steps}
+	\begin{itemize}
+		\item Write an \textbf{exposé} to sketch and summarize these research plans \newline
+		\item Implement the usage of the Wasserstein Distance\newline
+		\item Chose (several?) update steps or learning methods to adjust the \textit{hot weights}. First:
+		\begin{itemize}
+			\item Constant update with a fixed margin $\eta$\newline
+		\end{itemize}
+		\item Implement a \textbf{feedback-system}. (An evaluation of the used weights) \newline
+		\item Literature research
+	\end{itemize}	
+\end{frame}
+
+\section{End}
+\begin{frame}[c]
+	\centering %\Huge
+	\begin{huge}
+		\emph{Thank you all for listening.}\\
+	\end{huge}
+	\vspace{2 cm}
+	I will be happy to answer any \textbf{questions} and\\
+	hear your \textbf{comments}.
+\end{frame}
+
+\end{document}

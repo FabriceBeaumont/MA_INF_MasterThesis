@@ -1,0 +1,79 @@
+% !TeX spellcheck = US_en 
+\input{MA_praeambel.tex}
+\usepackage[
+	backend=biber,
+	%style=authoryear-icomp,
+	sortlocale=en_US,
+	natbib=true,
+	url=false, 
+	doi=true,
+	eprint=false,
+	citestyle=ieee % 	citestyle=none
+]{biblatex} % https://libguides.lib.msu.edu/latex/citations
+\addbibresource{../../bib_file_THESIS.bib}
+
+% Name of the author
+\author{Fabrice Beaumont}
+% Date of birth of the author
+\dateofbirth{17th of September 1996}
+% Birthplace of the author
+\birthplace{Seligenstadt, Germany}
+% Date of submission
+\date{26th November 2022}
+
+% Name of the (primary) supervisor
+\supervisor{Advisor: Dr. Pascal Welke}
+% Name of the second supervisor
+\reviewersecond{Second Advisor: Prof. Dr. Christian Bauckhage}
+% Name of the institutre, where the supervisor works
+\institute{Department of Information Systems and Artificial Intelligence}
+% Title of the thesis
+\title{Learning Graph Similarities Using The Weisfeiler-Leman Label Hierarchy}
+\outputtype{Master's Thesis Computer Science}
+
+% MASTER THESIS:
+% - autonomously, scientifical method, reach solution, present solution
+% - 25-100 Seiten
+% - 900 hours ~ 30 LP
+% - 6 Monate (prolonging for 6 weeks possible)
+
+% Tag '%LaterTODO:' for TODOs for later.
+%TODO: Use \- to force hypenation* line break
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\include{SectionFiles/0_introduction_notation} % The introduction should take around 10 % of all pages.
+\include{SectionFiles/1_theoretical_background}
+\include{SectionFiles/2_methods}
+\include{SectionFiles/3_experiments}
+\include{SectionFiles/4_results} % Write the results/conclusion first - in order to specify what questions need to be answered.
+\include{SectionFiles/5_outlook}
+% Appendix:
+\include{SectionFiles/6_appendix_overview}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+%\bibliography{../../bib_file_THESIS}
+%\bibliographystyle{alpha}
+\printbibliography
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section*{Declaration of Authorship}
+
+% Hiermit versichere ich, dass ich die vorliegende Arbeit selbstständig verfasst und keine anderen als die angegebenen Quellen und Hilfsmittel benutzt habe, dass alle Stellen der Arbeit, die wörtlich oder sinngemäß aus anderen Quellen übernommen wurden, als solche kenntlich gemacht und dass die Arbeit in gleicher oder ähnlicher Form noch keiner Prüfungsbehörde vorgelegt wurde.
+
+I hereby certify that this thesis has been composed by me and is based on my own work, unless stated otherwise. 
+No other person’s work has been used without due acknowledgement in this thesis. 
+All references and verbatim extracts have been quoted, and all sources of information, including graphs and datasets, have been specifically acknowledged.
+This thesis has not yet been submitted in the same or similar form to any examination authority.
+
+\vspace{3cm}
+Ort, Datum \hspace{5cm} Unterschrift\\
+\newpage\null\thispagestyle{empty}\newpage
+
+\end{document}

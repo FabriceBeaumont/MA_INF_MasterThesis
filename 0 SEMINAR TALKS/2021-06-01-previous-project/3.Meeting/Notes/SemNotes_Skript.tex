@@ -1,0 +1,738 @@
+
+\input{Skript_praeambel.tex}
+
+% !TeX spellcheck = en_GB 
+
+\begin{document}
+%Benötigte Angaben für die Titelseite
+\title{Summary of the lecture \\ \glqq Data Science and Big Data\grqq\! \\ by Dr. Tamas Horvath \\ (SoSe 2020)}
+%Hier Zeilenumbruch durch \\, da \newline in dieser Umgebung nicht funktioniert.
+\author{Fabrice Beaumont \\ Matrikel-Nr: 2747609 \\
+Rheinische Friedrich-Wilhelms-Universität Bonn}
+
+%Erstellung des Titels
+\maketitle
+\tableofcontents
+%\listoffigures
+
+%----------------------------------------------------------
+
+% exam: February 2020, March 2020
+
+% Meeting ID: 963 6882 7518
+% Password: 130333
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Vorlesung vom 22.04.2020 %%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Begin of script 1 (Introduction)
+
+\chapter{A: Wasserstein Weisfeiler-Lehman Graph Kernels}
+\setcounter{section}{-1}
+
+A lot of use of graph-structured data. E.g.:\\
+Social networks, sensor networks, chemo-informatics, bio.informatics.\\
+
+Graph kernels - deal with complexity of graphs. Mostly R-Convolution = decomposition into substructures which are then compared. Problems:\begin{enumerate}
+	\item Simple aggregation of the similarities of the substructures might limit the ability to capture complex characteristics of the graph\\
+	(Solutions: Fröhlich et a. [15], Kriege et al. [25])
+	\item Most proposed variants do not generalist to graphs with high-dimensional continuous node attributes
+\end{enumerate}
+
+Method of the paper: Vectorial graph representations + optimal transport theory (Wasserstein distances)\\
+
+\section{Definitions}
+
+\begin{Definition}{Kernel}{}{} \label{def:Kernel}
+	\textbf{Kernels} are a class of similarity functions.\\
+	Let $X$ be a set and $k: X\to X\to\IR$ be a function associated with a Hilbert space $\mathcal{H}$ such that
+	\[ \exists \phi:X\to\mathcal{H}\text{ s.t. }\qquad\qquad k(x,y)=\langle\phi(x),\phi(y)\rangle_{\mathcal{H}} \]
+	Then $\mathcal{H}$ is a \textbf{reproducing kernel Hilbert space} (\textbf{RKHS}) and $k$ is said to be a \textbf{positive definite kernel}.	
+\end{Definition}
+A positive definite kernel can be interpreted as a dot product in a high-dimensional space. Recal SVMs and the kernel trick.
+
+
+\begin{Definition}{Graph}{}{} \label{def:Graph}
+	A \textbf{graph} is a tuple $G=(V,E)$ where $V$ is a set of nodes and $E \subseteq 2^V$ is a set of undirected edges.\\
+	Set $n_G:=|V|$, $m_G:=|E|$ and
+	\[ \mathcal{N}(v):= \{u\in V| (u,v)\in E \} \]
+	and $|\mathcal{N}(v)|= \text{deg}(v)$ (\textbf{first- order neighbourhood}).\\
+	
+	$G$ is \textbf{labelled}, if there exists a labelling function $l:V\to \sum$ for a finite label alphabet $\sum$.\\
+	$G$ is \textbf{attributed}, %OTOD: question iff labelled AND... ?? "aditionally"
+	if for each node $v\in V$ there exists an associated vector $a(v)\in\IR^m$.\\
+	We call $a(v)$ \textbf{node attributes} (high-dimensional continuous vectors) and $l(v)$ \textbf{node labels} (integer).\\
+	$G$ is called \textbf{weighted} if there exists a weight function on its edges $w:E\to\IR$.
+\end{Definition}
+
+\begin{Definition}{$\mathcal{R}$-Convolution}{}{} \label{def:Convolution}
+	Decompose graph $G$ into substructures and define a kernel value $k(G,G')$ as a combination of substructure similarities.
+\end{Definition}
+Often $\mathcal{R}$-Convolution kernels discard valuable information such as the distribution of the substructures.
+
+\begin{Definition}{Wasserstein distance}{}{} \label{def:WassersteinDistance}
+	The \textbf{Wasserstein distance} $W_p$ (earth mover distance) is a distance function between probability distributions defined on a given metric space.\\
+	Let $\sigma$ and $\mu$ be two probability distributions on a metric space $M$ equipped with a ground distance $d$ such as the Euclidean distance. For $p\in [1,\infty)$ it is: %TODO: Question: $W_\pagebreak$  or $L^p$ 
+	\[ W_p(\sigma, \mu):=\Big( \inf\limits_{\gamma\in\Gamma(\sigma, \mu)}  \int_{M\times M}d(x,y)^p d\gamma(x,y) \Big)^{\frac{1}{p}} \]
+	where $\Gamma(\sigma, \mu)$ is the set of all transportation plans $\gamma\in\Gamma(\sigma, \mu)$ over $M\times M$ with marginals $\sigma$ and $\mu$ on the first and second factors respectively.\\
+	
+	$d$ is a metric $\implies$ $W_p$ is a metric (Villani [44], chapter 6, for a proof)\\
+	Focus on $p=1$ ($L^1$-Wasserstein distance).\\
+\end{Definition}
+
+HERE: Finite sets of node embeddings (no continuous probability distributions). Therefore formulate as a sum rather than an integral: Given two sets of vectors $X\in \IR^{n\times m}$ and $X'\in\IR^{n'\times m}$ it is:
+\[ W_1(X,X'):= \min\limits_{P\in\Gamma(X, X')}\langle P, M\rangle \]
+$M$ - distance matrix containing $d(x,x')$\\
+$P\in \Gamma$ - transport matrix (or joint probability). Contains fractions that indicate how to transport the values from $X$ to $X'$ with minimal total transport effort. Because we assume that the total mass to be transported equals $1$ and is evenly distributed across the elements of $X$ and $X'$, the row and column values of $P$ mus sum up to $\frac{1}{n}$ and $\frac{1}{n'}$ respectively.\\
+$\langle \dot,\dot{\rangle}$ - Frobenius dot product
+
+
+\begin{Definition}{Optimal transport problem}{}{} \label{def:OptimalTransportProblem}
+	\enquote{Find the most inexpensive way} in terms of ground distance\\
+	(to transport all the probability mass from distribution $\sigma$ to match distribution $\mu$.)
+\end{Definition}
+Intuition for 1D: two probability distribution as piles of sand. Now the minimum effort required to move the content of the first pile to reproduce the second pile = Wasserstein distance.\\
+
+\subsection{The Method}
+
+\begin{enumerate}
+	\item Transform each graph into a set of node embeddings (definition \ref{def:GraphEmbeddingScheme})
+	\item Measure the Wasserstein distance between each pair of graphs
+	\item Compute a similarity matrix to be used in the learning alg.
+\end{enumerate}
+
+\begin{Definition}{Graph Wasserstein Distance}{}{} \label{def:GraphWassersteinDistance}
+	Given two graphs $G=(V,E)$ and $G'=(V',E')$ a graph embedding scheme $f:G\to\IR^{|V|\times m}$ and a ground distance $d:\IR^m\times\IR^m \to\IR$ we define the \textbf{Graph Wasserstein Distance} (\textbf{GWD}) as
+	\[ D^f_W(G,G') := W_1(f(G), f(G')) \]
+\end{Definition}
+
+\begin{Definition}{Graph Embedding Scheme}{}{} \label{def:GraphEmbeddingScheme}
+	Given a graph $G=(V,E)$, a graph embedding scheme $f:G\to\IR^{|V|\times m}$, $f(G)=X_G$ is a function that outputs a fixed-size vectorial representation for each node in the graph.\\
+	For each $v_i\in V$, the $i$-th row of $X_G$ is called the node embedding of $v_i$.\\
+	
+	$m$ = dimensionality of node attributes (e.g. $m=1$ for only labels).
+\end{Definition}
+
+Concrete embedding: \textbf{Weisfeiler-Lehman scheme} (\textbf{WL scheme})
+\subsubsection{1.1 Weisfeiler-Lehman = Node embedding scheme}
+Designed for labelled non-attributed graphs.
+Looks at similarities among subtree patterns, iteratively compares labels on the nodes and their neighbours: Create new labels for each node, which encode the labels of their neighbors by hashing its old label and a string of labels of its neighbours.\\
+
+Consider a graph $G=(V,W)$, let $l^0(v)=l(v)$ be the initial node label of $v$ for each $v\in V$ and let $H$ be the number of WL iterations. Then, we can define a recursive scheme to compute $l^h(v)$ for $h=1,\dots, H$ by looking at the ordered set of neighbours labels $\mathcal{N}^h(v)=\{ l^h(u_0), \dots, l^h(u_{\text{deg}(v)-1}) \}$ as
+\[ l^{h+1}(v)= \text{hash}(l^h(v), \mathcal{N}^h (v)) \]
+Use perfect hashing for the hash function.\\
+
+Nodes at iteration $h+1$ will have the same label iff their label and those of their neighbours are identical at iteration $h$.\\
+Since with each iteration the encoded neighbourhood increases, the nodes necessary to encode all labels decreases over time.\\
+
+For graphs with continuous attributes $a(v)\in\IR^m$ we need to improve the WL refinement step.\\
+Idea: Create an explicit propagation scheme that uses the average over the attributes and weight of the neighbourhoods.\\
+Suppose we have a continuous attribute $a^0(v)=a(v)$ for each node $v\in G$. Define recursively:\\
+Idea: $ a^{h+1}(v)= a^h(v) + \sum\limits_{u\in\mathcal{N}(v)} w((v,u))a^h(u)$\\
+When edge weights are not available set $w(u,v)=1$.\\
+Realization:
+\[ a^{h+1}(v)= \frac{1}{2}\Big( a^h(v) + \frac{1}{\text{deg}(v)}\sum\limits_{u\in\mathcal{N}(v)} w((v,u))a^h(u) \Big) \]
+(The weighted average instead of simple sum, and the $1/2$ shall ensure a similar scale of the features across iterations / such tricks lead to better empirical results.)\\
+
+>> Intuitive extension for WL subtree kernel. Applicable to all types of graphs! (Without additional hashing)\\
+
+\textbf{FUTURE WORK:} Extension for high-dimensional edge attributes (and dual graphs).
+
+(Similar approaches for \textbf{node-level kernel similarities} rely on additional hashing steps for the continuous features.)\\
+
+\subsubsection{1.2 Graph embedding scheme}
+
+\begin{Definition}{WL features}{}{} \label{def:WLFeatures}
+	Let $G=(V,E)$ and let $H$ be the number of WL iterations. Then for every $h\in\{0,\dots,H\}$ we define the WL features as
+	\[ X^h_G=[ x^h(v_1),\dots, x^h(v_{n_G}) ]^T \]
+	where $x^h(\dot)=l^h(\dot)$ for categorically labelled graphs and $x^h(\dot)=a^h(\dot)$ for continuously attributed graphs. We refer to $X^h_G\in\IR^{n_g\times m}$ as the \textbf{node features} of graph $G$ at iteration $h$. THen the node embeddings of graph $G$ at iteration $H$ are defined as $f^H:G\to \IR^{n_G\times (m(H+1))}$:
+	\[ G\to\text{concatenate}(X^0_G,\dots, X^H_G) \]
+\end{Definition}
+%TODO: Woher kommt die Reihenfolge der Knoten $v_1,\dots v_{n_G}$??\ - Definition 4 - gleichung (7)\
+\textbf{FUTURE WORK:} Both categorically labelled + continously attributed. Information can be joined and used in an extended formula, but the question of appropriate distance measures between categorical and continuous data remains.
+
+\subsubsection{2 Wasserstein distance}
+
+Ground distance between each pair of embedded nodes.\\
+For \textbf{categorical node features} use Hamming distance:
+\[ d_{\text{Hamm}}(v,v')=\frac{1}{H+1}\sum\limits_{i=1}^{H+1}\rho(v_i,v'_i) \]
+\[  \rho(x,y)=\begin{cases}
+1, & x\neq y\\
+0, & x= y\\
+\end{cases}\]
+Use, since the Weisfeiler-Lehman features are categorical!! (Values carry no meaning).
+For \textbf{continous node feature} use Euclidean distance:
+\[ d_{E}(v,v')=||v-v'||_2 \]
+
+\textbf{Time-Complexity}: $n$ = cardinality of indexed set / number of nodes in the two graphs:
+\[ \mathcal{O}(n^3\log(n)) \]
+Speed-up: Approximations using Sinkhorn regularisation:
+\begin{center}
+	near-linear time (while accurate)
+\end{center}
+
+\subsubsection{3 Kernel}
+
+\begin{Definition}{Wasserstein Weisfeiler-Lehman kernel}{}{} \label{def:WWL}
+	Given a set of graphs $\mathcal{G}=\{G_1,\dots, G_N\}$ and the GWD defined for each pair of graphs on their WL embeddings, we define the \textbf{Wasserstein Weisfeiler-Lehman} (WWL) kernel as
+	\[ K_{\text{WWL}} = \exp\Big( -\lambda D^{f_{WL}}_W \Big) \]
+	Laplacian kernel > favourable conditions for positive definiteness with non-Euclidean distances: \textbf{Categorical WWL is positive definite} for all $\lambda >0$\\
+	(Open problem for continuous WWL!!)
+\end{Definition}
+(Wasserstein distance is not isometric/ no metric-preserving mapping to an $L^2$-norm / thus not necessarily possible to derive a positive definite kernel. Laplacian kernel fortunately did this.)\\
+
+For continuous WWL - treat as if indefinite kernel:\begin{itemize}
+	\item (reproducing kernel) \textbf{Krein spaces} (RKKS) \\
+	(Generalisation of reproducing kernel Hilbert spaces)
+	\item Krein SVM (KSVM) as classifier
+\end{itemize}
+
+\section{Experimental evaluation}
+
+\subsection{Set-Up:}
+Data sets:\begin{itemize}
+	\item Categorical labels:\begin{itemize}
+		\item MUTAG
+		\item PTC-MR
+		\item NCI1
+		\item D\&D
+	\end{itemize}
+	\item Categorical labels and continuous attributes:\begin{itemize}
+		\item ENZYMES
+		\item PROTEINS
+	\end{itemize}
+	\item Continuous attributes:\begin{itemize}
+		\item IMDB-B
+		\item BZR
+		\item COX2
+	\end{itemize}
+	\item Continuous attributes and edge weights:\begin{itemize}
+		\item BZR-MD
+		\item COX2-MD
+	\end{itemize}
+\end{itemize}
+(Source: Kersting et al.)\\
+
+Comparison of the method with other graph kernel methods:\begin{itemize}
+	\item Categorical labels:\begin{itemize}
+		\item WL
+		\item WL-OA (superior to previous approaches)
+		\item Vertex histogram \textbf{FRAGE: WasDas?} (V)
+		\item Edge histogram (E)
+	\end{itemize}
+	\item Continuous:\begin{itemize}
+		\item Hash graph kernel (HGK-SP, HGK-WL)
+		\item GraphHopper (GH)
+		\item Continuous vertex histogram (VH-C)\\
+		(RBF kernel)
+		\item RBF-WL (own method, but RBF kernel replaces Wasserstein distance)
+	\end{itemize}
+\end{itemize}
+
+Classifier: SVM (KSVM for WWL because of the possible indefiniteness of the kernel - negligible differences), \\
+10-fold cross-validation, selecting the parameters on the training set only.\\
+
+Implementation: Python. 'Original implementations' of the other compared methods.\\
+Ubuntu14.04.5 LTS, with 4 CPUs (Intel Xeon E7-4860 v2 @ 2.60GHz) each with 12 cores and 24 threads, and 512 GB of RAM.\\
+
+\subsection{Results:}
+\textbf{BEMERKUNG:} Seltsame Plazierung der Tabellen.\\
+
+\subsubsection{Categorical labels}
+WWL comparable to WL-OA,\\
+WWL better than WL\\
+\textbf{BEMERKUNG:} Erneut komische Reihenfolge der Ergebnisse.
+
+\subsubsection{Categorical labels}
+WWL significantly better 4/7.\\
+WWL better 1/7.\\
+WWL equal 2/7.\\
+On average always better.
+$\implies$ New state of art.\\
+
+Empirical observation: WWL kernel might be positive definite.\\
+
+Clear benefits over the additive hashing (hash graph kernel HGK).
+
+
+\chapter{B: GOT: An Optimal Transport framework for Graph comparison}
+
+Motivation: Lack of efficient measures for comparing graphs.
+
+Goal of the paper:\begin{itemize}
+	\item Distance between two graphs (compare graphs)\\
+	Use: Smooth graph signal distribution
+	\item Transportation plan for data from one graph to another (align permuted graphs)\\
+	(if graphs have same nr. of vertices)\\
+	Use: Wasserstein distance (captures the main structural informations of the graphs),\\
+	new \textbf{graph alignment problem}
+\end{itemize} 
+
+
+Optimal Transport (OT) by Monge and later Kantorovich.\\
+
+Benefits of the method in representative tasks (noisy graph alignment, graph classification, graph signal transfer). Possibility to predict graph signals.\\
+Outperforms Gromov-Wasserstein and Euclidean distance in graph alignment and graph clustering.\\
+
+Graph matching = NP-hard. Search of Approximations:\begin{itemize}
+	\item spectral clustering\\
+	(Problem: Matching accuracy is suboptimal)
+	\item Semi-definite programming relaxation
+	\item Gumbel-sinkhorn network\\
+	(for the non-convex quadratic problem version)
+	\item Flamary et al.: Optimal transport for empirical distributions
+	\item Gu et al.: Spectral distance (does not use the full graph structure)
+	\item Nikolentzos et al.: Graph embeddings
+	\item Memoli: Gromov-Wasserstein distance (object matching)
+	\item Peyré et al.:Gromov-Wasserstein distance and barycenter of dissimilarity matrices (+ Sinkhorn projections)
+	\item Vayer et al.: distance for graphs + signals
+\end{itemize}
+
+%TODO: FRAGE: WAS SIND singals? Ist die Antwort trivial? Es scheinen node attributes gemeint zu sein - dimension $N$\\
+
+\section{Graph alignment - optimal transport}
+
+\begin{Definition}{Graphs and Laplacian matrix}{}{} \label{Adef:graph}
+	Graph $G=(V,E)$, $|V|=N$, connected, undirected, edge weighted.\\
+	Adjacency matrix $W\in\IR^{N\times N}$.\\
+	$d(i)$ degree of $i\in V$. Degree matrix $D\in\IR^{N\times N}$:
+	\[ D_{i,j}=\begin{cases}
+	d(i),& i=j\\
+	0,&i\neq j
+	\end{cases} \]
+	Laplacian matrix $L:= D-W$
+\end{Definition}
+
+\subsection{Smooth graph signals}
+
+graphs = probability distributions of signals\\
+$G_1$, $G_2$ graphs with Laplacian matrices $L_1$ and $L_2$.\\
+Singals follow the normal distribution with zero mean and the transposed Laplacian matrices as covariance matrix:
+\[ \nu^{G_1}=\mathcal{N}(0,L^\dagger_1)\qquad\qquad \mu^{G_2}=\mathcal{N}(0,L^\dagger_2) \]
+(Graph signal values vary slowly between strongly connected nodes.)
+%TODO: FRAGE: was ist N(0,L_1^T) für ein Datentyp???
+%TODO: FRage Kreuz = Pseudo-inverse??
+\subsection{Wasserstein distance}
+
+compare: signal distributions...\\
+
+\begin{Definition}{Wasserstein distance}{}{} \label{def:BWassersteinDistance}
+	The $2$-Wasserstein distance between two graphs $G_1$ and $G_2$ with distributions $\nu^{G_1}$ and $\mu^{G_2}$ is:
+	\[ W_2^2(\nu^{G_1}, \mu^{G_2}) = \inf\limits_{T_{\#}\nu^{G_1}=\mu^{G_2}} \int\limits_{X} ||x-T(x)||^2 d\nu^{G_2}(x) \]
+	Where $T_{\#}\nu^{G_1}$ denotes the push forward of $\nu^{G_1}$ by the transport map $T:X\to X$ defined on a metric space $X$.\\
+	%TODO: Was ist ein push??? start ziel def\\
+	
+	For normal distributions such as $\nu^{G_1}$ and $\mu^{G_2}$ the $2$-Wasserstein distance can be explicitly written in terms of their covariance matrices:
+	\[ W_2^2(\nu^{G_1},\mu^{G_2}) = \text{Tr}(L_1^\dagger + L_2^\dagger) - 2\text{Tr}\Big(\sqrt{L_1^{\frac{\dagger}{2}} L_2^\dagger L_1^{\frac{\dagger}{2}}}\Big) \]
+	And the optimal transportation map is\\
+	$T(x)= L_1^{\frac{\dagger}{2}}\Big(L_1^{\frac{\dagger}{2}} L_2^\dagger L_1^{\frac{\dagger}{2}}\Big)^{\frac{\dagger}{2}}L_1^{\frac{\dagger}{2}} x$\\
+	
+	The distance is sensitive to differences that cause a global change in the connection between graph components. (No sensitive to differences hat have small impact on the whole graph structure.)\\
+	\textbf{FRAGE:} Was sind lower graph frequencies?? Vielleicht sind die signale / die Frequenzen auf die komprimierten Darstellungen aller Knoten attribute??	
+\end{Definition}
+
+\subsection{Graph alignment}
+
+Signal distributions depend on the enumeration of nodes (in $L_1$ and $L_2$)!\\
+
+\textbf{The graph alignment problem}: Given two graphs $G_1, G_2$ with $N$ distinct vertices each (and different sets of edges). Find the optimal transportation map $T$ from $G_1$ to $G_2$.\\
+\textbf{FRAGE:} Was ist eine transportation map?\\
+
+Define the probability measure of a permuted representation for the graph $G_2$ as
+\[ \mu_P^{G_2} = \mathcal{N}(0,(P^T L_2P)^\dagger)  = \mathcal{N}(0,(P^TL_2^\dagger P)) \]
+where $P\in \IR^{N\times N}$ is a permutation matrix.\\
+\textbf{FRAGE}: Was tut das? Ist es die WKeit, dass $G_2$ eine Permutation von $G_1$ ist?\\
+
+Thus the graph alignment pb. = find the permutation that minimizes the mass transportation between $\nu^{G_1}$ and $\mu_P^{G_2}$:\\
+\begin{center}
+ ...
+\end{center}%TODO: copy from paper
+\[ W_2^2(\nu^{G_1},\mu^{G_2}_P) = \text{Tr}(L_1^\dagger + P^TL_2^\dagger T) - 2\text{Tr}\Big(\sqrt{L_1^{\frac{\dagger}{2}} P^T L_2^\dagger P L_1^{\frac{\dagger}{2}}}\Big) \]
+
+\section{The Method (GOT)}
+
+Stochastic gradient descent (alg 1).\\
+
+Main difficulty: permutation matrix $P$ leads to a discrete optimization problem with a factorial number of feasible solutions.\\
+\textbf{Idea:} Enforce constraints implicitly by using the Sinkhorn operator. The operator normalizes the rows and columns of $\exp(P/\tau)$:
+\[ S_\tau(P) = A \exp(P/\tau) B\]
+Iterative computation of A and B ...\\
+For $\tau \to 0$ the operator yields a permutation matrix.\\
+
+Changed problem formulation - leads to differentiability - solvable with gradient descent  (although highly non-convex - may converge towards local minima).\\
+\textbf{FRAGE:} Ist ersichtlich, warum ohne den Sinkhorn Operator es noch nicht differnezierbar/ für gradient descent lösbar war??\\
+
+\subsubsection{Stochastic exploration}
+
+\textbf{Idea:} Optimize the expecation of the cost function w.r.t. the parameters of some distribution $q_0$: ...\\
+Reformulation (reparameterization trick) ... (17)\\
+Reformulation/ Approximation (parameterless distribution) ... (18)\\
+
+Alg. converges almost surely to a critical point (no guaranteed global minimum).\\
+
+Computational complexity:\\
+- naive: $\mathcal{O}(N^3)$ per iteration (due to matrix square-root in singular value decomposition (SVD))\\
+- better: approximate matrix square-root with Newton's method (results in only matrix multiplications)\\
+- better: this + avoid pseudo-inverse computation by adding small diagonal shift to Laplacian matrices and directly compute the inverse\\
+
+
+Seite 7 - Kapitel 4
+
+\section{Experiments}
+
+\subsection{Graph alignment}
+Use grid search to chose the parameters $\rho$ (Sinkhorn) and $\gamma$ (learning rate) - while the sample size $S$ was fixed empirically.\\
+For all experiments: $\rho = 5, \gamma=0.2, S=30$.\\
+Maximal $10$ Sinkhorn iterations, and $3000$ iterations for stochastic gradient descent (- typically convergence after around $1000$).\\
+
+Test-graphs: Stochastic block model graph with $40$ nodes and $4$ communities. Create a noisy version of this graph by removing edges with\dots
+\begin{itemize}
+	\item \dots probability $p=0.5$ within communities
+	\item \dots increasing probabilities $p\in[0,0.6]$ between communities
+\end{itemize}
+and generate a random permutation to change the order of nodes.\\
+
+Compares methods:\begin{itemize}
+	\item GOT
+	\item Stochastic alg (Euclidean disance)
+	\item State-of-art Gromov-Wasserstein distance for graphs (GW)\\
+	(Based on Euclidean distance between shortest path matrices)
+\end{itemize}
+Adjusting parameters for all methods - repeat each experiment $50$ times.\\
+
+GOT outperforms all two methods - but is a bit worse than GW if the error measurement of GW is used.
+%TODO: Figure 4 - was meint normalized error - pro methode ein eigenes error measruement??
+
+\subsection{Graph classification}
+
+Creation of 20 test graphs (20 nodes each - randomly permuted, similar numbers of  edges) for each of these five models:\begin{itemize}
+	\item Stochastic Block Model (2 blocks - SBM2)
+	\item Stochastic Block Model (3 blcosk - SBM3)
+	\item Random regular graph (RG)
+	\item Barabasy-Albert model (BA)
+	\item Watts-Strogatz model (WS)
+\end{itemize}
+
+GOT: Align graphs\\
+Non-Parametric 1-NN classification algorithm / several methods:\begin{itemize}
+	\item GW
+	\item FGM
+	\item IPFP
+	\item RRWM
+	\item NetLSD
+\end{itemize}
+Results as confusion matrices. GOT clearly outperforms (general accuracy).
+
+\subsection{Graph signal transportation}
+
+MNIST dataset ($60 000$ images of size $28\times28$ of handwritten digits - $6000$ per class). For each digit class stack all available images into a feature matrix ($6000\times 784$) and build a graph over the $784=28^2$ feature vectors:
+\begin{itemize}
+	\item 20-nearest neighbour binary graph
+	\item square it (results in 2-hop distances / more meaningful weights)
+\end{itemize}
+Hence each of the ten classes of digits is represented by a graph of $784$ nodes (pixels).\\
+
+Each image of a given class can be seen as a smooth signal $x\in\IR^{784}$ that lives on the corresponding graph.\\
+
+Construct transportation plan $T$ between a source graph and all nine other graphs.\\
+Result: Transport yields in recognizable images with similarity to the original digits.\\
+
+Same experiment for Fashin MNIST.\\
+Also recognizable results plus texture preservation (images of clothes). Potential of GOT in graph signal prediction through adaptation of a graph signal to another graph!
+
+%TODO: precise definitions / theorems / algorithm
+%TODO: draw graph around central formula/ ideas
+
+\chapter{C: A Graph Theoretic Additive Approximation of Optimal Transport}
+
+Method: Adaptation of the classical graph algorithm of Gabow and Tarjan. Execution time $\mathcal{O}\Big( \frac{n^2 C}{\delta} + \frac{n C^2}{\delta^2}\Big)$.\\
+Arbitrarily small constant $\epsilon$: $\lfloor\frac{2 C}{(1-\epsilon)\delta}\rfloor+1$ iterations\\
+(each iteration: Dijkstra-type search + DFS)\\
+Method does not slow down for very small values of $\delta$ (unlike Sinkhorn alg).\\
+
+Transportation cost as a similarity measure between data sets (point clouds, probability distributions, images):\\
+Set $A$ of demand nodes. Set $B$ of supply nodes. Demand $0<d_a$ at node $a\in A$, supply $0<s_b$ at node $b\in B$.\\
+Let $G(A,B)$ be a complete bipartite graph on $A$ and $B$ with $n=|A|+|B|$ where $c(a,b)\ge 0$ denotes the cost of transporting one unit of supply from $b$ to $a$. Let $C$ be the largest cost of any edge in the graph. Assume the cost is symmetric ($c(a,b)=c(b,a)$). W.l.o.g. assume that total supply is at most the total demand (no over saturation). Let $U:=\sum\limits_{b\in B}s_b$.\\
+
+\begin{Definition}{Transport Plan}{}{} \label{def:CTransportPlan}
+	A \textbf{transport plan} is a function $\sigma: A\times B\to\IR_{\ge 0}$ that assigns a non-negative value $\sigma(a,b)$ to every edge $(a,b)$ with the constraints that 
+	\[ \forall a\in A:\quad\sum\limits_{b\in B}\sigma(a,b)\le d_a \]
+	(i.e. the total supply coming into any node $a\in A$ is at most $d_a$) and\\
+	\[ \forall b\in B:\quad \sum\limits_{a\in A}\sigma(a,b)\le s_b \]
+	(i.e. the total supply leaving a node $b\in B$ is at most $s_b$).\\
+	
+	A \textbf{maximum transport plan} is one where
+	\[ \forall b\in B:\quad \sum\limits_{a\in A}\sigma(a,b)=s_b \]
+	(i.e. every available supply is transported).\\
+	
+	The cost incurred by any transport plan $\sigma$ is
+	\[ w(\sigma) =: \sum\limits_{(a,b)\in A\times B}\sigma(a,b)c(a,b) \]
+\end{Definition}
+
+\begin{Definition}{Transportation Problem}{}{} \label{def:CTransportationProablem}
+	\begin{tabbing}
+		\textbf{Output:} \=\kill
+		\textbf{Input:} \> A complete bipartite graph $G(A,B)$\\ %TODO: what else?
+		\textbf{Output:} \> Minimum-cost maximum transport plan.
+	\end{tabbing}
+
+	Special cases:\begin{itemize}
+		\item All demands and supplies positive integers\\ (\textbf{Hitchcock-Koopmans transportation problem})
+		\item Demand or supply at every node is $1$\\ (\textbf{Assignment problem})
+		\item $A$ and $B$ are discrete probability distributions and $U=1$\\(\textbf{Optimal transport distance between distributions})
+		\item Transporting costs is a metric: \textbf{Earth Mover's distance} (EMD)
+		\item Transporting cost is $p$-th power of some metric cost ($p>1$): $p$\textbf{-Wasserstein's distance}
+	\end{itemize}
+\end{Definition}
+
+Related work - Exact methods:\\
+\begin{tabularx}{\linewidth}{X || X | X | X | X}
+	Name & Task & Method & Time & Difficulty\\\hline\hline
+	Hungarian method & Assignment pb. & Linear programming duality & $\mathcal{O}(n^3)$ &\\\hline
+	Gabow, Tarjan & Assignment pb. & Cost scaling paradigm & $\mathcal{O}(n^{2.5} \log(nC))$&\\\hline
+	Gabow, Tarjan & Transportation pb. (Integer demands, supplies and edge costs) & Cost scaling paradigm & $\mathcal{O}(n^{2}\sqrt{U} + U\log(U))$& Scaling demands and supplies to integers leads to $U$ in $\Omega(n)$ - thus runtime $\Omega(n^{2.5})$ again\\\hline
+	& Minimum-cost maximum transport plan (integer demands and supplies) = minimum-cost maximum flow & &$\tilde{\mathcal{O}}(n^{2.5} \text{poly} \log(U))$ ($\tilde{\mathcal{O}}$ notation suppresses additional logarithmic terms in $n$)&\\\hline
+	& Assignment problem & & $\mathcal{O}(n^\omega C)$ ($\omega$ is the exponent of matrix multiplication time complexity)&
+\end{tabularx}
+Execution time polynomial in $n$, $\log(U)$ and $\log(C)$ - but all quite slow in practise.\\
+
+Idea: Approximate transport plans.
+\begin{Definition}{$\delta$-approximate Transportation Problem}{}{} \label{def:CApproximateTransportationProablem}
+	\begin{tabbing}
+		\textbf{Output:} \=\kill
+		\textbf{Input:} \> A complete bipartite graph $G(A,B)$\\ %TODO: what else?
+		\textbf{Output:} \> A maximum transport plan with cost $(1+\delta)w(\sigma^*)$.\\
+	\end{tabbing}	
+	$\sigma^*$ is the maximum transport plan with the smallest cost. 
+\end{Definition}
+
+\begin{Definition}{$\delta$-close Transportation Problem}{}{} \label{def:CCloseTransportationProablem}
+	\begin{tabbing}
+		\textbf{Output:} \=\kill
+		\textbf{Input:} \> A complete bipartite graph $G(A,B)$\\ %TODO: what else?
+		\textbf{Output:} \> A maximum transport plan with cost $w(\sigma)\le w(\sigma^*)+U\delta$.\\
+	\end{tabbing}	
+	$\sigma^*$ is the maximum transport plan with the smallest cost.\\
+	(For discrete probability distributions is is $U=1$ and thus the solution within an additive error of $\delta$ from the optimum.)
+\end{Definition}
+
+Related work - Approximative methods:\\
+\begin{tabularx}{\linewidth}{X || X | X | X | X}
+	Name & Task & Method & Time & Difficulty\\\hline\hline
+	& $\delta$-approximate transport plans, $d$-dim Euclidean assignment pb. (Euclidean transport pb.) & $n(\log(n)/\delta)^{\mathcal{O}(d)}\log(U)$ & &\\\hline
+	& Metric costs, $\delta$-approximate transport plan && $\tilde{\mathcal{O}}(n^2)$ &\\\hline
+	Cuturi, Altschuler& $\delta$-close transport plan, arbitrary costs & Sinkhorn projection technique & $\tilde{\mathcal{O}}(n^2(C/\delta))$&\\\hline
+	THIS PAPER & $\delta$-close transport plan, arbitrary costs & & $\mathcal{O}(n^2(C/\delta) + n(C/\delta)^2)$&\\\hline
+	& $\delta$-close transport plan, arbitrary costs &  Exploit structure of squared Euclidean distances & $\mathcal{O}(n(C/\delta)^d \log^d(n))$
+\end{tabularx}
+Execution time near-linear in the input size and polynomial in $\log(n)$, $\log(U)$ and $\log(C)$.\\
+No known $\delta$-approximation algorithms for arbitrary costs with near-linear time.\\
+For the $\delta$-close transport plan pb. Blanchet et al. showed that any algorithm with less than quadratic dependence on $C/\delta$ can be used to compute a maximum cardinality matching in any arbitrary bipartite graph in $o(n^{5/2})$ time.\\
+
+(Note that again $\tilde{\mathcal{O}}$ hides poly-logarithmic factors in the runtime. Some of them are artifacts of worst-case analyses of the algorithms and one cannot avoid them all-together in any practical implementation.)\\
+
+All these implementations: \textbf{Significant increase in running time and numerical instability for smaller values of} $\delta$.\\
+Ideas to tackle this: parallel algorithms or exploiting the cost structure.\\
+
+\subsection{Method}
+
+Deterministic primal-dual algorithm to compute a $\delta$-close solution in $\mathcal{O}(n^2 (C/\delta)+ n(C/\delta)^2)$ time.\\
+Adaptation of a single scale of Gabow and Tarjan's scaling algorithm for the transportation problem (with scaled integer demand, supply and cost functions).\\
+Key contribution: diameter-sensitive analysis.\\
+(For geometric costs even $\tilde{\mathcal{O}}(n(C/\delta)^2)$.)\\
+Transformation to integer demands and supplies in $\mathcal{O}(n^2)$.\\
+
+Two step alg. (per iteration):\begin{itemize}
+	\item Hungarian Search: Dijkstra's algorithm ($\mathcal{O}(n^2)$); adjust the weights corresponding to a dual linear program; find an augmenting path (consisting of zero slack edges)
+	\item DFS from every node with excess supply; find augmenting paths of zero slack edges to route the supplies ($\mathcal{O}(n^2)$).
+\end{itemize}
+(The total length of paths found during the course of the algorithm is bound by $\mathcal{O}(n/\epsilon(1-\epsilon)(C/\delta)^2)$)\\
+
+Note: Gabow and Tarjan's algorithm computes an optimal solution only when the total supply is equal to the total demand.\\
+The presented algorithm works also for the unbalanced case (and has unlike the original alg. no dependencies on the cost of the optimal solution).\\
+
+Unlike Sinkhorn projection based approaches, the presented algorithm is numerically stable and executes efficiently for smaller values of $\delta$.
+
+\subsubsection{Scaling}
+
+\begin{itemize}
+	\item Scale demands and supplies to integer demands and supplies.
+	\item Allows to apply the traditional framework of augmenting paths
+	\item Find an approximate solution for the transformed pb. in $\mathcal{O}(\frac{n^2 C}{\delta}+\frac{n C^2}{\delta^2})$.	
+	\item Map solution to a feasible solution for the original demands and supplies\\
+	(Loss of accuracy due to transformation $\le \epsilon U \delta$)
+\end{itemize}
+
+Scaling: $0<\epsilon<1$, 
+\[ \alpha := \frac{2n C}{\epsilon U\delta} \]
+for $a\in A$ and $b\in B$ use the following transformations:
+\[d_a \to \overline{d}_a = \lceil d_a\alpha \rceil \qquad\qquad s_b \to \overline{s}_b = \lceil s_b\alpha \rceil\]
+(Recall that the total supply is no more than the total demand!)\\
+It follows
+\[ U=\sum\limits_{b\in B}\overline{s}_b =\sum\limits_{b\in B}\lfloor s_b \alpha\rfloor \le \alpha \sum\limits_{b\in B}s_b = \alpha U \]
+
+Let $\sigma^*$ be a feasible maximum transport plan for the transformed pb. $\mathcal{I}'$. Define a new transport plan pointwise as: $\sigma(a,b)=\sigma'(a,b)/\alpha$ (not necessarily feasible of maximum of $\mathcal{I}$). $\sigma$ has costs $w(\sigma) = w(\sigma')/\alpha$.\\
+
+Convert $\sigma$ into a feasible and maximum transport plan in two steps:\begin{enumerate}
+	\item Feasibility: Reduce excess supply $\kappa_a$ for each demand node to zero by reducing $\sigma(a,b)$ (arbitrary adjacent node $b$) and $\kappa_a$ by $\min\{\kappa_a, \sigma(a,b)\}$\\
+	Total remaining (excess) supply: $2n/\alpha$. (Cost $w(\sigma)\le w(\sigma')/\alpha$ - only cost reductions)
+	\item Maximum: Match the remaining $2n/\alpha$ to leftover demands of at most cost $C$ per unit of supply:
+	\[ w(\sigma) \le w(\sigma')/\alpha + \frac{2n C}{\alpha} \le w(\sigma')/\alpha + \epsilon U\delta \]
+\end{enumerate}
+
+(Proof in supplement): The optimal solution for the original pb. is with factor $\alpha$ better than the $w(\sigma^*)$.\\
+
+
+\subsubsection{Alg for scaled demands and supplies}
+Alg. output: $\sigma'$ with 
+\[ w(\sigma') \le w(\sigma'_{\text{OPT}}) + (1-\epsilon)\delta U \]
+in $\mathcal{O}(\frac{n^2 C}{(1-\epsilon)\delta} + \frac{n C^2}{\epsilon(1-\epsilon)\delta^2})$.\\
+
+\begin{Definition}{Free vertices}{}{} \label{def:CFreeVertices}
+	We say that a vertex $a\in A$ is \textbf{free} w.r.t. a transportation plan $\sigma$ if 
+	\[ d_a-\sum\limits_{b\in B}\sigma(a,b)>0 \]
+	(i.e. $a$ is able to receive more supply than $\sigma$ dictates.)\\
+	
+	The set of free demand nodes is $A_F$.\\
+	(Analouge definition for the supply and $B_F$.)
+\end{Definition}
+
+Define $\delta'=(1-\epsilon)\delta$ and the scaled costs $\overline{c}(a,b)=\lfloor 2c(a,b)/\delta'\rfloor$. $\overline{w}(\sigma)$ denotes the cost of any transport plan w.r.t. the scaled cost function $\overline{c}$.\\
+
+Algorithm: primal-dual approach. At all times the transport plan satisfies the dual feasibility conditions.\\
+
+\begin{Definition}{$1$-Feasible transport plans}{}{} \label{def:C1feasibilePlans}
+	A transport plan $\sigma$ along with a dual weight $y(v)$ for every $v\in A\cup B$ is $1$\textbf{-feasible}, if $\forall a\in A, b\in B$:
+	\[ y(a)+y(b) \begin{cases}
+	\le \overline{c}(a,b)+1 & \text{if }\sigma(a,b)<\min \{s_b, d_a\}\\
+	\ge \overline{c}(a,b) & \text{if }\sigma(a,b)>0\\
+	\end{cases} \]
+\end{Definition}
+(Identical conditions to Gabow and Tarjan - but for costs scaled by $2/\delta'$ and rounded down.)
+
+\begin{Definition}{$1$-Optimal transport plans}{}{} \label{def:C1OptimalPlans}
+	A transport plan $\sigma$ along with a dual weight $y(v)$ for every $v\in A\cup B$ is $1$\textbf{-optimal}, if it is $1$-feasible and maximum.
+\end{Definition}
+Since the unbalanced case is considered, some conditions may not be fulfilled jet. One needs to demand that $\forall a\in A$ the dual weight $y(a)<0$. And if $a\in A_F$ then $y(a)=0$.\\
+For such a transport plan $\sigma$ and the minimum cost maximum transport plan $\sigma'$ it is
+\[ w(\sigma) \le w(\sigma') + \delta'U \]
+GOAL: Construct such a $1$-optimal transport plan, fulfilling the condition.
+
+\begin{Definition}{Residual graph}{}{} \label{def:CResidualGraph}
+	Let $\sigma$ be a $1$-feasible transport plan. The \textbf{residual graph} $G_\sigma$ on the vertex set $A\cup B$ has the following edges:\begin{itemize}
+		\item $(b,a)$ with capacity $\min\{\overline{d}_a, \overline{s}_b\}$ if:\\
+		$(a,b)\in A\times B:\;\; \sigma(a,b)=0$
+		\item $(a,b)$ with capacity $\sigma(a,b)$ if:\\
+		$(a,b)\in A\times B:\;\; \sigma(a,b)=\min\{\overline{d}_a, \overline{s}_b\}$
+		\item $(a,b)$ with capacity $\sigma(a,b)$ and $(b,a)$ with capacity $\min\{ \overline{d}_a, \overline{s}_b \}-\sigma(a,b)$ if:\\
+		$0<\sigma(a,b)<\min\{\overline{d}_a, \overline{s}_b\}$
+	\end{itemize}
+
+	$(a,b)$ is called a \textbf{backward edge}.
+	$(b,a)$ is called a \textbf{forward edge}.\\
+	Set the cost of all edges:
+	\[ \overline{c}(a,b)= \lfloor 2c(a,b)/\delta' \rfloor \]
+	
+	Any directed path in the residual network starting from a free supply vertex to a free demand vertex is called an \textbf{augmenting path} (alternates between forward and backward edges - with the first and last edges forward edges).\\
+	
+	We can augment the supplies transported by $k\ge1$ units along an augmenting path $P$ as follows:\\
+	Raise the flow in every forward edge by $k$ and reduce the flow in every backward edge by $k$.\\
+	Define \textbf{slack} on any edge in the residual graph:
+	\[ s(a,b)= \begin{cases}
+	\overline{c}(a,b)+1-y(a)-y(b) & \text{if }(a,b)\text{ is a forward edge}\\
+	y(a)+y(b)-\overline{c}(a,b) & \text{if }(a,b)\text{ is a backward edge}\\
+	\end{cases} \]
+	Any edge in the residual graph is called \textbf{admissible} if it has zero slack. The \textbf{admissible graph} $\mathcal{A}_\sigma$ is the subgraph of the residual graph consisting of only its the admissible edges.
+\end{Definition}
+
+\subsubsection{The Algorithm}
+
+Set-up: $\forall (a,b)\in A\times B:\quad \sigma(a,b)=0$\\
+Dual weights $\forall v\in A\cup B:\quad y(v)=0$\\
+$\sigma$ and $y$ form a $1$-feasible transportation plan.\\
+
+Start phases - terminate when $\sigma$ is a maximum transport plan.\\
+Each phase consists of two steps:\begin{enumerate}
+	\item \textbf{Hungarian Search} = Adjust dual weights, create augmenting path of admissible edges:\\
+	\begin{itemize}
+		\item \textbf{Augmented residual network} $G_\sigma$:\\
+		Add a source node $s$ (connected to every free supply node with $\sum\limits_{a\in A}\sigma(a,b)<\overline{s}_b$, weight $0$),\\
+		and target node $t$ (every free demand vertex is connected to it, weight $0$)
+		\item The weight of every other edge of the residual network is set to its slack
+		\item $\forall v\in A\cup B$ let $l_v$ be the shortest path from $s$ to $v$ in $G_\sigma$.\\
+		Perform \textbf{dual weight adjustment}: $\forall v\in A\cup B$ 
+		\[ y(v) = \begin{cases}
+		y(v) & \text{if }l_v\ge l_t\\
+		y(v)-l_t+l_v & \text{if }l_v<l_t\;\;\land v\in A\\
+		y(v)-l_t-l_v & \text{if }l_v<l_t\;\;\land v\in B
+		\end{cases} \]
+	\end{itemize}
+	(Now $\sigma$ and $y$ still form a $1$-feasible solution and there is at least one augmenting path in the admissible graph.)\\
+	Executable in time $\mathcal{O}(n\Theta(n)\log^2(n))$
+	\item \textbf{Partial DFS}: Compute at least one augmenting path and update $\sigma$ along it. Afterwards there is no augmenting path of admissible edges left:\begin{itemize}
+		\item $\mathcal{A} = \mathcal{A}_\sigma$. Let $X$ denote the set of free supply nodes in $\mathcal{A}$
+		\item Initiate DFS from each supply node of $X$ in $\mathcal{A}$:\begin{itemize}
+			\item If the DFS visits a free demand node - then an augmenting path $P$ is found
+			\item Delete all visited edges except the ones of $P$
+			\item \textbf{Augment} $\sigma$ along $P$ and update $X$ to denote the free supply nodes in $\mathcal{A}$:\begin{itemize}
+				\item Define the \textbf{bottleneck edge set} as the set of all edges $(u,v)$ on $P$ with the smallest residual capacity $\text{bc}(P)$.
+				\item Define the \textbf{bottleneck capacity} $r_P$ of $P$ as 
+				\[ \min\{ \overline{s}_b-\sum\limits_{a'\in A}\sigma(a',b), \overline{d}_a-\sum\limits_{b'\in B}\sigma(a,b'), \text{bc}(P) \]
+				\item Update $P$ by adding $r_P$ to the transport of every forward edge and subtracting $r_P$ to every backward edge
+			\end{itemize}
+			\item If no free demand nodes was found - delete all visited edges and vertices and update $X$ to the remaining free supply nodes.			
+		\end{itemize}		
+		\item If $X$ is empty - go to the first step $1.$
+	\end{itemize}
+	Executable in time $\mathcal{O}(n\Theta(n))$
+\end{enumerate}
+
+Omitted: page 7 - Correctness and Efficiency of the alg.\\
+... Theoretical execution time of 
+\[ \mathcal{O}(\frac{n^2 C}{(1-\epsilon)\delta} + \frac{n C^2}{\epsilon(1-\epsilon)\delta^2}) \]
+
+\[ \mathcal{O}(\frac{n^2 C}{\delta} + \frac{n C^2}{\delta^2}) \]
+
+\section{Experimental Results}
+
+Implementation in Java.\\
+MNIST data set of handwritten digits. Supply and demand based on pixel intensities - normalized such that total supply and demand are both $1$. Edge cost = squared-Euclidean distance between pixel coordinates, scaled such that maximum edge cost $C=1$. ($28\times 28=784$ pixels.)\\
+
+First set of tests: Confirm theoretical analysis.\\
+Result: Significantly less iterations, shorter than worst case augmenting paths (reason: the theoretical results were tight, and the flow increase in practise is higher). The augmentation time was negligible ($\le 2\%$ of the execution time).\\
+
+Second set of test: Compare with Sinkhorn, Greenkhorn, APDAGD alg.\\
+Divide algs in iterations = portions that take $\mathcal{O}(n^2)$ time.\\
+Result: Unlike others no significant increase in iterations for smaller values of $\delta$ (= better numerical stability).\\
+Outperforms Sinkhorn (the others are not optimized for actual running time) w.r.t. run time (even for added error parameter $5\delta$ to Sinkhorn (relaxation)). But the results (cost of $\sigma$) where not always better - but better, if Sinkhorn is relaxed ($5\delta$).
+
+\section{Extensions}
+
+Sinkhorn scales well in parallel settings (parallelize row and column operations).\\
+The presented method - first step = Dijkstra's search is inherently sequential. But there exists an alternate implementaiton of a single scale of Gabow and Tarjan's algorithm - which may be more amenable to parallel implementation.
+
+\chapter{Comparisons}
+
+\begin{center}
+	\begin{tabular}{l || c | c}
+		&Pros & Cons\\ \hline \hline
+		A & Clear definitions & Bad placement of tables and also content\\
+		& & Shift of attention (categorical, continuous WWL)\\ \hline
+		B & & \enquote{Challenging problem} - Abstract, not scientific (?) \\\hline
+		& & Less formal definitions (see (5) and (6), graph alignment pb.)\\\hline
+		& & Strange typos (page 4 - last paragraph \enquote{=of the same size})\\\hline
+		& & Redundancies in the Algorithm 1 requirements\\\hline
+		& & \enquote{mild assumptions} converges \enquote{almost surely} to a critical point - non scientific writing \\\hline
+		& & Paragraph before 4-Experimental results is extremely vague\\\hline
+		& & No specifications of the implementation(?)\\\hline
+		& & \\\hline
+		C & & \\
+		& & \\
+	\end{tabular}
+\end{center}
+
+\bibliographystyle{alphadin_martin}
+\bibliography{Literaturverzeichnis}
+
+\end{document}
+

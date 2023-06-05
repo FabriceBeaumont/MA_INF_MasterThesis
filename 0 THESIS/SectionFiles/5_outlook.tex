@@ -1,0 +1,82 @@
+\section{Outlook} \label{sec:outlook}
+As argued in section \ref{subsec:reflection}, the l-WWLLT shows potential.
+Research on more datasets, parameter settings and implementation choices may prove useful.
+Using the experience from developing the l-WWLLT method and conducting the summarized experiments, we can propose new research strategies.
+This section contains some ideas on how to continue the research with the l-WWLLT method.
+    
+    \paragraph{Graph Representations}
+    The graph representations can amount to sparse, high-dimensional real valued vectors.
+    By introducing unlabeled, disconnected dummy vertices, these representations could be replaced by natural valued vectors.
+    One may implement dimensionality reduction methods (e.g. TruncatedSVD for sparse data).
+    This is at least beneficial for low dimensional visualization methods when evaluating the performance of the implemented method (e.g. t-SNE).
+    
+    \paragraph{Datasets}
+    The motivation of the l-WWLLT method arises from the ability of the WL-labels to capture different graph substructures.
+    Therefore, even if the method works predictably and as desired, the minimum requirement for a successful implementation could be, to outperform the NoG Kernel.
+    As explained before, \citeauthor{2019_Schulz_CONF} argued that the TUDatasets may not be optimal for graph kernel evaluations~\cite{2019_Schulz_CONF}.
+    More expensive experiments (with respect to runtime and required storage) should be made on bigger datasets.
+    Preferably datasets, whose graph classification highly depend on the graph structures and or vertex labels.
+
+   	\paragraph{Edge Weight Initialization}
+   	Many machine learning methods depend on the initialized state.
+   	For example learning methods based on a gradient descent approach.
+   	One may argue, that the l-WWLLT method follows this approach by iteratively improving the edge weights of the WLLT, based on their last definition, in the direction of the biggest improvement (with respect to the local SME).
+   	Thus different edge weight initialization should be considered.
+   	For example randomized edge weights, edge weights based on the layer sizes or a more sophisticated initialization based on the WLLT structure.
+   	For example the amount of children per vertex. 
+   	However recall, that for some parameters, the initialized edge weights already implied a good similarity measure.
+   	It may be interesting to qualify, how the initialized similarity measure relates to the graph datasets and their classification.
+   	
+   	Another set of experiments arises, if application based knowledge on the original vertex labels, or even entire substructures can be used.
+   	One can try to derive edge weights from this knowledge and compare the resulting similarity measure with uninformed initializations.
+   	
+    \paragraph{Update Rule}
+    The implemented update rule is based on de- and increasing the distance between samples of two graph.
+    The method itself however was based on the idea of decreasing the distance between all samples of the same class and increasing the distance between samples of different classes.
+    One may think of different update rules, which relate to this idea in another way.
+    For example by identifying specific sets of edge weights, which are provably more important for either graph in the same or in different classes.
+    If such edges can be identified, the update rule may target them more specifically, which could circumvent edge weight updates which improve the local SME but strongly degenerate the global SME.    
+   	
+	\paragraph{Other Parameters}    
+   	As mentioned, a non-uniform treatment of the WL-layers could be implemented.
+   	This may include updates in only a selected number of WL-layers, or different strength of the weight updates for the layers.
+   	One may formulate this as a \textbf{layer gradient} (see update scope in section \ref{subsec:exp_setup}).
+   	It could be implemented for example linearly, exponentially and in relation to the size of the layers.
+   	
+   	Another interesting approach is to change parameter settings during the learning epochs.
+   	For example with respect to the push- and pull-factors.
+   	This resembles the approach of Simulated Annealing, which has been useful in many applications.
+   	
+   	The proposed l-WWLLT method only works with categorical vertex labels.
+   	To be applicable to more datasets and to allow comparison with other kernels, it might be helpful to develop a method to extend the definition of the l-WWLLT method to multi-task vertex classifications, edge labels, or \textbf{vertex and edge attributes}.
+   	
+   	\paragraph{Controlled Distance Improvements}
+   	In order to better understand the conditions under which the local SME reduction translates to a global SME reduction, one may construct artificial datasets similarly to the proposed \textit{AIDS\_perfect} (section  \ref{subsubsec:exp_AIDS_perfect}).
+   	Possibly with an increasing intensity of \enquote{imperfections} in the classification and the structure of the WLLT.
+   	These datasets should also be used to find general conditions under which the implied similarity measure is improved or at least maintained over a high number of learning epochs.
+   	In theory no degeneration should occur which is not corrected in the next epochs.
+   	   	
+   	\paragraph{Performance Comparability}
+   	As stated before, considering only the zeroth WLLT layer in the l-WWLLT method (with uniformly initialized edge weights) strongly relates to the NoG Kernel.
+   	But the NoG Kernel also considers edge weights for the graph representations.
+   	It can be insightful, to compare the usage of one or two WLLT layers in the l-WWLLT method, and only vertex or vertex and edge labels in the NoG method.
+   	Similarly, other configurations of the l-WWLLT method can be used to closely resemble other kernels.
+   	For example also the WWL Kernel.
+   	
+   	In the same way that application based knowledge can be used to initialize edge weights in the WLLT, learned edge weights can be used to derive application based knowledge, too.
+   	Every similarity measure is based on the distances between WL-labels, and thus substructures of the graphs.
+   	In the example of molecular graph databases, this could amount to a statement on what kind of substructures of the molecules are relevant with respect to the given classification.
+   	   	   	
+   	\paragraph{Runtime Complexity}
+   	Extensive runtime measurements were omitted in this thesis.
+   	The presented estimation of the runtime complexity should be verified empirically.
+   	Preferably with a set of parameter configurations that provides more reliable evaluation performance.
+   	
+   	\paragraph{Method Capabilities}   	
+   	Let us assume that the l-WWLLT method can be used as a reliable learning strategy.
+   	The presented experiments do not address empirical evaluations of potential strengths or weaknesses of the l-WWLLT method.
+   	For example, given a reliable learning strategy, one may ask what kind of graph substructures are best learned by l-WWLLT.
+   	And if there are structural features that are more difficult or impossible to learn.   	
+   	Similarly one may test, if the learner is able to learn other graph clusterings (as mentioned in experiment \enquote{Arbitrary Classifications} in section \ref{subsubsec:exp_Arbitrary_Classifications}).\newline
+   	
+   	We conclude that research on the l-WWLLT should be continued.
