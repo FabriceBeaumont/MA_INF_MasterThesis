@@ -1,6 +1,6 @@
 # MA-Thesis
 
-This repository contains key files regarding my master thesis "Learning Graph Similarities Using The Weisfeiler-Leman Label Hierarchy".
+This repository contains key files regarding my master thesis "[Learning Graph Similarities Using The Weisfeiler-Leman Label Hierarchy](https://github.com/FabriceBeaumont/MA_INF_MasterThesis/blob/master/22-12-26_SUBMITTED_MA_THESIS_Fabrice_Beaumont.pdf)".
 It does NOT contain the used datasets or the computed results (Kernels) on them.
 It does NOT contain the entrie evaluation of the proposed method.
 
